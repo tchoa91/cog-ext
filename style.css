@@ -46,7 +46,6 @@ li {
 }
 
 #cpuInfo, #memoryInfo, #storageInfo {
-  background-color: #f9f9f9;
   padding: 10px;
   border-radius: 5px;
   border: 1px solid #ddd;

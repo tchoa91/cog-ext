@@ -1,5 +1,6 @@
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(145deg, #4caf50, #2e7d32);
   margin: 10px;
   width: 350px; /* Adjust width as needed */
 }

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>System Information</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+  <h1>System Information</h1>
+
+  <h2>CPU</h2>
+  <div id="cpuInfo">
+    <p><strong>Model:</strong> <span id="cpuModel">-</span></p>
+    <p><strong>Architecture:</strong> <span id="cpuArch">-</span></p>
+    <p><strong>Cores:</strong> <span id="cpuCores">-</span></p>
+    <p><strong>Processors:</strong></p>
+    <ul id="cpuProcessors"></ul>
+    <p><strong>Temperatures:</strong></p>
+    <ul id="cpuTemperatures"></ul>
+  </div>
+
+  <h2>Memory</h2>
+  <div id="memoryInfo">
+    <p><strong>Capacity:</strong> <span id="memoryCapacity">-</span> GB</p>
+    <p><strong>Available Capacity:</strong> <span id="memoryAvailable">-</span> GB</p>
+  </div>
+
+  <h2>Storage</h2>
+  <div id="storageInfo">
+    <!-- Storage information will be populated here by popup.js -->
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

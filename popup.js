@@ -55,4 +55,18 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   });
+
+  // General Information
+  chrome.runtime.getPlatformInfo(function(platformInfo) {
+    document.getElementById('osInfo').textContent = platformInfo.os;
+    document.getElementById('platformInfo').textContent = platformInfo.arch;
+  });
+
+  const userAgent = navigator.userAgent;
+  const chromeVersionMatch = userAgent.match(/Chrome\/([0-9.]+)/);
+  if (chromeVersionMatch && chromeVersionMatch[1]) {
+    document.getElementById('chromeVersion').textContent = chromeVersionMatch[1];
+  } else {
+    document.getElementById('chromeVersion').textContent = 'Not available';
+  }
 });

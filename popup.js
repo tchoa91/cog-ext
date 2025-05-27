@@ -1,8 +1,26 @@
 document.addEventListener('DOMContentLoaded', function() {
+  const osMap = {
+    'mac': 'macOS',
+    'win': 'Windows',
+    'android': 'Android',
+    'cros': 'Chrome OS',
+    'linux': 'Linux',
+    'openbsd': 'OpenBSD'
+  };
+
+  const archMap = {
+    'arm': 'ARM',
+    'arm64': 'ARM 64-bit',
+    'x86-32': 'x86 32-bit',
+    'x86-64': 'x86 64-bit',
+    'mips': 'MIPS',
+    'mips64': 'MIPS 64-bit'
+  };
+
   // CPU Information
   chrome.system.cpu.getInfo(function(cpuInfo) {
-    document.getElementById('cpuModel').textContent = cpuInfo.modelName;
-    document.getElementById('cpuArch').textContent = cpuInfo.archName;
+    document.getElementById('cpuModel').textContent = cpuInfo.modelName || 'Not available';
+    document.getElementById('cpuArch').textContent = archMap[cpuInfo.archName] || cpuInfo.archName;
     document.getElementById('cpuCores').textContent = cpuInfo.numOfProcessors;
 
     const processorsList = document.getElementById('cpuProcessors');
@@ -58,8 +76,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // General Information
   chrome.runtime.getPlatformInfo(function(platformInfo) {
-    document.getElementById('osInfo').textContent = platformInfo.os;
-    document.getElementById('platformInfo').textContent = platformInfo.arch;
+    document.getElementById('osInfo').textContent = osMap[platformInfo.os] || platformInfo.os;
+    document.getElementById('platformInfo').textContent = archMap[platformInfo.arch] || platformInfo.arch;
   });
 
   const userAgent = navigator.userAgent;

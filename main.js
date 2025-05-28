@@ -3,41 +3,41 @@ var previousCpuInfo;
 
 function initLabels() {
 
-  function setLabel(elementId, messageId) {
+  function setLabel(elementId, labelText) {
     var label = document.querySelector('label[for=' + elementId + ']');
-    label.textContent = chrome.i18n.getMessage(messageId);
+    label.textContent = labelText;
   }
 
-  setLabel('operating-system', 'operatingSystemLabel');
-  setLabel('platform', 'platformLabel');
-  setLabel('chrome-version', 'chromeVersionLabel');
+  setLabel('operating-system', 'Operating System');
+  setLabel('platform', 'Platform');
+  setLabel('chrome-version', 'Chrome Version');
 
-  setLabel('cpu-name', 'cpuNameLabel');
-  setLabel('cpu-arch', 'cpuArchLabel');
-  setLabel('cpu-features', 'cpuFeaturesLabel');
-  setLabel('cpu-usage', 'cpuUsageLabel');
-  setLabel('cpu-temperatures', 'cpuTemperaturesLabel');
+  setLabel('cpu-name', 'CPU Name');
+  setLabel('cpu-arch', 'CPU Architecture');
+  setLabel('cpu-features', 'CPU Features');
+  setLabel('cpu-usage', 'CPU Usage');
+  setLabel('cpu-temperatures', 'CPU Temperatures');
 
-  setLabel('internal-storage-units', 'internalStorageUnitsLabel');
-  setLabel('external-storage-units', 'externalStorageUnitsLabel');
+  setLabel('internal-storage-units', 'Internal Storage Units');
+  setLabel('external-storage-units', 'External Storage Units');
 
-  setLabel('memory-capacity', 'memoryCapacityLabel');
-  setLabel('memory-usage', 'memoryUsageLabel');
+  setLabel('memory-capacity', 'Memory Capacity');
+  setLabel('memory-usage', 'Memory Usage');
 
-  setLabel('internet-state', 'internetStateLabel');
-  setLabel('local-adapters', 'localAdaptersLabel');
+  setLabel('internet-state', 'Internet State');
+  setLabel('local-adapters', 'Local Adapters');
 
-  setLabel('battery-status', 'batteryStatusLabel');
-  setLabel('battery-time', 'batteryTimeLabel');
-  setLabel('battery-level', 'batteryLevelLabel');
+  setLabel('battery-status', 'Battery Status');
+  setLabel('battery-time', 'Battery Time');
+  setLabel('battery-level', 'Battery Level');
 
-  setLabel('primary-display', 'primaryDisplayLabel');
-  setLabel('other-displays', 'otherDisplaysLabel');
+  setLabel('primary-display', 'Primary Display');
+  setLabel('other-displays', 'Other Displays');
 
-  setLabel('language', 'languageLabel');
-  setLabel('accept-languages', 'acceptLanguagesLabel');
+  setLabel('language', 'Language');
+  setLabel('accept-languages', 'Accept Languages');
 
-  setLabel('plugins-list', 'pluginsListLabel');
+  setLabel('plugins-list', 'Plugins List');
 }
 
 function initInfo() {
@@ -93,20 +93,20 @@ function initBattery() {
 function updateBattery(batteryManager) {
     var batteryStatus = document.querySelector('#battery-status');
     if (batteryManager.charging) {
-      batteryStatus.textContent = chrome.i18n.getMessage('batteryChargingState');
+      batteryStatus.textContent = 'Charging';
     } else {
-      batteryStatus.textContent = chrome.i18n.getMessage('batteryDischargingState');
+      batteryStatus.textContent = 'Discharging';
     }
 
     var batteryTime = document.querySelector('#battery-time');
     if (batteryManager.charging) {
       batteryTime.textContent = (batteryManager.chargingTime !== Infinity) ?
           formatSeconds(batteryManager.chargingTime) +
-          chrome.i18n.getMessage('untilFullText') : '-';
+          ' until full' : '-';
     } else {
       batteryTime.textContent = (batteryManager.dischargingTime !== Infinity) ?
           formatSeconds(batteryManager.dischargingTime) +
-          chrome.i18n.getMessage('leftText') : '-';
+          ' left' : '-';
     }
 
     var batteryLevel = document.querySelector('#battery-level');

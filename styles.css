@@ -1,0 +1,170 @@
+/* Import de la police Inter depuis Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Styles généraux pour le corps de la page */
+body {
+    font-family: 'Inter', sans-serif; /* Utilisation de la police Inter */
+    margin: 0; /* Supprime la marge par défaut du corps */
+    /* Dégradé de vert-bleu subtil pour le fond */
+    background: linear-gradient(to bottom right, #345c5c, #2a4a4a);
+    display: flex; /* Utilise flexbox pour centrer le contenu */
+    justify-content: center; /* Centre horizontalement */
+    align-items: flex-start; /* Aligne en haut verticalement */
+    min-height: 100vh; /* Hauteur minimale de 100% de la hauteur de la fenêtre */
+    padding: 0; /* Supprime le rembourrage du corps */
+    box-sizing: border-box; /* Inclut le rembourrage dans la largeur/hauteur */
+}
+
+/* Styles pour le conteneur principal du contenu (qui inclut maintenant la barre supérieure) */
+.wrapper {
+    background-color: #3d6060; /* Couleur de fond vert-bleu moyen pour le wrapper */
+    border-radius: 15px; /* Coins arrondis */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Ombre plus prononcée */
+    width: 100%; /* Largeur complète */
+    max-width: 200px; /* Largeur maximale fixée à 200px */
+    margin: 20px; /* Marge autour du wrapper */
+    color: #e0f2f1; /* Couleur du texte clair */
+    display: flex; /* Utilise flexbox pour les sections */
+    flex-direction: column; /* Les sections s'empilent verticalement */
+    overflow: hidden; /* Cache le contenu qui dépasse les coins arrondis */
+}
+
+/* Styles pour la barre supérieure, maintenant à l'intérieur du wrapper */
+.topbar {
+    background-color: #3d6060; /* Couleur de fond identique au wrapper pour une intégration fluide */
+    color: white; /* Texte blanc */
+    padding: 15px 25px; /* Rembourrage */
+    font-size: 1.3em; /* Taille de la police */
+    font-weight: 600; /* Poids de la police */
+    text-align: center; /* Centre le texte */
+    border-top-left-radius: 15px; /* Coins arrondis en haut à gauche */
+    border-top-right-radius: 15px; /* Coins arrondis en haut à droite */
+    margin-bottom: 20px; /* Marge inférieure pour séparer du contenu */
+}
+
+/* Styles pour chaque section (info, cpu, memory, etc.) */
+.section {
+    background-color: #3d6060; /* Couleur de fond identique au wrapper pour l'intégration */
+    padding: 0 25px 20px 25px; /* Rembourrage interne, pas de padding top pour le premier élément */
+    display: flex; /* Utilise flexbox pour les boîtes à l'intérieur */
+    flex-direction: column; /* Les boîtes s'empilent verticalement */
+    gap: 15px; /* Espace entre les boîtes */
+}
+
+/* Styles pour chaque boîte d'information */
+.box {
+    background-color: #4a7c7c; /* Couleur de fond vert-bleu plus clair pour les boîtes */
+    border-radius: 8px; /* Coins arrondis */
+    padding: 15px; /* Rembourrage interne */
+    display: flex; /* Utilise flexbox pour les labels et les infos */
+    flex-direction: column; /* Les labels et infos s'empilent */
+    gap: 8px; /* Espace entre label et info */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* Ombre interne légère */
+}
+
+/* Styles pour les labels */
+label {
+    font-weight: 500; /* Poids de la police */
+    color: #c8e6c9; /* Couleur du texte du label (légèrement ajustée si nécessaire) */
+    font-size: 0.95em; /* Taille de la police */
+    margin-bottom: 5px; /* Marge inférieure */
+}
+
+/* Styles pour les informations affichées */
+.info {
+    font-size: 1.1em; /* Taille de la police */
+    font-weight: 400; /* Poids de la police */
+    color: #ffffff; /* Couleur du texte blanc */
+    word-break: break-word; /* Permet le retour à la ligne pour les longs textes */
+}
+
+/* Styles pour les informations de petite taille */
+.small.info {
+    font-size: 0.9em; /* Taille de la police plus petite */
+    color: #e8f5e9; /* Couleur du texte légèrement plus claire */
+}
+
+/* Styles pour la barre de niveau de batterie */
+#battery-level .bar {
+    background-color: #a5d6a7; /* Couleur de fond de la barre */
+    border-radius: 5px; /* Coins arrondis */
+    height: 15px; /* Hauteur de la barre */
+    overflow: hidden; /* Cache le contenu qui dépasse */
+}
+
+/* Styles pour la section utilisée de la barre de batterie */
+#battery-level .bar-section.used {
+    background-color: #66bb6a; /* Couleur de la section utilisée */
+    height: 100%; /* Hauteur complète de la barre */
+    width: 75%; /* Exemple de largeur (sera mis à jour par JS) */
+    border-radius: 5px; /* Coins arrondis */
+}
+
+/* Styles pour les sections cachées */
+.hidden {
+    display: none; /* Cache l'élément */
+}
+
+/* Ligne de séparation entre les sections */
+.section:not(:last-child)::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.2); /* Ligne blanche semi-transparente */
+    margin-top: 20px; /* Marge au-dessus de la ligne */
+}
+
+/* Media queries pour la réactivité */
+@media (max-width: 768px) {
+    .wrapper {
+        margin: 15px; /* Réduit la marge sur les petits écrans */
+        max-width: 200px; /* Maintient la largeur fixe sur les petits écrans */
+    }
+
+    .topbar {
+        padding: 12px 20px; /* Ajuste le rembourrage de la barre supérieure */
+        font-size: 1.2em; /* Réduit la taille de la police */
+    }
+
+    .section {
+        padding: 0 20px 15px 20px; /* Ajuste le rembourrage des sections */
+    }
+
+    .box {
+        padding: 12px; /* Réduit le rembourrage des boîtes */
+    }
+}
+
+@media (max-width: 480px) {
+    .wrapper {
+        margin: 10px; /* Réduit la marge du wrapper */
+        border-radius: 10px; /* Réduit le rayon des coins */
+        max-width: 200px; /* Maintient la largeur fixe sur les très petits écrans */
+    }
+
+    .topbar {
+        padding: 10px 15px; /* Réduit le rembourrage de la barre supérieure */
+        font-size: 1.1em; /* Réduit la taille de la police */
+        border-top-left-radius: 10px; /* Ajuste le rayon des coins */
+        border-top-right-radius: 10px; /* Ajuste le rayon des coins */
+        margin-bottom: 15px; /* Réduit la marge inférieure */
+    }
+
+    .section {
+        padding: 0 15px 10px 15px; /* Réduit le rembourrage des sections */
+        gap: 10px; /* Réduit l'espace entre les boîtes */
+    }
+
+    .box {
+        padding: 10px; /* Réduit le rembourrage des boîtes */
+    }
+
+    .info {
+        font-size: 1em; /* Réduit la taille de la police */
+    }
+
+    .small.info {
+        font-size: 0.85em; /* Réduit la taille de la police */
+    }
+}

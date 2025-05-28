@@ -216,10 +216,25 @@ function updateCpuUsage() {
         var usedSectionWidth = 0;
       if (previousCpuInfo) {
         var oldUsage = previousCpuInfo.processors[i].usage;
-        usedSectionWidth = Math.floor((usage.kernel + usage.user - oldUsage.kernel - oldUsage.user) / (usage.total - oldUsage.total) * 100);
+        let G = usage.total - oldUsage.total; // Denominator
+        if (G > 0) { // Check if Denominator is greater than zero
+            usedSectionWidth = Math.floor((usage.kernel + usage.user - oldUsage.kernel - oldUsage.user) / G * 100);
+        } else {
+            usedSectionWidth = 0; // Default to 0 if no change or invalid data
+        }
       } else {
-        usedSectionWidth = Math.floor((usage.kernel + usage.user) / usage.total * 100);
+        if (usage.total > 0) { // Check if usage.total is greater than zero
+            usedSectionWidth = Math.floor((usage.kernel + usage.user) / usage.total * 100);
+        } else {
+            usedSectionWidth = 0; // Default to 0 if total is zero
+        }
       }
+
+      // Ensure usedSectionWidth is a valid number between 0 and 100
+      if (isNaN(usedSectionWidth) || !isFinite(usedSectionWidth)) {
+        usedSectionWidth = 0;
+      }
+      usedSectionWidth = Math.max(0, Math.min(100, usedSectionWidth));
       var bar = cpuUsage.querySelector('.bar:nth-child(' + (i + 1) + ')');
       bar.querySelector('.used').style.transform = 'translate(' + parseInt(usedSectionWidth * width / 100 - width) + 'px, 0px)';
     }

@@ -5,6 +5,7 @@
 body {
     font-family: 'Inter', sans-serif; /* Utilisation de la police Inter */
     margin: 0; /* Supprime la marge par défaut du corps */
+    width: 300px; /* Définit la largeur du corps */
     /* Dégradé de vert-bleu subtil pour le fond */
     background: linear-gradient(to bottom right, #345c5c, #2a4a4a);
     display: flex; /* Utilise flexbox pour centrer le contenu */

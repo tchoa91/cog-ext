@@ -10,7 +10,8 @@ body {
     background: linear-gradient(to bottom right, #345c5c, #2a4a4a);
     display: flex; /* Utilise flexbox pour centrer le contenu */
     justify-content: center; /* Centre horizontalement */
-    align-items: flex-start; /* Aligne en haut verticalement */
+    align-items: stretch; /* Aligne en haut verticalement */
+    flex-direction: column; /* Ajout de la direction flexbox */
     min-height: 100vh; /* Hauteur minimale de 100% de la hauteur de la fenêtre */
     padding: 0; /* Supprime le rembourrage du corps */
     box-sizing: border-box; /* Inclut le rembourrage dans la largeur/hauteur */

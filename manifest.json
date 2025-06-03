@@ -3,7 +3,7 @@
   "name": "System Info Viewer",
   "version": "1.0",
   "description": "Displays system CPU, memory, and storage information.",
-  "permissions": ["system.cpu", "system.memory", "system.storage"],
+  "permissions": ["system.cpu", "system.memory", "system.storage", "system.display", "storage"],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {

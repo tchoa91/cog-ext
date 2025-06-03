@@ -1,41 +1,117 @@
 <!DOCTYPE html>
+
 <html>
 <head>
-  <title>System Information</title>
-  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" width="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-  <h1>System Information</h1>
-
-  <h2>General Information</h2>
-  <div>
-    <p><strong>Operating System:</strong> <span id="osInfo">-</span></p>
-    <p><strong>Platform Architecture:</strong> <span id="platformInfo">-</span></p>
-    <p><strong>Chrome Version:</strong> <span id="chromeVersion">-</span></p>
+  <div class="topbar">Cog</div>
+  <div class="wrapper">
+    <div id="info" class="section">
+      <div class="box">
+        <label for="operating-system"></label>
+        <div id="operating-system" class="info"></div>
+        <label for="platform"></label>
+        <div id="platform" class="small info"></div>
+      </div>
+      <div class="box">
+        <label for="chrome-version"></label>
+        <div id="chrome-version" class="small info"></div>
+      </div>
+    </div>
+    <div id="cpu" class="section">
+      <div class="box">
+        <label for="cpu-name"></label>
+        <div id="cpu-name" class="info"></div>
+        <label for="cpu-arch"></label>
+        <div id="cpu-arch" class="info"></div>
+        <label for="cpu-features"></label>
+        <div id="cpu-features" class="small info"></div>
+      </div>
+      <div class="box">
+        <label for="cpu-usage"></label>
+        <div id="cpu-usage" class="info"></div>
+        <label for="cpu-temperatures"></label>
+        <div id="cpu-temperatures" class="small info"></div>
+      </div>
+    </div>
+    <div id="storage" class="section hidden">
+      <div id="internal-storage" class="box">
+        <label for="internal-storage-units"></label>
+        <div id="internal-storage-units" class="small info"></div>
+      </div>
+      <div id="external-storage" class="box">
+        <label for="external-storage-units"></label>
+        <div id="external-storage-units" class="small info"></div>
+      </div>
+    </div>
+    <div id="memory" class="section">
+      <div class="box">
+        <label for="memory-capacity"></label>
+        <div id="memory-capacity" class="info"></div>
+      </div>
+      <div class="box">
+        <label for="memory-usage"></label>
+        <div id="memory-usage" class="info"></div>
+      </div>
+    </div>
+    <div id="network" class="section">
+      <div class="box">
+        <label for="internet-state"></label>
+        <div id="internet-state" class="info"></div>
+      </div>
+      <div class="box">
+        <label for="local-adapters"></label>
+        <div id="local-adapters" class="small info"></div>
+      </div>
+    </div>
+    <div id="battery" class="section hidden">
+      <div class="box">
+        <label for="battery-status"></label>
+        <div id="battery-status" class="info"></div>
+        <label for="battery-time"></label>
+        <div id="battery-time" class="small info"></div>
+      </div>
+      <div class="box">
+        <label for="battery-level"></label>
+        <div id="battery-level" class="info">
+          <div class="bar">
+            <span class="bar-section used"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="displays" class="section">
+      <div class="box">
+        <label for="primary-display"></label>
+        <div id="primary-display" class="info"></div>
+      </div>
+      <div class="box">
+        <label for="other-displays"></label>
+        <div id="other-displays" class="small info"></div>
+      </div>
+    </div>
+    <div id="languages" class="section">
+      <div class="box">
+        <label for="language"></label>
+        <div id="language" class="info"></div>
+      </div>
+      <div class="box">
+        <label for="accept-languages"></label>
+        <div id="accept-languages" class="small info"></div>
+      </div>
+    </div>
+    <div id="plugins" class="section hidden">
+      <div class="box">
+        <label for="plugins-list"></label>
+        <div id="plugins-list" class="small info"></div>
+      </div>
+    </div>
   </div>
-
-  <h2>CPU</h2>
-  <div id="cpuInfo">
-    <p><strong>Model:</strong> <span id="cpuModel">-</span></p>
-    <p><strong>Architecture:</strong> <span id="cpuArch">-</span></p>
-    <p><strong>Cores:</strong> <span id="cpuCores">-</span></p>
-    <p><strong>Processors:</strong></p>
-    <ul id="cpuProcessors"></ul>
-    <p><strong>Temperatures:</strong></p>
-    <ul id="cpuTemperatures"></ul>
-  </div>
-
-  <h2>Memory</h2>
-  <div id="memoryInfo">
-    <p><strong>Capacity:</strong> <span id="memoryCapacity">-</span> GB</p>
-    <p><strong>Available Capacity:</strong> <span id="memoryAvailable">-</span> GB</p>
-  </div>
-
-  <h2>Storage</h2>
-  <div id="storageInfo">
-    <!-- Storage information will be populated here by popup.js -->
-  </div>
-
-  <script src="popup.js"></script>
+  <script src="util.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>

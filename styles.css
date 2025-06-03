@@ -22,8 +22,6 @@ body {
     background-color: #3d6060; /* Couleur de fond vert-bleu moyen pour le wrapper */
     border-radius: 15px; /* Coins arrondis */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Ombre plus prononcée */
-    width: 100%; /* Largeur complète */
-    max-width: 200px; /* Largeur maximale fixée à 200px */
     margin: 20px; /* Marge autour du wrapper */
     color: #e0f2f1; /* Couleur du texte clair */
     display: flex; /* Utilise flexbox pour les sections */
@@ -121,7 +119,6 @@ label {
 @media (max-width: 768px) {
     .wrapper {
         margin: 15px; /* Réduit la marge sur les petits écrans */
-        max-width: 200px; /* Maintient la largeur fixe sur les petits écrans */
     }
 
     .topbar {
@@ -142,7 +139,6 @@ label {
     .wrapper {
         margin: 10px; /* Réduit la marge du wrapper */
         border-radius: 10px; /* Réduit le rayon des coins */
-        max-width: 200px; /* Maintient la largeur fixe sur les très petits écrans */
     }
 
     .topbar {

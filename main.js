@@ -24,8 +24,8 @@ function initLabels() {
   setLabel('memory-capacity', 'Memory Capacity');
   setLabel('memory-usage', 'Memory Usage');
 
-  setLabel('internet-state', 'Internet State');
-  setLabel('local-adapters', 'Local Adapters');
+  //setLabel('internet-state', 'Internet State');
+  //setLabel('local-adapters', 'Local Adapters');
 
   setLabel('battery-status', 'Battery Status');
   setLabel('battery-time', 'Battery Time');

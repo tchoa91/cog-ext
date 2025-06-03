@@ -22,8 +22,6 @@ body {
     background-color: #3d6060; /* Couleur de fond vert-bleu moyen pour le wrapper */
     border-radius: 15px; /* Coins arrondis */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Ombre plus prononcée */
-    width: 100%; /* Largeur complète */
-    max-width: 200px; /* Largeur maximale fixée à 200px */
     margin: 20px; /* Marge autour du wrapper */
     color: #e0f2f1; /* Couleur du texte clair */
     display: flex; /* Utilise flexbox pour les sections */
@@ -114,14 +112,13 @@ label {
     width: 100%;
     height: 1px;
     background-color: rgba(255, 255, 255, 0.2); /* Ligne blanche semi-transparente */
-    margin-top: 20px; /* Marge au-dessus de la ligne */
+    margin-top: 0px; /* Marge au-dessus de la ligne */
 }
 
 /* Media queries pour la réactivité */
 @media (max-width: 768px) {
     .wrapper {
         margin: 15px; /* Réduit la marge sur les petits écrans */
-        max-width: 200px; /* Maintient la largeur fixe sur les petits écrans */
     }
 
     .topbar {
@@ -142,7 +139,6 @@ label {
     .wrapper {
         margin: 10px; /* Réduit la marge du wrapper */
         border-radius: 10px; /* Réduit le rayon des coins */
-        max-width: 200px; /* Maintient la largeur fixe sur les très petits écrans */
     }
 
     .topbar {
@@ -150,11 +146,11 @@ label {
         font-size: 1.1em; /* Réduit la taille de la police */
         border-top-left-radius: 10px; /* Ajuste le rayon des coins */
         border-top-right-radius: 10px; /* Ajuste le rayon des coins */
-        margin-bottom: 15px; /* Réduit la marge inférieure */
+        margin-bottom: 5px; /* Réduit la marge inférieure */
     }
 
     .section {
-        padding: 0 15px 10px 15px; /* Réduit le rembourrage des sections */
+        padding: 5px; /* Réduit le rembourrage des sections */
         gap: 10px; /* Réduit l'espace entre les boîtes */
     }
 

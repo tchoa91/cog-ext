@@ -111,6 +111,7 @@ function updateBattery(batteryManager) {
 
     var batteryLevel = document.querySelector('#battery-level');
     var batteryUsed = batteryManager.level.toFixed(2) * 100;
+    batteryLevel.querySelector('.bar').title = batteryUsed.toFixed(0) + '%';
     batteryLevel.querySelector('.used').style.width = batteryUsed + '%';
 }
 
@@ -168,8 +169,12 @@ function updateStorage() {
 function initCpu() {
   chrome.system.cpu.getInfo(function(cpuInfo) {
 
-    var cpuName = cpuInfo.modelName.replace(/\(R\)/g, '®').replace(/\(TM\)/, '™');
+    var cpuName = 'Unknown';
+    if (cpuInfo.modelName.length != 0) {
+      cpuName = cpuInfo.modelName.replace(/\(R\)/g, '®').replace(/\(TM\)/, '™');
+    }
     document.querySelector('#cpu-name').textContent = cpuName;
+
 
     var cpuArch = cpuInfo.archName.replace(/_/g, '-');
     document.querySelector('#cpu-arch').textContent = cpuArch;
@@ -245,9 +250,9 @@ function updateCpuUsage() {
 function updateCpuTemperatures(cpuInfo) {
   chrome.storage.sync.get('cpuTemperatureScale', function(result) {
     if (result.cpuTemperatureScale === 'Fahrenheit') {
-      document.querySelector('#cpu-temperatures').innerHTML = cpuInfo.temperatures.map(t => t + ' °C').join('<br/>');
+      document.querySelector('#cpu-temperatures').innerHTML = cpuInfo.temperatures.map(t => t.toFixed(1) + ' °C').join('<br/>');
     } else {
-      document.querySelector('#cpu-temperatures').innerHTML = cpuInfo.temperatures.map(t => Math.round(t * 1.8 + 32) + ' °F').join('<br/>');
+      document.querySelector('#cpu-temperatures').innerHTML = cpuInfo.temperatures.map(t => (t * 1.8 + 32).toFixed(1) + ' °F').join('<br/>');
     }
   });
 }
@@ -272,6 +277,7 @@ function updateMemoryUsage() {
 
     var memoryUsage = document.querySelector('#memory-usage');
     var usedMemory = 100 - Math.round(memoryInfo.availableCapacity / memoryInfo.capacity * 100);
+    memoryUsage.querySelector('.bar').title = (formatBytes(memoryInfo.capacity - memoryInfo.availableCapacity)) + ' GB : ' + usedMemory + ' %';
     memoryUsage.querySelector('.used').style.width = usedMemory + '%';
   });
 };

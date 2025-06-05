@@ -6,8 +6,7 @@ body {
     font-family: 'Inter', sans-serif; /* Utilisation de la police Inter */
     margin: 0; /* Supprime la marge par défaut du corps */
     width: 300px; /* Définit la largeur du corps */
-    /* Dégradé de vert-bleu subtil pour le fond */
-    background: linear-gradient(to bottom right, #345c5c, #2a4a4a);
+    background-color: #3d6060; /* Couleur de fond vert-bleu moyen pour le wrapper */
     display: flex; /* Utilise flexbox pour centrer le contenu */
     justify-content: center; /* Centre horizontalement */
     align-items: stretch; /* Aligne en haut verticalement */
@@ -19,10 +18,10 @@ body {
 
 /* Styles pour le conteneur principal du contenu (qui inclut maintenant la barre supérieure) */
 .wrapper {
-    background-color: #3d6060; /* Couleur de fond vert-bleu moyen pour le wrapper */
-    border-radius: 15px; /* Coins arrondis */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Ombre plus prononcée */
-    margin: 20px; /* Marge autour du wrapper */
+    /* border-radius: 15px; */ /* Coins arrondis */
+    /* box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); */ /* Ombre plus prononcée */
+    margin: 60px 10px 10px; /* Marge autour du wrapper */
+    /* margin-top: 40px; */
     color: #e0f2f1; /* Couleur du texte clair */
     display: flex; /* Utilise flexbox pour les sections */
     flex-direction: column; /* Les sections s'empilent verticalement */
@@ -31,30 +30,37 @@ body {
 
 /* Styles pour la barre supérieure, maintenant à l'intérieur du wrapper */
 .topbar {
-    background-color: #3d6060; /* Couleur de fond identique au wrapper pour une intégration fluide */
-    color: white; /* Texte blanc */
+    background-color: #2a4a4a; /* Couleur de fond identique au wrapper pour une intégration fluide */
+    color: #c8e6c9; /* Texte */
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    z-index: 10;
     padding: 15px 25px; /* Rembourrage */
     font-size: 1.3em; /* Taille de la police */
     font-weight: 600; /* Poids de la police */
     text-align: center; /* Centre le texte */
-    border-top-left-radius: 15px; /* Coins arrondis en haut à gauche */
-    border-top-right-radius: 15px; /* Coins arrondis en haut à droite */
-    margin-bottom: 20px; /* Marge inférieure pour séparer du contenu */
+    display: flow;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
 }
 
 /* Styles pour chaque section (info, cpu, memory, etc.) */
 .section {
-    background-color: #3d6060; /* Couleur de fond identique au wrapper pour l'intégration */
-    padding: 0 25px 20px 25px; /* Rembourrage interne, pas de padding top pour le premier élément */
+    /* background-color: #3d6060; /* Couleur de fond identique au wrapper pour l'intégration */
+    padding: 5px; /* Rembourrage interne, pas de padding top pour le premier élément */
     display: flex; /* Utilise flexbox pour les boîtes à l'intérieur */
     flex-direction: column; /* Les boîtes s'empilent verticalement */
-    gap: 15px; /* Espace entre les boîtes */
+    gap: 10px; /* Espace entre les boîtes */
 }
 
 /* Styles pour chaque boîte d'information */
 .box {
-    background-color: #4a7c7c; /* Couleur de fond vert-bleu plus clair pour les boîtes */
-    border-radius: 8px; /* Coins arrondis */
+    /* Dégradé de vert-bleu subtil pour le fond */
+    background: linear-gradient(to bottom right, #345c5c, #2a4a4a);
+    /* background-color: #4a7c7c; /* Couleur de fond vert-bleu plus clair pour les boîtes */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Ombre plus prononcée */
+    border-radius: 20px; /* Coins arrondis */
     padding: 15px; /* Rembourrage interne */
     display: flex; /* Utilise flexbox pour les labels et les infos */
     flex-direction: column; /* Les labels et infos s'empilent */
@@ -66,8 +72,9 @@ body {
 label {
     font-weight: 500; /* Poids de la police */
     color: #c8e6c9; /* Couleur du texte du label (légèrement ajustée si nécessaire) */
-    font-size: 0.95em; /* Taille de la police */
-    margin-bottom: 5px; /* Marge inférieure */
+    font-size: 1.2em; /* Taille de la police */
+    /* margin-bottom: 5px; */ /* Marge inférieure */
+    line-height: 1em;
 }
 
 /* Styles pour les informations affichées */
@@ -76,6 +83,7 @@ label {
     font-weight: 400; /* Poids de la police */
     color: #ffffff; /* Couleur du texte blanc */
     word-break: break-word; /* Permet le retour à la ligne pour les longs textes */
+    margin-bottom: 10px;
 }
 
 /* Styles pour les informations de petite taille */
@@ -85,20 +93,31 @@ label {
 }
 
 /* Styles pour la barre de niveau de batterie */
-#battery-level .bar {
-    background-color: #a5d6a7; /* Couleur de fond de la barre */
+#battery-level .bar, #memory-usage .bar, #cpu-usage .bar {
+    background-color: #1f3636; /* Couleur de fond de la barre */
     border-radius: 5px; /* Coins arrondis */
-    height: 15px; /* Hauteur de la barre */
+    height: 10px; /* Hauteur de la barre */
     overflow: hidden; /* Cache le contenu qui dépasse */
+    margin-top: 10px;
 }
 
 /* Styles pour la section utilisée de la barre de batterie */
-#battery-level .bar-section.used {
-    background-color: #66bb6a; /* Couleur de la section utilisée */
+#battery-level .bar-section.used, #memory-usage .bar-section.used, #cpu-usage .bar-section.used {
+    background: linear-gradient(to left, #47854a, #66bb6a); /* Couleur de la section utilisée */
     height: 100%; /* Hauteur complète de la barre */
-    width: 75%; /* Exemple de largeur (sera mis à jour par JS) */
+    display: block;
+    width: 100%; /* Exemple de largeur (sera mis à jour par JS) */
+    transition: transform 0.5s ease-in-out;
     border-radius: 5px; /* Coins arrondis */
 }
+
+/* */
+#cpu-temperatures {
+    text-align: right;
+    width: fit-content;
+    font-family: Google Sans Mono,monospace;
+}
+
 
 /* Styles pour les sections cachées */
 .hidden {
@@ -115,54 +134,8 @@ label {
     margin-top: 0px; /* Marge au-dessus de la ligne */
 }
 
-/* Media queries pour la réactivité */
-@media (max-width: 768px) {
-    .wrapper {
-        margin: 15px; /* Réduit la marge sur les petits écrans */
-    }
-
-    .topbar {
-        padding: 12px 20px; /* Ajuste le rembourrage de la barre supérieure */
-        font-size: 1.2em; /* Réduit la taille de la police */
-    }
-
-    .section {
-        padding: 0 20px 15px 20px; /* Ajuste le rembourrage des sections */
-    }
-
-    .box {
-        padding: 12px; /* Réduit le rembourrage des boîtes */
-    }
-}
-
-@media (max-width: 480px) {
-    .wrapper {
-        margin: 10px; /* Réduit la marge du wrapper */
-        border-radius: 10px; /* Réduit le rayon des coins */
-    }
-
-    .topbar {
-        padding: 10px 15px; /* Réduit le rembourrage de la barre supérieure */
-        font-size: 1.1em; /* Réduit la taille de la police */
-        border-top-left-radius: 10px; /* Ajuste le rayon des coins */
-        border-top-right-radius: 10px; /* Ajuste le rayon des coins */
-        margin-bottom: 5px; /* Réduit la marge inférieure */
-    }
-
-    .section {
-        padding: 5px; /* Réduit le rembourrage des sections */
-        gap: 10px; /* Réduit l'espace entre les boîtes */
-    }
-
-    .box {
-        padding: 10px; /* Réduit le rembourrage des boîtes */
-    }
-
-    .info {
-        font-size: 1em; /* Réduit la taille de la police */
-    }
-
-    .small.info {
-        font-size: 0.85em; /* Réduit la taille de la police */
-    }
+p {
+    margin: 10px 20px;
+    font-size: 0.85em;
+    color: #619c9c;
 }

@@ -18,21 +18,17 @@ body {
 
 /* Styles pour le conteneur principal du contenu (qui inclut maintenant la barre supérieure) */
 .wrapper {
-    /* border-radius: 15px; */ /* Coins arrondis */
-    /* box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); */ /* Ombre plus prononcée */
     margin: 60px 10px 10px; /* Marge autour du wrapper */
-    /* margin-top: 40px; */
     color: #e0f2f1; /* Couleur du texte clair */
     display: flex; /* Utilise flexbox pour les sections */
     flex-direction: column; /* Les sections s'empilent verticalement */
     overflow: hidden; /* Cache le contenu qui dépasse les coins arrondis */
 }
 
-/* Styles pour la barre supérieure, maintenant à l'intérieur du wrapper */
+/* Styles pour la barre supérieure */
 .topbar {
     background-color: #2a4a4a; /* Couleur de fond identique au wrapper pour une intégration fluide */
     color: #c8e6c9; /* Texte */
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
     z-index: 10;
     padding: 15px 25px; /* Rembourrage */
     font-size: 1.3em; /* Taille de la police */
@@ -45,9 +41,13 @@ body {
     left: 0;
 }
 
+/* Ombre sous la topbar si scroll */
+.topbar.shadow {
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
 /* Styles pour chaque section (info, cpu, memory, etc.) */
 .section {
-    /* background-color: #3d6060; /* Couleur de fond identique au wrapper pour l'intégration */
     padding: 5px; /* Rembourrage interne, pas de padding top pour le premier élément */
     display: flex; /* Utilise flexbox pour les boîtes à l'intérieur */
     flex-direction: column; /* Les boîtes s'empilent verticalement */
@@ -58,7 +58,6 @@ body {
 .box {
     /* Dégradé de vert-bleu subtil pour le fond */
     background: linear-gradient(to bottom right, #345c5c, #2a4a4a);
-    /* background-color: #4a7c7c; /* Couleur de fond vert-bleu plus clair pour les boîtes */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Ombre plus prononcée */
     border-radius: 20px; /* Coins arrondis */
     padding: 15px; /* Rembourrage interne */
@@ -73,7 +72,6 @@ label {
     font-weight: 500; /* Poids de la police */
     color: #c8e6c9; /* Couleur du texte du label (légèrement ajustée si nécessaire) */
     font-size: 1.2em; /* Taille de la police */
-    /* margin-bottom: 5px; */ /* Marge inférieure */
     line-height: 1em;
 }
 

@@ -43,7 +43,7 @@ body {
 
 /* Ombre sous la topbar si scroll */
 .topbar.shadow {
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 /* Styles pour chaque section (info, cpu, memory, etc.) */

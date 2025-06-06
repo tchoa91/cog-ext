@@ -42,7 +42,7 @@ body {
 }
 
 /* Ombre sous la topbar si scroll */
-.topbar #shadow {
+.topbar.shadow {
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
 }
 

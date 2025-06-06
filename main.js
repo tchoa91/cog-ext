@@ -439,6 +439,15 @@ chrome.runtime.onSuspendCanceled.addListener(function() {
 
 document.addEventListener('DOMContentLoaded', function() {
   domCache.topBar = document.querySelector('.topbar');
+
+  // Add scroll event listener for topbar shadow
+  window.addEventListener('scroll', function() {
+    if (window.scrollY > 0) {
+      domCache.topBar.classList.add('shadow');
+    } else {
+      domCache.topBar.classList.remove('shadow');
+    }
+  });
   domCache.topBar.innerHTML += ' ' + chrome.runtime.getManifest().version;
 
   initLabels();

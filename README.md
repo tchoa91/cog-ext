@@ -2,9 +2,14 @@
 
 This Chrome extension displays basic system information, including CPU, memory, and battery.
 
+## Feedback
+
+Please share your thoughts here in the Issues tab : https://github.com/tchoa91/cog-ext/issues
+
 ## History
 
 This extension is a wild hack from the ChromeApp "COG" coded by François Beaufort, Chrome expert at Google, to demonstrate the capabilities of the Chrome system API.
+
 Help was provided by Jules : https://jules.google.com/
 
 

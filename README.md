@@ -4,7 +4,8 @@ This Chrome extension displays basic system information, including CPU, memory, 
 
 ## History
 
-This extension is a wild hack from the ChromeApp COG coded by François Beaufort, Chrome experter at Google, to demonstrate the capabilities of the Chrome system API.
+This extension is a wild hack from the ChromeApp "COG" coded by François Beaufort, Chrome expert at Google, to demonstrate the capabilities of the Chrome system API.
+Help was provided by Jules : https://jules.google.com/
 
 
 ## Features

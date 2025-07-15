@@ -175,7 +175,8 @@ function updateStorage() {
 
     for (var i = 0; i < storageInfo.length; i++) {
       let div = document.createElement('div');
-      div.textContent = storageInfo[i].name +
+      let storageName = storageInfo[i].name.trim().replace(/\\r\\n|\\r|\\n/g, "");
+      div.textContent = storageName +
           (storageInfo[i].capacity ? ' - ' + formatBytes(storageInfo[i].capacity) : '');
       if (storageInfo[i].type === 'removable') {
         externalFragment.appendChild(div);
@@ -223,7 +224,9 @@ function initCpu() {
     domCache.cpuArch.textContent = cpuInfo.archName.replace(/_/g, '-');
     domCache.cpuFeatures.textContent = cpuInfo.features.join(', ').toUpperCase().replace(/_/g, '.') || '-';
 
-    if ('temperatures' in cpuInfo) {
+    domCache.cpuTemperaturesWrapper = document.querySelector('#cpu-temperatures-wrapper');
+    if ('temperatures' in cpuInfo && cpuInfo.temperatures.length > 0) {
+      domCache.cpuTemperaturesWrapper.classList.remove('hidden');
       // First, get the stored preference or use default
       chrome.storage.sync.get('cpuTemperatureScale', function(result) {
         if (result.cpuTemperatureScale) {
@@ -244,8 +247,6 @@ function initCpu() {
           });
         }
       });
-    } else {
-      if (domCache.cpuTemperatures) domCache.cpuTemperatures.textContent = 'N/A';
     }
 
     var width = parseInt(window.getComputedStyle(domCache.cpuUsage).width.replace(/px/g, ''));

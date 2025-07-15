@@ -43,7 +43,7 @@ Link (to come)
 -   `popup.html`: The HTML structure for the popup window.
 -   `main.js`, `util.js`: Contains the JavaScript logic to fetch and display system information.
 -   `style.css`: Styling for the popup window.
--   `images/`: Directory containing the extension icons (`icon16.png`, `icon48.png`, `icon128.png`).
+-   `assets/`: Directory containing the extension icons (`icon16.png`, `icon48.png`, `icon128.png`).
 
 ## Permissions Used
 

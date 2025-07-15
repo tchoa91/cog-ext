@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "COGext : System Info Viewer",
-  "version": "1.0",
+  "version": "1.1",
   "description": "Displays OS, CPU, memory, and more system information.",
   "permissions": ["system.cpu", "system.memory", "system.storage", "system.display", "storage"],
   "action": {

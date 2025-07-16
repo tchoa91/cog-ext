@@ -1,20 +1,20 @@
 {
   "manifest_version": 3,
   "name": "COGext : System Info Viewer",
-  "version": "1.0",
+  "version": "1.1",
   "description": "Displays OS, CPU, memory, and more system information.",
   "permissions": ["system.cpu", "system.memory", "system.storage", "system.display", "storage"],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "16": "images/icon16.png",
-      "48": "images/icon48.png",
-      "128": "images/icon128.png"
+      "16": "assets/icon16.png",
+      "48": "assets/icon48.png",
+      "128": "assets/icon128.png"
     }
   },
   "icons": {
-    "16": "images/icon16.png",
-    "48": "images/icon48.png",
-    "128": "images/icon128.png"
+    "16": "assets/icon16.png",
+    "48": "assets/icon48.png",
+    "128": "assets/icon128.png"
   }
 }

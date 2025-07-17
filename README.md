@@ -28,7 +28,12 @@ Help was provided by Jules : https://jules.google.com/
 
 - tried to fix windows only bugs that I can not test: CPU Temp & Storage display
 - removed README & LICENCE from package, only needed here
-- added font in package, no donwload from the web any more 
+- added font in package, no donwload from the web any more
+
+### V 1.2
+
+- tried again to fix windows only bugs on Storage display
+- new icons ok on dark background
 
 ## How to Install and Use
 

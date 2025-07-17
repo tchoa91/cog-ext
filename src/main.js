@@ -175,7 +175,7 @@ function updateStorage() {
 
     for (var i = 0; i < storageInfo.length; i++) {
       let div = document.createElement('div');
-      let storageName = storageInfo[i].name.trim().replace(/\\r\\n|\\r|\\n/g, "");
+      let storageName = storageInfo[i].name.replace(/[^\x20-\x7E]/g, '').trim();
       div.textContent = storageName +
           (storageInfo[i].capacity ? ' - ' + formatBytes(storageInfo[i].capacity) : '');
       if (storageInfo[i].type === 'removable') {

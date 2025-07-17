@@ -109,8 +109,12 @@ label {
     font-size: 1.1em; /* Taille de la police */
     font-weight: 400; /* Poids de la police */
     color: #ffffff; /* Couleur du texte blanc */
-    word-break: break-word; /* Permet le retour à la ligne pour les longs textes */
+    /* word-break: break-word; Permet le retour à la ligne pour les longs textes */
     margin-bottom: 10px;
+    width: 100%;                /* Assure que l'élément prend la largeur disponible */
+    white-space: nowrap;        /* Empêche le retour à la ligne du contenu */
+    overflow: hidden;           /* Cache ce qui dépasse */
+    text-overflow: ellipsis;    /* Ajoute "..." à la fin si le texte est coupé */
 }
 
 /* Styles pour les informations de petite taille */

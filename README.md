@@ -2,6 +2,8 @@
 
 This Chrome extension displays basic system information, including CPU, memory, and battery.
 
+<img width="256" height="256" alt="COGext_0_1224px" src="https://github.com/user-attachments/assets/940f61ef-cba6-4e5e-8e59-d40834224923" />
+
 ## Feedback
 
 Please share your thoughts here in the Issues tab : https://github.com/tchoa91/cog-ext/issues
@@ -16,7 +18,8 @@ Help was provided by Jules : https://jules.google.com/
 ## Features
 
 - Shows OS, version & platform.
-- Shows CPU model, architecture, number of cores, processor usage and temperatures.
+- Shows CPU model, architecture, number of cores, pr
+ocessor usage and temperatures.
 - Displays system memory capacity and usage.
 - Displays battery level, staus and time left/to full charge.
 - Lists available (external) storage units with their capacity and available space.

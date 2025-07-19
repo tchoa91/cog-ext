@@ -66,4 +66,4 @@ Link : https://chromewebstore.google.com/detail/cogext-system-info-viewer/bkgdbd
 -   `system.cpu`: To access CPU information.
 -   `system.memory`: To access memory information.
 -   `system.storage`: To access storage information.
--   'storage' : To store persistant parameters.
+-   `storage`: To store persistant parameters.

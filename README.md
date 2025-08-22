@@ -67,3 +67,7 @@ Link : https://chromewebstore.google.com/detail/cogext-system-info-viewer/bkgdbd
 -   `system.memory`: To access memory information.
 -   `system.storage`: To access storage information.
 -   `storage`: To store persistant parameters.
+
+## Testing tool
+
+This project is tested with BrowserStack

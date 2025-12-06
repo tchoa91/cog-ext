@@ -1,255 +1,298 @@
 /* --- 0. TYPOGRAPHIE (Uniquement 400 et 600) --- */
 @font-face {
-    font-family: 'Inter';
-    src: url('assets/fonts/Inter-400.ttf') format('truetype');
-    font-weight: 400; font-style: normal;
+  font-family: "Inter";
+  src: url("assets/fonts/Inter-400.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
 }
 @font-face {
-    font-family: 'Inter';
-    src: url('assets/fonts/Inter-600.ttf') format('truetype');
-    font-weight: 600; font-style: normal;
+  font-family: "Inter";
+  src: url("assets/fonts/Inter-600.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
 }
 
 /* --- 1. VARIABLES & THÈMES --- */
 :root {
-    /* Structure (inchangée pour garantir l'ergo validée) */
-    --topbar-height: 90px; 
-    --grid-gap: 12px;
-    
-    /* Design System */
-    --radius-lg: 12px; /* Arrondis demandés */
-    --font-main: 'Inter', system-ui, sans-serif;
-    
-    /* THÈME SOMBRE (Défaut - Slate/Teal) */
-    --bg-color: #1a262b;       /* Fond profond */
-    
-    /* Cartes : Sombre (repos) -> Lumineux (action) */
-    --card-bg: #1e2c32;        /* Quasiment comme le fond */
-    --card-hover: #2c444b;     /* Plus clair (ex-couleur normale) */
-    
-    /* Overlay : Utilise la couleur "Active/Lumineuse" pour la lisibilité */
-    --modal-bg: #263a40;       /* Lighter Slate */
+  /* Structure (inchangée pour garantir l'ergo validée) */
+  --topbar-height: 90px;
+  --grid-gap: 15px;
 
-    /* Overlay Backdrop (Le fond qui masque la grille) */
-    /* On reprend la couleur de --bg-color (#1a262b) à 95% d'opacité */
-    --overlay-backdrop: rgba(26, 38, 43, 0.95);
-    
-    /* Textes & Accents */
-    --text-main: #eceff1;
-    --text-muted: #90a4ae;
-    --accent: #66bb6a;
-    
-    /* UI Elements */
-    --monitor-bg: rgba(0, 0, 0, 0.3);
-    --monitor-hover: rgba(255, 255, 255, 0.05);
-    --border-subtle: rgba(255, 255, 255, 0.08); /* Un peu plus visible car fond sombre */
+  /* Design System */
+  --radius-lg: 12px; /* Arrondis demandés */
+  --font-main: "Inter", system-ui, sans-serif;
+
+  /* THÈME SOMBRE (Modifié pour plus de profondeur et cohérence) */
+  --bg-color: #151f23; /* Plus sombre que l'original (#1a262b) */
+
+  /* Hiérarchie des fonds : Fond < Monitor < Carte < Hover */
+  --monitor-bg: #182428; /* Intermédiaire exact entre le fond et les cartes */
+  --card-bg: #1b292e; /* Légèrement plus sombre que l'original (#1e2c32) */
+
+  /* Action : Unification Monitors & Cartes */
+  --card-hover: #23353b; /* Plus sombre que l'original (#2c444b), garde la teinte Teal */
+  --monitor-hover: var(
+    --card-hover
+  ); /* Identique à la carte pour la cohérence demandée */
+
+  /* Overlay */
+  --modal-bg: #263a40; /* Reste lisible pour le contenu */
+  --overlay-backdrop: rgba(
+    21,
+    31,
+    35,
+    0.95
+  ); /* Basé sur le nouveau --bg-color */
+
+  /* Textes & Accents */
+  --text-main: #eceff1;
+  --text-muted: #90a4ae;
+  --accent: #66bb6a;
+
+  /* UI Elements */
+  --border-subtle: rgba(
+    255,
+    255,
+    255,
+    0.08
+  ); /* Un peu plus visible car fond sombre */
 }
 
 /* THÈME CLAIR (S'active via JS plus tard) */
 [data-theme="light"] {
-    --bg-color: #f0f4f5;       /* Gris pâle */
-    
-    /* Cartes : Fondu (repos) -> Blanc pur (action) */
-    --card-bg: #e6eaeb;        /* Un gris un peu plus soutenu pour "rentrer" dans le fond */
-    --card-hover: #ffffff;     /* Blanc pur lumineux */
-    
-    --modal-bg: #ffffff;       /* Blanc pur pour l'overlay */
-    
-    --text-main: #263238;
-    --text-muted: #546e7a;
-    --accent: #2e7d32;
-    
-    --monitor-bg: rgba(0, 0, 0, 0.05);
-    --monitor-hover: rgba(255, 255, 255, 0.6);
-    --overlay-backdrop: rgba(240, 244, 245, 0.95);
-    --border-subtle: rgba(0, 0, 0, 0.06);
+  --bg-color: #f0f4f5; /* Gris pâle */
+
+  /* Cartes : Fondu (repos) -> Blanc pur (action) */
+  --card-bg: #e6eaeb; /* Un gris un peu plus soutenu pour "rentrer" dans le fond */
+  --card-hover: #ffffff; /* Blanc pur lumineux */
+  --modal-bg: #ffffff; /* Blanc pur pour l'overlay */
+  --text-main: #263238;
+  --text-muted: #546e7a;
+  --accent: #2e7d32;
+  --monitor-bg: rgba(0, 0, 0, 0.05);
+  --monitor-hover: rgba(255, 255, 255, 0.6);
+  --overlay-backdrop: rgba(240, 244, 245, 0.95);
+  --border-subtle: rgba(0, 0, 0, 0.06);
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
 
 body {
-    width: 600px;
-    height: 600px;
-    background-color: var(--bg-color);
-    color: var(--text-main);
-    font-family: system-ui, -apple-system, sans-serif;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
+  width: 600px;
+  height: 600px;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  font-family: system-ui, -apple-system, sans-serif;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 /* --- ZONE A: TopBar --- */
 #topbar {
-    height: var(--topbar-height);
-    flex-shrink: 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 20px;
-    gap: 15px;
-    z-index: 200; /* Au-dessus de l'overlay */
-    position: relative;
-    background-color: var(--bg-color);
-    color: var(--text-main);
-    font-family: var(--font-main); /* Nouvelle font */
-    font-weight: 400;
-    
-    /* Transition douce pour le changement de thème */
-    transition: background-color 0.3s, color 0.3s;
+  height: var(--topbar-height);
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 15px;
+  gap: 15px;
+  z-index: 200; /* Au-dessus de l'overlay */
+  position: relative;
+  /* background-color: var(--bg-color); */
+  color: var(--text-main);
+  font-family: var(--font-main); /* Nouvelle font */
+  font-weight: 400;
+
+  /* Transition douce pour le changement de thème */
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .monitor-block {
-    flex: 1;
-    /* On retire height: 100% qui cause le problème */
-    height: auto; 
-    /* On force l'étirement vertical en respectant les marges */
-    align-self: stretch;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    cursor: pointer;
-    margin: 10px 0; /* Marge haut/bas pour détacher du bord */
-    padding: 0 12px; /* Padding interne */
-    background-color: var(--monitor-bg); /* Fond sombre/clair selon thème */
-    border-radius: var(--radius-lg); /* 12px */
-    border: 1px solid var(--border-subtle); /* Bordure subtile */
-    
-    /* Interaction */
-    transition: transform 0.1s, background-color 0.2s, border-color 0.2s;
+  flex: 1;
+  /* On retire height: 100% qui cause le problème */
+  height: auto;
+  /* On force l'étirement vertical en respectant les marges */
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  cursor: pointer;
+  margin: 10px 0 0; /* Marge haut/bas pour détacher du bord */
+  padding: 0 12px; /* Padding interne */
+  background-color: var(--monitor-bg); /* Fond sombre/clair selon thème */
+  border-radius: var(--radius-lg); /* 12px */
+  border: 1px solid var(--border-subtle); /* Bordure subtile */
+
+  /* Interaction */
+  transition: transform 0.1s, background-color 0.2s, border-color 0.2s;
 }
-.monitor-block:hover { 
-    background-color: var(--monitor-hover); /* Nouvelle variable subtile */
-    border-color: rgba(255, 255, 255, 0.15); /* Bordure blanche très légère, pas verte */
-    transform: translateY(-1px); 
+.monitor-block:hover {
+  background-color: var(--monitor-hover); /* Nouvelle variable subtile */
+  border-color: rgba(
+    255,
+    255,
+    255,
+    0.15
+  ); /* Bordure blanche très légère, pas verte */
+  transform: translateY(-1px);
 }
 
 .monitor-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 6px;
-    font-weight: 600; /* Utilise la version semi-bold */
-    color: var(--text-muted);
-    font-size: 0.95rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  font-weight: 600; /* Utilise la version semi-bold */
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .monitor-bar-track {
-    width: 100%;
-    height: 10px;
-    background-color: #333;
-    border-radius: 5px;
-    overflow: hidden;
+  width: 100%;
+  height: 10px;
+  background-color: #333;
+  border-radius: 5px;
+  overflow: hidden;
 }
 
 .monitor-bar-fill {
-    height: 100%;
-    background-color: var(--accent);
-    width: 0%;
-    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 100%;
+  background-color: var(--accent);
+  width: 0%;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* --- ZONE B: Grille --- */
 #dashboard-grid {
-    flex-grow: 1;
-    overflow: hidden;
-    padding: var(--grid-gap);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: repeat(5, 1fr); 
-    gap: var(--grid-gap);
+  flex-grow: 1;
+  overflow: hidden;
+  padding: var(--grid-gap);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(5, 1fr);
+  gap: var(--grid-gap);
 }
 
-.card:last-child:nth-child(odd) { grid-column: span 2; }
+.card:last-child:nth-child(odd) {
+  grid-column: span 2;
+}
 
 .card {
-    background-color: var(--card-bg);
-    border-radius: var(--radius-lg); /* 12px */
-    border: 1px solid var(--border-subtle);
-    position: relative;
-    cursor: pointer;
-    padding: 0 20px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    transition: transform 0.1s, background 0.2s;
+  background-color: var(--card-bg);
+  border-radius: var(--radius-lg); /* 12px */
+  border: 1px solid var(--border-subtle);
+  position: relative;
+  cursor: pointer;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  transition: transform 0.1s, background 0.2s;
 }
 .card:hover {
-    background-color: var(--card-hover); /* Devient lumineux */
-    border-color: var(--border-subtle); /* On garde la bordure subtile ou var(--accent) si tu préfères */
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* Ajout d'une petite ombre pour le "pop" */
+  background-color: var(--card-hover); /* Devient lumineux */
+  border-color: var(
+    --border-subtle
+  ); /* On garde la bordure subtile ou var(--accent) si tu préfères */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Ajout d'une petite ombre pour le "pop" */
 }
-.card h3 { font-size: 0.95rem; font-weight: 500; z-index: 2; }
-.card-icon { width: 24px; height: 24px; fill: #666; z-index: 2; transition: fill 0.2s;}
-.card:hover .card-icon { fill: var(--text-main); }
+.card h3 {
+  font-size: 0.95rem;
+  font-weight: 500;
+  z-index: 2;
+}
+.card-icon {
+  width: 24px;
+  height: 24px;
+  fill: #666;
+  z-index: 2;
+  transition: fill 0.2s;
+}
+.card:hover .card-icon {
+  fill: var(--text-main);
+}
 .card-watermark {
-    position: absolute; right: -5px; bottom: -10px;
-    width: 60px; height: 60px; 
-    opacity: 0.12; /* Augmenté de 0.04 à 0.12 pour visibilité */
-    pointer-events: none; 
-    fill: var(--text-main);
-    transition: opacity 0.2s; /* Transition douce si on veut animer plus tard */
+  position: absolute;
+  right: -5px;
+  bottom: -10px;
+  width: 60px;
+  height: 60px;
+  opacity: 0.12; /* Augmenté de 0.04 à 0.12 pour visibilité */
+  pointer-events: none;
+  fill: var(--text-main);
+  transition: opacity 0.2s; /* Transition douce si on veut animer plus tard */
 }
 
 /* --- ZONE C: Overlay (CORRIGÉ) --- */
 #overlay {
-    position: absolute;
-    top: var(--topbar-height); /* Commence SOUS la barre */
-    left: 0;
-    width: 100%;
-    height: calc(100% - var(--topbar-height)); /* Remplit le reste */
-    background-color: var(--overlay-backdrop);
-    z-index: 100;
-    
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px; /* Marge autour de la carte interne */
+  position: absolute;
+  top: var(--topbar-height); /* Commence SOUS la barre */
+  left: 0;
+  width: 100%;
+  height: calc(100% - var(--topbar-height)); /* Remplit le reste */
+  background-color: var(--overlay-backdrop);
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px; /* Marge autour de la carte interne */
 
-    /* Animation setup */
-    opacity: 0;
-    pointer-events: none;
-    
-    /* On démarre plus petit pour que le zoom soit bien visible */
-    transform: scale(0.5); 
-    
-    /* Transition ralentie (0.45s) pour la visibilité */
-    transition: 
-        opacity 0.3s ease, 
-        transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.1);
+  /* Animation setup */
+  opacity: 0;
+  pointer-events: none;
+
+  /* On démarre plus petit pour que le zoom soit bien visible */
+  transform: scale(0.5);
+
+  /* Transition ralentie (0.45s) pour la visibilité */
+  transition: opacity 0.3s ease,
+    transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.1);
 }
 
 #overlay.active {
-    opacity: 1;
-    pointer-events: auto;
-    transform: scale(1);
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
 }
 
 /* Le conteneur interne (la "carte" de détail) */
 .overlay-content {
-    /* Utilise la variable "Lumineuse/Modal" du thème */
-    background-color: var(--modal-bg); 
-    color: var(--text-main); /* Force la couleur du texte du thème */
-    width: 100%; 
-    height: 100%;
-    border-radius: var(--radius-lg);
-    padding: 30px;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-    border: 1px solid var(--border-subtle);
+  /* Utilise la variable "Lumineuse/Modal" du thème */
+  background-color: var(--modal-bg);
+  color: var(--text-main); /* Force la couleur du texte du thème */
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-lg);
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0 5px 6px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-subtle);
 }
 
 #close-overlay {
-    position: absolute;
-    top: 15px; right: 15px;
-    background: none; border: none;
-    color: var(--text-main); font-size: 1.8rem;
-    cursor: pointer; 
-    transition: color 0.2s, transform 0.2s;
-    z-index: 10; /* Sécurité pour être bien au-dessus */
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  color: var(--text-main);
+  font-size: 1.8rem;
+  cursor: pointer;
+  transition: color 0.2s, transform 0.2s;
+  z-index: 10; /* Sécurité pour être bien au-dessus */
 }
-#close-overlay:hover { opacity: 1; transform: scale(1.1); }
+#close-overlay:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}

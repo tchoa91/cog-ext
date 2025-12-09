@@ -107,7 +107,7 @@ export function buildInterface(config, callbacks) {
   gridEl.innerHTML = config.cards
     .map((card) => {
       return `
-        <div class="card ${card.isInteractive ? "interactive" : "static"}" 
+        <div class="card ${card.hasOvelay ? "interactive" : "static"}" 
             id="card-${card.id}" 
             data-id="${card.id}" 
             style="display: none;"> 
@@ -119,7 +119,7 @@ export function buildInterface(config, callbacks) {
             <div class="card-icon">${SVGS.defaultIcon}</div>
             
             ${
-              card.isInteractive
+              card.hasOvelay
                 ? `<div class="card-watermark">${SVGS.chevron}</div>`
                 : ""
             }

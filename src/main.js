@@ -12,22 +12,27 @@ import { DataStore } from "./data-store.js"; // On importe le cerveau
 // --- 1. CONFIGURATION (L'intention d'affichage) ---
 const UI_CONFIG = {
   topBar: [
-    { id: "cpu", label: "CPU", cardLink: "cpuUsage" },
+    { id: "cpu", label: "CPU", cardLink: "cpuUsage", hasOvelay: true },
     { id: "mem", label: "MEM", cardLink: "memory" },
     { id: "net", label: "NET", cardLink: "network" },
     { id: "batt", label: "BAT", cardLink: "battery" },
   ],
   cards: [
-    { id: "cpuTemp", title: "CPU Temperature" },
-    { id: "system", title: "System Identity" },
-    { id: "cpuUsage", title: "Processor" },
-    { id: "network", title: "Network" },
-    { id: "memory", title: "Memory" },
+    {
+      id: "cpuTemp",
+      title: "CPU Temperature",
+      hasOvelay: true,
+      isDynamic: true,
+    },
+    { id: "memory", title: "Memory", isDynamic: true },
+    { id: "cpuUsage", title: "CPU Load", hasOvelay: true, isDynamic: true },
+    { id: "network", title: "Network", isDynamic: true },
+    { id: "system", title: "System Identity", hasOvelay: true },
+    { id: "battery", title: "Battery", isDynamic: true },
+    { id: "display", title: "Display", hasOvelay: true, isDynamic: true },
     { id: "gpu", title: "Graphic Card" },
-    { id: "battery", title: "Battery" },
-    { id: "display", title: "Display" },
-    { id: "storage", title: "Storage" },
-    { id: "settings", title: "COGext - setting" },
+    { id: "storage", title: "Storage", hasOvelay: true, isDynamic: true },
+    { id: "settings", title: "COGext - setting", hasOvelay: true },
   ],
 };
 
@@ -93,17 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // On mappe les cartes UI vers les modules Data pour savoir si on active l'overlay
   const runtimeConfig = {
     ...UI_CONFIG,
-    cards: UI_CONFIG.cards
-      .map((card) => {
-        const data = initPacket.modules[card.id];
-        if (!data) return null;
-
-        return {
-          ...card,
-          isInteractive: !!data.details,
-        };
-      })
-      .filter(Boolean),
+    cards: UI_CONFIG.cards.filter((card) => initPacket.modules[card.id]),
   };
 
   // C. Construction Interface

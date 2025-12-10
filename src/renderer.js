@@ -83,9 +83,12 @@ export function buildInterface(config, callbacks) {
   // 1. Build TopBar
   // On crée les slots basés sur la config
   topBarEl.innerHTML = config.topBar
-    .map(
-      (item) => `
-        <div class="monitor-block" id="monitor-${item.cardLink}" data-link="${item.cardLink}">
+    .map((item) => {
+      return `
+        <div class="monitor-block ${item.hasOvelay ? "interactive" : "static"}" 
+             id="monitor-${item.cardLink}" 
+             data-link="${item.cardLink}"
+             ${!item.hasOvelay ? 'style="cursor: default;"' : ""}>
             <div class="monitor-header">
                 <span class="monitor-label">${item.label}</span>
                 <span class="monitor-val-text" data-bind="mainText">--</span>
@@ -94,12 +97,12 @@ export function buildInterface(config, callbacks) {
                 <div class="monitor-bar-fill" data-bind="barWidth" style="width: 0%"></div>
             </div>
         </div>
-    `
-    )
+    `;
+    })
     .join("");
 
   // Events TopBar
-  topBarEl.querySelectorAll(".monitor-block").forEach((el) => {
+  topBarEl.querySelectorAll(".monitor-block.interactive").forEach((el) => {
     el.addEventListener("click", () => callbacks.onOpen(el.dataset.link));
   });
 

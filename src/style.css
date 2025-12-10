@@ -105,7 +105,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  cursor: pointer;
+  /* cursor: pointer; */
   margin: 10px 0 0;
   padding: 0 12px;
   background-color: var(--monitor-bg); /* Fond sombre/clair selon thème */
@@ -115,7 +115,10 @@ body {
   /* Interaction */
   transition: transform 0.1s, background-color 0.2s, border-color 0.2s;
 }
-.monitor-block:hover {
+.monitor-block.interactive {
+  cursor: pointer;
+}
+.monitor-block.interactive:hover {
   background: var(--monitor-hover);
   box-shadow: var(--shadow);
   transform: translateY(-1px);
@@ -168,7 +171,6 @@ body {
   border-radius: var(--radius-lg);
   border: var(--border-subtle);
   position: relative;
-  cursor: pointer;
   padding: 0 20px;
   display: flex;
   flex-direction: row;
@@ -176,7 +178,10 @@ body {
   justify-content: space-between;
   transition: transform 0.1s, background 0.2s;
 }
-.card:hover {
+.card.interactive {
+  cursor: pointer;
+}
+.card.interactive:hover {
   background: var(--card-hover);
   transform: translateY(-1px);
   box-shadow: var(--shadow);
@@ -193,7 +198,7 @@ body {
   z-index: 2;
   transition: fill 0.2s;
 }
-.card:hover .card-icon {
+.card.interactive:hover .card-icon {
   fill: var(--text-main);
 }
 .card-watermark {

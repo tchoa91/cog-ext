@@ -46,7 +46,7 @@ const UPDATE_INTERVAL = 1000; // 1 seconde (plus calme que 200ms pour commencer)
 let activeOverlayId = null;
 
 // --- 3. INITIALISATION (Le Flux que vous avez défini) ---
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const callbacks = {
     // Signal d'ouverture
     onOpen: (cardId) => {
@@ -84,21 +84,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Signal de changement d'unité (F/C)
     // (Sera appelé par un bouton dans l'overlay "Settings" par exemple)
-    onUnitToggle: () => {
-      // Logique de changement d'unité dans le store...
-      console.log("Main: Changement d'unité demandé");
-      store.toggleTempUnit(); // Méthode hypothétique du store
-    },
+    // onUnitToggle: () => {
+    //   // Logique de changement d'unité dans le store...
+    //   console.log("Main: Changement d'unité demandé");
+    //   store.toggleTempUnit(); // Méthode hypothétique du store
+    // },
   };
 
-  const initPacket = store.getInitPacket();
-  //console.log("📦 INIT:", initPacket);
+  const initData = await store.getSystemState("cards");
+  console.log("📦 INIT:", initData);
 
   // B. Enrichissement de la config (Runtime)
   // On mappe les cartes UI vers les modules Data pour savoir si on active l'overlay
   const runtimeConfig = {
     ...UI_CONFIG,
-    cards: UI_CONFIG.cards.filter((card) => initPacket.modules[card.id]),
+    // CORRECTION : On garde la carte si elle a des données OU si c'est "settings"
+    cards: UI_CONFIG.cards.filter(
+      (card) => initData[card.id] || card.id === "settings"
+    ),
   };
 
   // C. Construction Interface
@@ -106,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ÉTAPE 3 : Main injecte les datas initiales
   // On transforme le InitPacket en format compatible pour updateInterface
-  const initialState = transformDataToRenderFormat(initPacket.modules);
+  const initialState = transformDataToRenderFormat(initData);
   console.log("📦 INIT_STATE:", initialState);
 
   updateInterface(initialState);
@@ -117,103 +120,123 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // --- 4. TRANSFORMATEUR DE DONNÉES (Adapter / Mapper) ---
 /**
- * Adapte les données du DataStore (format { hero: ... }) vers le format Renderer.
+ * Adapte les données du DataStore vers le format Renderer.
  * Gère les règles d'affichage (Title, Text, Percent, Barre, Spot...).
  * * @param {Object} modulesData - L'objet 'modules' du paquet INIT ou UPDATE
  * @returns {Array} Liste d'objets d'état pour updateInterface()
+ *
+ * Adapte les données brutes (v5.1) vers le format Renderer.
  */
 function transformDataToRenderFormat(modulesData) {
   const renderList = [];
 
-  Object.entries(modulesData).forEach(([id, moduleContent]) => {
-    // Règle 1 : On ne traite que les modules qui ont des données 'hero'
-    // (Le paquet UPDATE peut ne contenir qu'un sous-ensemble de modules)
-    if (!moduleContent || !moduleContent.hero) return;
+  Object.entries(modulesData).forEach(([id, rawData]) => {
+    if (!rawData) return;
 
-    const h = moduleContent.hero;
-
-    // Objet de rendu par défaut
-    // On prépare les champs pour le futur renderer (text, text_sm, spot, etc.)
-    // Tout en assurant la rétro-compatibilité avec le renderer actuel (mainText, barPercent)
     let renderItem = {
       id: id,
-      mainText: "--", // Compatible Renderer V1
-      barPercent: 0, // Compatible Renderer V1
+      mainText: "--",
+      barPercent: 0,
       forceTextUpdate: true,
-
-      // Champs sémantiques pour futur Renderer V2
-      // type: 'text' | 'bar' | 'spot' | ... (à implémenter plus tard côté vue)
     };
 
-    // Règle 2 : Application des formats spécifiques par module
+    // Mappage des nouvelles clés du DataStore v5.1
     switch (id) {
       case "cpuUsage":
-        if (h.load !== undefined) {
-          renderItem.mainText = `${h.load}%`;
-          renderItem.barPercent = h.load;
+        // rawData: { usagePct: 45, model: ... }
+        if (rawData.usagePct !== undefined) {
+          renderItem.mainText = `${rawData.usagePct}%`;
+          renderItem.barPercent = rawData.usagePct;
         }
         break;
 
       case "memory":
-        // Priorité : Afficher le % d'usage, et peut-être la valeur absolue en petit plus tard
-        if (h.load !== undefined) {
-          renderItem.mainText = `${h.load}%`;
-          renderItem.barPercent = h.load;
-        }
-        // Si on a 'used' (ex: "4.2 GB") et pas de load, on pourrait l'afficher,
-        // mais pour l'instant restons cohérents sur le %.
-        // Note: Si vous préférez "4.2 GB" en texte principal :
-        if (h.used) {
-          renderItem.mainText = h.used; // Override si 'used' est présent (INIT)
+        if (rawData.capacity && rawData.availableCapacity) {
+          // 1. Calculs
+          const usedBytes = rawData.capacity - rawData.availableCapacity;
+          const pct = Math.round((usedBytes / rawData.capacity) * 100);
+
+          // 2. Formatage pour l'affichage
+          renderItem.mainText = `${pct}%`;
+          renderItem.barPercent = pct;
+
+          // Optionnel : Tu pourrais aussi formater les Gb ici pour un tooltip plus tard
+          // renderItem.subText = (usedBytes / 1073741824).toFixed(1) + " GB";
         }
         break;
 
       case "battery":
-        if (h.level !== undefined) {
-          renderItem.mainText = `${h.level}%`;
-          renderItem.barPercent = h.level;
-          // Ici on pourrait ajouter un indicateur de charge dans le futur (spot: h.isCharging)
-        }
-        break;
+        if (rawData.level !== undefined) {
+          // Conversion 0.8 -> 80
+          const pct = Math.round(rawData.level * 100);
+          const statusIcon = rawData.charging ? "⚡" : "";
 
-      case "cpuTemp":
-        if (h.temp !== undefined) {
-          renderItem.mainText = `${h.temp}°C`;
-          renderItem.barPercent = h.temp; // Echelle 0-100 arbitraire pour la barre
+          renderItem.mainText = `${statusIcon}${pct}%`;
+          renderItem.barPercent = pct;
+        } else {
+          renderItem.mainText = "--";
+          renderItem.barPercent = 0;
         }
         break;
 
       case "network":
-        if (h.online !== undefined) {
-          renderItem.mainText = h.online ? "Online" : "Offline";
-          renderItem.barPercent = h.online ? 100 : 0; // 100% = Vert/Connecté, 0% = Rouge/Déco
+        // rawData: { online: true, ip: "82.124.xx.xx", type: "4g" }
+        if (rawData.online) {
+          // On affiche l'IP publique, c'est le plus informatif
+          renderItem.mainText = rawData.ip || "Online";
+          renderItem.barPercent = 100;
+        } else {
+          renderItem.mainText = "Offline";
+          renderItem.barPercent = 0;
+        }
+        break;
+
+      case "cpuTemp":
+        // rawData: { tempC: 50 }
+        if (rawData.tempC !== undefined) {
+          renderItem.mainText = `${rawData.tempC}°C`;
+          renderItem.barPercent = rawData.tempC;
         }
         break;
 
       case "gpu":
-        if (h.name) renderItem.mainText = h.name;
+        // rawData: { model: 'Intel UHD' }
+        if (rawData.model) renderItem.mainText = rawData.model;
         break;
 
       case "display":
-        // On affiche la résolution en priorité, sinon le nom
-        if (h.resolution) renderItem.mainText = h.resolution;
-        else if (h.primaryName) renderItem.mainText = h.primaryName;
+        // rawData: { width: 1920, height: 1080 }
+        if (rawData.width && rawData.height) {
+          renderItem.mainText = `${rawData.width}x${rawData.height}`;
+        }
+        break;
+
+      case "storage":
+        // rawData: { name: 'Internal', usedBytes: ... }
+        if (rawData.name) renderItem.mainText = rawData.name;
+        // Note: On pourrait calculer un % ici avec usedBytes / totalBytes
         break;
 
       case "system":
-        if (h.osName) renderItem.mainText = h.osName;
-        if (h.chromeVersion) renderItem.mainText += ` ${h.chromeVersion}`; // Concaténation simple
-        break;
-
-      case "settings":
-        if (h.version) renderItem.mainText = `v${h.version}`;
+        // rawData: { os: 'ChromeOS', browserVer: '120.0' ... }
+        if (rawData.os) {
+          renderItem.mainText = `${rawData.os} ${rawData.browserVer || ""}`;
+        }
         break;
 
       default:
-        // Pour les modules inconnus ou sans règle spécifique
-        renderItem.mainText = JSON.stringify(h);
+        renderItem.mainText = "N/A";
         break;
     }
+
+    // 2. AJOUT MANUEL DES CARTES UI STATIQUES
+    // Comme "settings" n'est pas dans modulesData, on l'ajoute explicitement ici.
+    renderList.push({
+      id: "settings",
+      mainText: "Menu", // Ou une icône si vous préférez "⚙️"
+      barPercent: 0, // Pas de barre
+      forceTextUpdate: true,
+    });
 
     renderList.push(renderItem);
   });
@@ -222,24 +245,19 @@ function transformDataToRenderFormat(modulesData) {
 }
 
 // --- 5. BOUCLE PRINCIPALE ---
-function gameLoop(timestamp) {
+async function gameLoop(timestamp) {
   const deltaTime = timestamp - lastTime;
 
   if (deltaTime >= UPDATE_INTERVAL) {
     lastTime = timestamp;
 
     // 1. Récupération des données fraîches
-    const updatePacket = store.getUpdatePacket();
+    // On demande le scope "cards" pour mettre à jour les valeurs du dashboard
+    // (ou null si vous voulez économiser des ressources et ne mettre à jour que le topbar)
+    const sysData = await store.getSystemState("cards");
 
     // 2. Transformation
-    // Note: getUpdatePacket renvoie une structure similaire à initPacket.hardware.modules
-    // mais simplifiée. On adapte notre transformateur ou on le réutilise si la structure matche.
-    // Dans le mock actuel, la structure 'modules' est compatible.
-    const renderState = transformDataToRenderFormat(updatePacket.modules); // Attention: structure légèrement différente dans le mock, à adapter
-
-    // Pour l'instant, le mock updatePacket.modules a : { cpu: { value: 'XX%', subValue: 'XX' } }
-    // Alors que initPacket avait : { cpu: { hero: { value... } } }
-    // J'adapte le transformateur ci-dessous pour gérer les deux cas (Hero ou Direct)
+    const renderState = transformDataToRenderFormat(sysData);
 
     // 3. Envoi à la vue
     updateInterface(renderState);

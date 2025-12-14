@@ -3,7 +3,13 @@
   "name": "COGext : System Info Viewer",
   "version": "2.0",
   "description": "Displays OS, CPU, memory, and more system information.",
-  "permissions": ["system.cpu", "system.memory", "system.storage", "system.display", "storage"],
+  "permissions": [
+    "system.cpu",
+    "system.memory",
+    "system.storage",
+    "system.display",
+    "storage"
+  ],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {

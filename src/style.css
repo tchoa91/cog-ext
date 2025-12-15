@@ -1,14 +1,20 @@
 /* --- 0. TYPOGRAPHIE (Uniquement 400 et 600) --- */
 @font-face {
   font-family: "Inter";
-  src: url("assets/fonts/Inter-400.ttf") format("truetype");
-  font-weight: 400;
+  src: url("assets/fonts/Inter-300.ttf") format("truetype");
+  font-weight: 300;
   font-style: normal;
 }
 @font-face {
   font-family: "Inter";
-  src: url("assets/fonts/Inter-600.ttf") format("truetype");
-  font-weight: 600;
+  src: url("assets/fonts/Inter-500.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("assets/fonts/Inter-700.ttf") format("truetype");
+  font-weight: 700;
   font-style: normal;
 }
 
@@ -37,27 +43,30 @@
   /* Textes & Accents */
   --text-main: #eceff1;
   --text-muted: #90a4ae;
+  --titles: #90a4ae52;
   --accent: #66bb6a;
   /* --border-subtle: none; */
   --border-subtle: 1px solid #59859321;
   --shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  --bar-bg: #111;
 }
 
 /* THÈME CLAIR (S'active via JS plus tard) */
 [data-theme="light"] {
   --bg-color: #f0f4f5;
-
   --card-bg: #e6eaeb;
   --card-hover: #ffffff;
   --modal-bg: var(--card-hover);
   --overlay-backdrop: var(--bg-color);
   --text-main: #263238;
   --text-muted: #546e7a;
-  --accent: #2e7d32;
+  --titles: #90a4ae70;
+  --accent: #5bb45f;
   --monitor-bg: rgba(0, 0, 0, 0.05);
   --monitor-hover: var(--card-hover);
   --border-subtle: 1px solid #121b1e13;
   --shadow: 2px 2px 4px rgba(0, 0, 0, 0.06);
+  --bar-bg: #7a7b7a;
 }
 
 * {
@@ -92,7 +101,7 @@ body {
   /* background-color: var(--bg-color); */
   color: var(--text-main);
   font-family: var(--font-main); /* Nouvelle font */
-  font-weight: 400;
+  font-weight: 700;
 
   /* Transition douce pour le changement de thème */
   transition: background-color 0.3s, color 0.3s;
@@ -128,19 +137,55 @@ body {
   display: flex;
   justify-content: space-between;
   margin-bottom: 15px;
-  font-weight: 600; /* Utilise la version semi-bold */
-  color: var(--text-muted);
+  font-weight: 700; /* Utilise la version semi-bold */
+  color: var(--text-main);
   font-size: 0.95rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+.monitor-label {
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.monitor-header > div {
+  display: flex;
+  align-items: center; /* Aligne l'éclair et le texte verticalement */
+}
+
+.monitor-status-icon {
+  display: flex;
+  align-items: center;
+  margin-right: 4px; /* Espace entre l'éclair et le % */
+  color: var(--accent); /* L'éclair prend la couleur verte/accent */
+}
+
+.monitor-status-icon svg {
+  width: 16px; /* Taille discrète */
+  height: 16px;
+  fill: currentColor;
 }
 
 .monitor-bar-track {
   width: 100%;
   height: 10px;
-  background-color: #111;
+  background-color: var(--bar-bg);
   border-radius: 5px;
   overflow: hidden;
+}
+.bar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 10px; /* Espace entre barre et texte */
+}
+.bar-value {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-main);
+  min-width: 30px; /* Évite le saut si la valeur change de taille */
+  text-align: right;
 }
 
 .monitor-bar-fill {
@@ -171,11 +216,12 @@ body {
   border-radius: var(--radius-lg);
   border: var(--border-subtle);
   position: relative;
-  padding: 0 20px;
+  padding: 0 10px;
+  /* MODIFICATION FLEXBOX */
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column; /* On empile verticalement */
+  align-items: flex-start; /* On cale tout à gauche */
+  justify-content: flex-start; /* On cale tout en haut */
   transition: transform 0.1s, background 0.2s;
 }
 .card.interactive {
@@ -187,9 +233,23 @@ body {
   box-shadow: var(--shadow);
 }
 .card h3 {
-  font-size: 0.95rem;
-  font-weight: 500;
+  font-size: 1.75rem;
+  font-weight: 300;
   z-index: 2;
+  width: 100%; /* Prend toute la largeur */
+  line-height: 0.7em;
+  margin: 5px 0 0 0; /* Espace sous le titre */
+  color: var(--titles); /* Utilisation de VOTRE variable */
+}
+.card-body {
+  width: 100%;
+  display: flex;
+  /* C'est la clé : on autorise les éléments à se mettre côte à côte */
+  flex-flow: row wrap;
+  align-items: center;
+  padding-left: 10px;
+  gap: 6px; /* Espace standard entre les éléments */
+  z-index: 3;
 }
 .card-icon {
   width: 24px;
@@ -211,6 +271,55 @@ body {
   pointer-events: none;
   fill: var(--text-main);
   transition: opacity 0.2s; /* Transition douce si on veut animer plus tard */
+}
+/* La grosse valeur (ex: 45%) */
+.card-main-value {
+  font-size: 1rem; /* Assez gros */
+  font-weight: 500;
+  color: var(--text-main); /* VOTRE variable */
+  line-height: 1;
+  /* Pousse cet élément tout à droite de la ligne courante */
+  /* margin-left: auto; */
+}
+
+/* Les lignes Clé/Valeur (ex: IP : 192...) */
+.card-kv-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--text-muted); /* VOTRE variable */
+  /* Force le retour à la ligne pour ces éléments */
+  width: 100%;
+  line-height: 0.8em;
+  /* margin-top: 4px; */ /* Un petit peu d'espace si nécessaire */
+}
+
+/* La valeur spécifique dans une ligne KV */
+.card-kv-row .kv-value {
+  color: var(--text-main); /* VOTRE variable pour faire ressortir la data */
+  font-weight: 500;
+}
+/* Nouveau composant : Ligne Barre + Texte */
+.card-bar-row {
+  width: 100%;
+  display: flex;
+  align-items: center; /* Alignement vertical centré */
+  justify-content: space-between; /* Barre à gauche, Texte tout à droite */
+  /* margin-bottom: 8px; */ /* Espacement sous la ligne */
+}
+/* Contrainte stricte sur la barre dans ce contexte */
+.card-bar-row .monitor-bar-track {
+  width: 190px; /* Largeur demandée */
+  flex: 0 0 190px; /* Empêche le rétrécissement ou l'agrandissement */
+}
+/* Le texte */
+.card-bar-text {
+  font-weight: 700;
+  color: var(--text-main);
+  font-size: 1rem;
+  text-align: right; /* Sécurité si le texte est long */
+  line-height: 0.6em;
 }
 
 /* --- ZONE C: Overlay (CORRIGÉ) --- */

@@ -10,30 +10,129 @@ import {
 import { DataStore } from "./data-store.js"; // On importe le cerveau
 
 // --- 1. CONFIGURATION (L'intention d'affichage) ---
+
 const UI_CONFIG = {
-  topBar: [
-    { id: "cpu", label: "CPU", cardLink: "cpuUsage", hasOvelay: true },
-    { id: "mem", label: "MEM", cardLink: "memory" },
-    { id: "net", label: "NET", cardLink: "network" },
-    { id: "batt", label: "BAT", cardLink: "battery" },
+  monitors: [
+    {
+      id: "cpu",
+      title: "CPU",
+      cardLink: "cpuUsage",
+      type: "bar",
+      hasOvelay: true,
+    },
+    { id: "mem", title: "MEM", cardLink: "memory", type: "bar" },
+    { id: "batt", title: "BAT", cardLink: "battery", type: "bar" },
+    { id: "net", title: "NET", cardLink: "network", type: "dot" },
   ],
   cards: [
+    {
+      id: "cpuUsage",
+      title: "CPU Load",
+      hasOvelay: true,
+      isDynamic: true,
+      content: [{ id: "loadBar", type: "cardBar" }],
+    },
+    {
+      id: "memory",
+      title: "Memory",
+      isDynamic: true,
+      content: [
+        { id: "memBar", type: "cardBar" },
+        { id: "memtotal", type: "kv", title: "Total memory" },
+        { id: "memUsed", type: "kv", title: "Used memory" },
+      ],
+    },
     {
       id: "cpuTemp",
       title: "CPU Temperature",
       hasOvelay: true,
       isDynamic: true,
+      content: [{ id: "tempBar", type: "cardBar" }],
     },
-    { id: "memory", title: "Memory", isDynamic: true },
-    { id: "cpuUsage", title: "CPU Load", hasOvelay: true, isDynamic: true },
-    { id: "network", title: "Network", isDynamic: true },
-    { id: "system", title: "System Identity", hasOvelay: true },
-    { id: "battery", title: "Battery", isDynamic: true },
-    { id: "display", title: "Display", hasOvelay: true, isDynamic: true },
-    { id: "gpu", title: "Graphic Card" },
-    { id: "storage", title: "Storage", hasOvelay: true, isDynamic: true },
-    { id: "settings", title: "COGext - setting", hasOvelay: true },
+    {
+      id: "battery",
+      title: "Battery",
+      isDynamic: true,
+      content: [
+        { id: "battBar", type: "cardBar" },
+        { id: "battStatus", type: "value" },
+        {
+          id: "battTime",
+          type: "kv",
+          title: "Time before full charge/discharge : ",
+        },
+      ],
+    },
+    {
+      id: "display",
+      title: "Display",
+      hasOvelay: true,
+      isDynamic: true,
+      content: [
+        { id: "displayMain", type: "value" },
+        { id: "displayDef", type: "value" },
+      ],
+    },
+    {
+      id: "network",
+      title: "Network",
+      isDynamic: true,
+      content: [
+        { id: "netStatus", type: "value" },
+        { id: "netIp", type: "kv", title: "IP : " },
+      ],
+    },
+    {
+      id: "chrome",
+      title: "Chrome",
+      hasOvelay: true,
+      content: [{ id: "chromeVersion", type: "value" }],
+    },
+    {
+      id: "os",
+      title: "OS",
+      content: [
+        { id: "osName", type: "value" },
+        { id: "osPlatform", type: "kv", title: "Platform : " },
+      ],
+    },
+    {
+      id: "storage",
+      title: "Storage",
+      hasOvelay: true,
+      isDynamic: true,
+      content: [
+        { id: "storageMain", type: "value" },
+        { id: "storageDef", type: "value" },
+      ],
+    },
+    {
+      id: "settings",
+      title: "COGext - settings",
+      hasOvelay: true,
+      content: [{ id: "appVersion", type: "kv", title: "Version : " }],
+    },
   ],
+  overlays: {
+    cpuLoad: {
+      title: "Détails CPU",
+      content: [
+        { type: "header", title: "Par Cœur" },
+        { id: "coresList", type: "list", title: "Cœurs Logiques" },
+      ],
+    },
+    settings: {
+      title: "Configuration",
+      content: [
+        { type: "header", title: "Apparence" },
+        { id: "toggleTheme", type: "button", title: "Mode Sombre/Clair" },
+        { type: "header", title: "Système" },
+        { id: "sysInfo", type: "kv", title: "OS" },
+      ],
+    },
+    // Ajout d'une entrée vide pour les cartes sans config spécifique (fallback)
+    // ou à définir au besoin.
+  },
 };
 
 // Instanciation du Data Store
@@ -98,10 +197,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   // On mappe les cartes UI vers les modules Data pour savoir si on active l'overlay
   const runtimeConfig = {
     ...UI_CONFIG,
-    // CORRECTION : On garde la carte si elle a des données OU si c'est "settings"
-    cards: UI_CONFIG.cards.filter(
-      (card) => initData[card.id] || card.id === "settings"
-    ),
+    cards: UI_CONFIG.cards.filter((card) => {
+      // 1. Cas spécial : Settings (toujours là)
+      if (card.id === "settings") return true;
+
+      // 2. Cas spécial : OS et Chrome dépendent du module "system"
+      if (card.id === "os" || card.id === "chrome") {
+        return !!initData.system;
+      }
+
+      // 3. Cas général : L'ID de la carte correspond à une clé de données (cpu, battery...)
+      return !!initData[card.id];
+    }),
   };
 
   // C. Construction Interface
@@ -125,120 +232,168 @@ document.addEventListener("DOMContentLoaded", async () => {
  * * @param {Object} modulesData - L'objet 'modules' du paquet INIT ou UPDATE
  * @returns {Array} Liste d'objets d'état pour updateInterface()
  *
- * Adapte les données brutes (v5.1) vers le format Renderer.
+ * Adapte les données brutes (v5.1) vers le format Renderer (Atomic Design).
+ * Mappe les données du store vers les sous-éléments (loadBar, memVal, etc.).
  */
 function transformDataToRenderFormat(modulesData) {
   const renderList = [];
 
-  Object.entries(modulesData).forEach(([id, rawData]) => {
+  // 1. Traitement des modules de données dynamiques
+  Object.entries(modulesData).forEach(([storeKey, rawData]) => {
     if (!rawData) return;
 
-    let renderItem = {
-      id: id,
-      mainText: "--",
-      barPercent: 0,
-      forceTextUpdate: true,
-    };
-
-    // Mappage des nouvelles clés du DataStore v5.1
-    switch (id) {
-      case "cpuUsage":
-        // rawData: { usagePct: 45, model: ... }
-        if (rawData.usagePct !== undefined) {
-          renderItem.mainText = `${rawData.usagePct}%`;
-          renderItem.barPercent = rawData.usagePct;
-        }
-        break;
-
-      case "memory":
-        if (rawData.capacity && rawData.availableCapacity) {
-          // 1. Calculs
-          const usedBytes = rawData.capacity - rawData.availableCapacity;
-          const pct = Math.round((usedBytes / rawData.capacity) * 100);
-
-          // 2. Formatage pour l'affichage
-          renderItem.mainText = `${pct}%`;
-          renderItem.barPercent = pct;
-
-          // Optionnel : Tu pourrais aussi formater les Gb ici pour un tooltip plus tard
-          // renderItem.subText = (usedBytes / 1073741824).toFixed(1) + " GB";
-        }
-        break;
-
-      case "battery":
-        if (rawData.level !== undefined) {
-          // Conversion 0.8 -> 80
-          const pct = Math.round(rawData.level * 100);
-          const statusIcon = rawData.charging ? "⚡" : "";
-
-          renderItem.mainText = `${statusIcon}${pct}%`;
-          renderItem.barPercent = pct;
-        } else {
-          renderItem.mainText = "--";
-          renderItem.barPercent = 0;
-        }
-        break;
-
-      case "network":
-        // rawData: { online: true, ip: "82.124.xx.xx", type: "4g" }
-        if (rawData.online) {
-          // On affiche l'IP publique, c'est le plus informatif
-          renderItem.mainText = rawData.ip || "Online";
-          renderItem.barPercent = 100;
-        } else {
-          renderItem.mainText = "Offline";
-          renderItem.barPercent = 0;
-        }
-        break;
-
-      case "cpuTemp":
-        // rawData: { tempC: 50 }
-        if (rawData.tempC !== undefined) {
-          renderItem.mainText = `${rawData.tempC}°C`;
-          renderItem.barPercent = rawData.tempC;
-        }
-        break;
-
-      case "gpu":
-        // rawData: { model: 'Intel UHD' }
-        if (rawData.model) renderItem.mainText = rawData.model;
-        break;
-
-      case "display":
-        // rawData: { width: 1920, height: 1080 }
-        if (rawData.width && rawData.height) {
-          renderItem.mainText = `${rawData.width}x${rawData.height}`;
-        }
-        break;
-
-      case "storage":
-        // rawData: { name: 'Internal', usedBytes: ... }
-        if (rawData.name) renderItem.mainText = rawData.name;
-        // Note: On pourrait calculer un % ici avec usedBytes / totalBytes
-        break;
-
-      case "system":
-        // rawData: { os: 'ChromeOS', browserVer: '120.0' ... }
-        if (rawData.os) {
-          renderItem.mainText = `${rawData.os} ${rawData.browserVer || ""}`;
-        }
-        break;
-
-      default:
-        renderItem.mainText = "N/A";
-        break;
+    // A. CPU USAGE (Aligné avec l'ID 'cpuUsage' désormais)
+    if (storeKey === "cpuUsage") {
+      const updates = {};
+      if (rawData.usagePct !== undefined) {
+        updates.loadBar = {
+          perc: rawData.usagePct, // Valeur numérique pour la barre CSS (0-100)
+          display: `${rawData.usagePct}%`, // Texte à afficher
+        };
+      }
+      renderList.push({ id: "cpuUsage", updates });
     }
 
-    // 2. AJOUT MANUEL DES CARTES UI STATIQUES
-    // Comme "settings" n'est pas dans modulesData, on l'ajoute explicitement ici.
-    renderList.push({
-      id: "settings",
-      mainText: "Menu", // Ou une icône si vous préférez "⚙️"
-      barPercent: 0, // Pas de barre
-      forceTextUpdate: true,
-    });
+    // B. MEMORY
+    else if (storeKey === "memory") {
+      const updates = {};
+      if (rawData.capacity && rawData.availableCapacity) {
+        const usedBytes = rawData.capacity - rawData.availableCapacity;
+        const pct = Math.round((usedBytes / rawData.capacity) * 100);
 
-    renderList.push(renderItem);
+        updates.memBar = {
+          perc: pct,
+          display: `${pct}%`,
+        };
+        // Conversion basique en GB pour l'affichage KV
+        updates.memtotal = (rawData.capacity / 1073741824).toFixed(1) + " GB";
+        updates.memUsed = (usedBytes / 1073741824).toFixed(1) + " GB";
+      }
+      renderList.push({ id: "memory", updates });
+    }
+
+    // C. BATTERY
+    else if (storeKey === "battery") {
+      const updates = {};
+      if (rawData.level !== undefined) {
+        const pct = Math.round(rawData.level * 100);
+        updates.battBar = {
+          perc: pct,
+          display: `${pct}%`,
+        };
+        updates.battStatus = rawData.charging ? "Charging" : "On battery";
+        updates.isCharging = rawData.charging;
+
+        // Formatage simple du temps restant
+        if (rawData.chargingTime !== Infinity && rawData.chargingTime > 0) {
+          updates.battTime = `${Math.round(
+            rawData.chargingTime / 60
+          )} min (Charge)`;
+        } else if (
+          rawData.dischargingTime !== Infinity &&
+          rawData.dischargingTime > 0
+        ) {
+          updates.battTime = `${Math.round(
+            rawData.dischargingTime / 60
+          )} min (Restant)`;
+        } else {
+          updates.battTime = "--";
+        }
+      }
+      renderList.push({ id: "battery", updates });
+    }
+
+    // D. NETWORK
+    else if (storeKey === "network") {
+      renderList.push({
+        id: "network",
+        updates: {
+          netStatus: rawData.online ? "Online" : "Offline",
+          isConnected: rawData.online,
+          netIp: rawData.ip || "--",
+        },
+      });
+    }
+
+    // E. CPU TEMP
+    else if (storeKey === "cpuTemp") {
+      if (rawData.tempC !== undefined) {
+        // Règle de 3 : 0 à 120°C -> 0 à 100%
+        let barPct = Math.round((rawData.tempC / 120) * 100);
+        // Sécurité : on borne à 100% max pour ne pas dépasser graphiquement
+        if (barPct > 100) barPct = 100;
+
+        renderList.push({
+          id: "cpuTemp",
+          updates: {
+            tempBar: {
+              perc: barPct, // La barre suit l'échelle 0-120
+              display: `${rawData.tempC}°C`, // Le texte affiche la vraie température
+            },
+          },
+        });
+      }
+    }
+
+    // F. DISPLAY
+    else if (storeKey === "display") {
+      if (rawData.width && rawData.height) {
+        renderList.push({
+          id: "display",
+          updates: {
+            displayMain: `${rawData.width}x${rawData.height}`,
+            displayDef: "Résolution principale",
+          },
+        });
+      }
+    }
+
+    // G. STORAGE
+    else if (storeKey === "storage") {
+      if (rawData.name) {
+        // Calcul d'un % d'usage si on a les données
+        const usedPct = rawData.totalBytes
+          ? Math.round((rawData.usedBytes / rawData.totalBytes) * 100)
+          : 0;
+
+        renderList.push({
+          id: "storage",
+          updates: {
+            storageMain: `${usedPct}%`, // ou rawData.name
+            storageDef: rawData.name, // ou "Utilisé"
+            // Si vous aviez une barre dans la config storage, ce serait ici
+          },
+        });
+      }
+    }
+
+    // H. SYSTEM (Cas spécial : alimente OS et CHROME)
+    else if (storeKey === "system") {
+      // Carte OS
+      renderList.push({
+        id: "os",
+        updates: {
+          osName: rawData.os || "ChromeOS",
+          osPlatform: rawData.platform || "x86_64",
+        },
+      });
+
+      // Carte Chrome
+      renderList.push({
+        id: "chrome",
+        updates: {
+          chromeVersion: rawData.browserVer || "Unknown",
+        },
+      });
+    }
+  });
+
+  // 2. Ajout manuel pour les cartes sans source de données directe (Settings)
+  renderList.push({
+    id: "settings",
+    updates: {
+      appVersion: "1.0.0", // Valeur statique ou récupérée ailleurs
+    },
   });
 
   return renderList;

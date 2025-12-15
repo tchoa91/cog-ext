@@ -4,7 +4,7 @@
 // Constantes graphiques
 const SVGS = {
   chevron: `<svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>`,
-  defaultIcon: `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>`,
+  bolt: `<svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>`,
 };
 
 // === 1. CACHE DES ÉLÉMENTS DOM (Privé au module) ===
@@ -82,22 +82,31 @@ export function toggleTheme() {
 export function buildInterface(config, callbacks) {
   // 1. Build TopBar
   // On crée les slots basés sur la config
-  topBarEl.innerHTML = config.topBar
+  topBarEl.innerHTML = config.monitors
     .map((item) => {
+      // On garde l'ID basé sur cardLink pour faciliter la mise à jour (ex: monitor-cpuUsage)
       return `
-        <div class="monitor-block ${item.hasOvelay ? "interactive" : "static"}" 
-             id="monitor-${item.cardLink}" 
-             data-link="${item.cardLink}"
-             ${!item.hasOvelay ? 'style="cursor: default;"' : ""}>
-            <div class="monitor-header">
-                <span class="monitor-label">${item.label}</span>
-                <span class="monitor-val-text" data-bind="mainText">--</span>
+      <div class="monitor-block ${item.hasOvelay ? "interactive" : "static"}" 
+            id="monitor-${item.cardLink}" 
+            data-link="${item.cardLink}"
+            ${!item.hasOvelay ? 'style="cursor: default;"' : ""}>
+          <div class="monitor-header">
+            <span class="monitor-label">${item.title}</span>
+            <div>
+                <span class="monitor-status-icon"></span>
+                <span class="monitor-val-text">--</span>
             </div>
-            <div class="monitor-bar-track">
-                <div class="monitor-bar-fill" data-bind="barWidth" style="width: 0%"></div>
-            </div>
-        </div>
-    `;
+          </div>
+          ${
+            item.type === "bar"
+              ? `<div class="monitor-bar-track">
+                  <div class="monitor-bar-fill" style="width: 0%"></div>
+                  </div>`
+              : ""
+          }
+          ${item.type === "dot" ? `<div class="monitor-dot"></div>` : ""}
+      </div>
+  `;
     })
     .join("");
 
@@ -117,9 +126,9 @@ export function buildInterface(config, callbacks) {
              
             <h3>${card.title}</h3>
             
-            <div class="card-main-value" data-bind="mainText">--</div>
-            
-            <div class="card-icon">${SVGS.defaultIcon}</div>
+            <div class="card-body">
+                ${renderCardContent(card.content)}
+            </div>
             
             ${
               card.hasOvelay
@@ -137,43 +146,138 @@ export function buildInterface(config, callbacks) {
   });
 }
 
+function renderCardContent(contentItems) {
+  if (!contentItems) return "";
+  return contentItems
+    .map((item) => {
+      switch (item.type) {
+        case "cardBar":
+          return `
+            <div class="card-bar-row" data-el-id="${item.id}">
+                <div class="monitor-bar-track">
+                    <div class="monitor-bar-fill" style="width: 0%"></div>
+                </div>
+                <div class="card-bar-text">--</div>
+            </div>`;
+        case "value":
+          return `<div class="card-main-value" data-el-id="${item.id}">--</div>`;
+        case "kv":
+          return `<div class="card-kv-row">
+                    <span class="kv-label">${item.title || ""}</span>
+                    <span class="kv-value" data-el-id="${item.id}">--</span>
+                  </div>`;
+        default:
+          return "";
+      }
+    })
+    .join("");
+}
+
 /**
  * PHASE 2 : MISE A JOUR (UPDATE)
  * Appelée en boucle par le main.js
  */
 export function updateInterface(dashboardState) {
-  dashboardState.forEach((data) => {
-    const cardEl = document.getElementById(`card-${data.id}`);
-    if (!cardEl) return;
+  dashboardState.forEach((cardData) => {
+    // --- A. Mise à jour de la CARTE (Grille) ---
+    const cardEl = document.getElementById(`card-${cardData.id}`);
+    if (cardEl) {
+      if (cardEl.style.display === "none") cardEl.style.display = "flex";
 
-    // 1. Gestion Visibilité (Apparition au premier flux de données)
-    if (cardEl.style.display === "none") {
-      cardEl.style.display = "flex";
-    }
+      if (cardData.updates) {
+        // Boucle standard sur les mises à jour (barre et valeur ont des IDs différents)
+        Object.entries(cardData.updates).forEach(([elId, value]) => {
+          // On cherche par ID de données
+          const targetEl = cardEl.querySelector(`[data-el-id="${elId}"]`);
 
-    // 2. Mise à jour Barre (Haute fréquence)
-    if (typeof data.barPercent !== "undefined") {
-      const barEl = cardEl.querySelector('[data-bind="barWidth"]');
-      if (barEl) barEl.style.width = `${data.barPercent}%`;
+          if (targetEl) {
+            // CAS 1 : C'est notre nouveau composant combiné (Barre + Texte)
+            if (targetEl.classList.contains("card-bar-row")) {
+              // value contient { perc: X, display: "Y" }
 
-      // Synchro TopBar
-      const monitorEl = document.getElementById(`monitor-${data.id}`);
-      if (monitorEl) {
-        const mBar = monitorEl.querySelector('[data-bind="barWidth"]');
-        if (mBar) mBar.style.width = `${data.barPercent}%`;
+              // Mise à jour de la barre
+              const barEl = targetEl.querySelector(".monitor-bar-fill");
+              // On vérifie bien que value.perc existe (pour éviter undefined%)
+              if (barEl && value.perc !== undefined) {
+                barEl.style.width = `${value.perc}%`;
+              }
+
+              // Mise à jour du texte
+              const textEl = targetEl.querySelector(".card-bar-text");
+              if (textEl && value.display) {
+                textEl.textContent = value.display;
+              }
+            }
+            // CAS 2 : Fallback ancien système (si encore utilisé ailleurs)
+            else if (targetEl.classList.contains("monitor-bar-track")) {
+              const bar = targetEl.querySelector(".monitor-bar-fill");
+              if (bar) bar.style.width = `${value}%`;
+            }
+            // CAS 3 : Valeur texte simple
+            else {
+              targetEl.textContent = value;
+            }
+          }
+        });
       }
     }
 
-    // 3. Mise à jour Texte (Throttle - Basse fréquence)
-    if (data.forceTextUpdate) {
-      const textEl = cardEl.querySelector('[data-bind="mainText"]');
-      if (textEl) textEl.textContent = data.mainText;
+    // --- B. Mise à jour du MONITOR (TopBar) ---
+    // On cherche le moniteur qui correspond à cet ID de données
+    const monitorEl = document.getElementById(`monitor-${cardData.id}`);
+    if (monitorEl && cardData.updates) {
+      const u = cardData.updates;
+      let valToDisplay = "--";
+      let barToDisplay = 0;
 
-      // Synchro TopBar
-      const monitorEl = document.getElementById(`monitor-${data.id}`);
-      if (monitorEl) {
-        const mText = monitorEl.querySelector('[data-bind="mainText"]');
-        if (mText) mText.textContent = data.mainText;
+      // HEURISTIQUE DE MAPPING : On devine quelle valeur afficher dans le moniteur
+      // selon l'ID du module. C'est le pont entre "Détail" et "Résumé".
+
+      switch (cardData.id) {
+        case "cpuUsage":
+          // Cible : updates.loadBar { perc, display }
+          if (u.loadBar) {
+            valToDisplay = u.loadBar.display;
+            barToDisplay = u.loadBar.perc;
+          }
+          break;
+
+        case "memory":
+          // Cible : updates.memBar { perc, display }
+          if (u.memBar) {
+            valToDisplay = u.memBar.display;
+            barToDisplay = u.memBar.perc;
+          }
+          break;
+
+        case "battery":
+          // Cible : updates.battBar { perc, display }
+          // Note : parseInt(u.battLevel) n'est plus nécessaire car on a déjà un % propre
+          if (u.battBar) {
+            valToDisplay = u.battBar.display;
+            barToDisplay = u.battBar.perc;
+          }
+          const iconEl = monitorEl.querySelector(".monitor-status-icon");
+          if (iconEl) {
+            // Affiche l'éclair si u.isCharging est vrai, sinon vide
+            iconEl.innerHTML = u.isCharging ? SVGS.bolt : "";
+          }
+          break;
+
+        case "network":
+          // Pour le réseau, on n'a pas changé la structure (netStatus est toujours une string simple)
+          valToDisplay = u.isConnected ? "ON" : "OFF";
+          break;
+      }
+
+      // 1. Mise à jour Texte Monitor
+      const textEl = monitorEl.querySelector(".monitor-val-text");
+      if (textEl && valToDisplay) textEl.textContent = valToDisplay;
+
+      // 2. Mise à jour Barre Monitor (si existante)
+      const barEl = monitorEl.querySelector(".monitor-bar-fill");
+      if (barEl && barToDisplay !== undefined) {
+        barEl.style.width = `${barToDisplay}%`;
       }
     }
   });

@@ -84,10 +84,9 @@ export function buildInterface(config, callbacks) {
   // On crée les slots basés sur la config
   topBarEl.innerHTML = config.monitors
     .map((item) => {
-      // On garde l'ID basé sur cardLink pour faciliter la mise à jour (ex: monitor-cpuUsage)
       return `
       <div class="monitor-block ${item.hasOvelay ? "interactive" : "static"}" 
-            id="monitor-${item.cardLink}" 
+            id="monitor-${item.id}" 
             data-link="${item.cardLink}"
             ${!item.hasOvelay ? 'style="cursor: default;"' : ""}>
           <div class="monitor-header">
@@ -175,112 +174,75 @@ function renderCardContent(contentItems) {
 
 /**
  * PHASE 2 : MISE A JOUR (UPDATE)
- * Appelée en boucle par le main.js
+ * Appelée en boucle par le main.js avec le payload structuré
  */
-export function updateInterface(dashboardState) {
-  dashboardState.forEach((cardData) => {
-    // --- A. Mise à jour de la CARTE (Grille) ---
-    const cardEl = document.getElementById(`card-${cardData.id}`);
-    if (cardEl) {
+export function updateInterface(payload) {
+  // 1. GESTION DES MONITORS (TopBar)
+  if (payload.monitors) {
+    payload.monitors.forEach((mon) => {
+      // Maintenant ça matche : mon.id="cpu" -> dom="monitor-cpu"
+      const el = document.getElementById(`monitor-${mon.id}`);
+      if (!el) return;
+
+      // Texte
+      const textEl = el.querySelector(".monitor-val-text");
+      if (textEl && mon.label) textEl.textContent = mon.label;
+
+      // Barre (si existe)
+      const barEl = el.querySelector(".monitor-bar-fill");
+      if (barEl && mon.percent !== undefined) {
+        barEl.style.width = `${mon.percent}%`;
+      }
+
+      // Icone (ex: éclair)
+      const iconEl = el.querySelector(".monitor-status-icon");
+      if (iconEl) {
+        iconEl.innerHTML = mon.icon === "bolt" ? SVGS.bolt : "";
+      }
+
+      // Classes d'état (ex: warning/normal)
+      if (mon.state) {
+        // Optionnel : gérer les couleurs via data-state
+        el.setAttribute("data-state", mon.state);
+      }
+    });
+  }
+
+  // 2. GESTION DES CARDS (Grille)
+  if (payload.cards) {
+    payload.cards.forEach((card) => {
+      const cardEl = document.getElementById(`card-${card.id}`);
+      if (!cardEl) return;
+
+      // Forcer l'affichage si c'était caché
       if (cardEl.style.display === "none") cardEl.style.display = "flex";
 
-      if (cardData.updates) {
-        // Boucle standard sur les mises à jour (barre et valeur ont des IDs différents)
-        Object.entries(cardData.updates).forEach(([elId, value]) => {
-          // On cherche par ID de données
-          const targetEl = cardEl.querySelector(`[data-el-id="${elId}"]`);
+      if (card.content) {
+        card.content.forEach((item) => {
+          const targetEl = cardEl.querySelector(`[data-el-id="${item.id}"]`);
+          if (!targetEl) return;
 
-          if (targetEl) {
-            // CAS 1 : C'est notre nouveau composant combiné (Barre + Texte)
-            if (targetEl.classList.contains("card-bar-row")) {
-              // value contient { perc: X, display: "Y" }
-
-              // Mise à jour de la barre
-              const barEl = targetEl.querySelector(".monitor-bar-fill");
-              // On vérifie bien que value.perc existe (pour éviter undefined%)
-              if (barEl && value.perc !== undefined) {
-                barEl.style.width = `${value.perc}%`;
-              }
-
-              // Mise à jour du texte
-              const textEl = targetEl.querySelector(".card-bar-text");
-              if (textEl && value.display) {
-                textEl.textContent = value.display;
-              }
-            }
-            // CAS 2 : Fallback ancien système (si encore utilisé ailleurs)
-            else if (targetEl.classList.contains("monitor-bar-track")) {
-              const bar = targetEl.querySelector(".monitor-bar-fill");
-              if (bar) bar.style.width = `${value}%`;
-            }
-            // CAS 3 : Valeur texte simple
-            else {
-              targetEl.textContent = value;
-            }
+          // Cas A : Barre + Texte combinés
+          if (targetEl.classList.contains("card-bar-row")) {
+            const bar = targetEl.querySelector(".monitor-bar-fill");
+            const txt = targetEl.querySelector(".card-bar-text");
+            if (bar && item.value !== undefined)
+              bar.style.width = `${item.value}%`;
+            if (txt && item.display) txt.textContent = item.display;
+          }
+          // Cas B : Valeur texte simple
+          else {
+            if (item.display) targetEl.textContent = item.display;
           }
         });
       }
-    }
+    });
+  }
 
-    // --- B. Mise à jour du MONITOR (TopBar) ---
-    // On cherche le moniteur qui correspond à cet ID de données
-    const monitorEl = document.getElementById(`monitor-${cardData.id}`);
-    if (monitorEl && cardData.updates) {
-      const u = cardData.updates;
-      let valToDisplay = "--";
-      let barToDisplay = 0;
-
-      // HEURISTIQUE DE MAPPING : On devine quelle valeur afficher dans le moniteur
-      // selon l'ID du module. C'est le pont entre "Détail" et "Résumé".
-
-      switch (cardData.id) {
-        case "cpuUsage":
-          // Cible : updates.loadBar { perc, display }
-          if (u.loadBar) {
-            valToDisplay = u.loadBar.display;
-            barToDisplay = u.loadBar.perc;
-          }
-          break;
-
-        case "memory":
-          // Cible : updates.memBar { perc, display }
-          if (u.memBar) {
-            valToDisplay = u.memBar.display;
-            barToDisplay = u.memBar.perc;
-          }
-          break;
-
-        case "battery":
-          // Cible : updates.battBar { perc, display }
-          // Note : parseInt(u.battLevel) n'est plus nécessaire car on a déjà un % propre
-          if (u.battBar) {
-            valToDisplay = u.battBar.display;
-            barToDisplay = u.battBar.perc;
-          }
-          const iconEl = monitorEl.querySelector(".monitor-status-icon");
-          if (iconEl) {
-            // Affiche l'éclair si u.isCharging est vrai, sinon vide
-            iconEl.innerHTML = u.isCharging ? SVGS.bolt : "";
-          }
-          break;
-
-        case "network":
-          // Pour le réseau, on n'a pas changé la structure (netStatus est toujours une string simple)
-          valToDisplay = u.isConnected ? "ON" : "OFF";
-          break;
-      }
-
-      // 1. Mise à jour Texte Monitor
-      const textEl = monitorEl.querySelector(".monitor-val-text");
-      if (textEl && valToDisplay) textEl.textContent = valToDisplay;
-
-      // 2. Mise à jour Barre Monitor (si existante)
-      const barEl = monitorEl.querySelector(".monitor-bar-fill");
-      if (barEl && barToDisplay !== undefined) {
-        barEl.style.width = `${barToDisplay}%`;
-      }
-    }
-  });
+  // 3. GESTION OVERLAY (Si présent dans le payload)
+  if (payload.overlay) {
+    // Logique future pour mettre à jour l'overlay ouvert dynamiquement
+  }
 }
 
 /**

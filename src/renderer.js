@@ -1,90 +1,54 @@
-// --- renderer.js ---
-// Responsabilité : Gérer tout l'affichage et le DOM
-
 // Constantes graphiques
 const SVGS = {
   chevron: `<svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>`,
   bolt: `<svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>`,
 };
 
-// === 1. CACHE DES ÉLÉMENTS DOM (Privé au module) ===
+// === 1. CACHE & ÉTAT ===
 let topBarEl;
 let gridEl;
 let overlayEl;
-let closeBtnEl; // Le bouton dans l'overlay
+let closeBtnEl;
 
-// === 2. FONCTION D'INITIALISATION EXPORTÉE ===
-/**
- * Initialise le Renderer : trouve les éléments DOM, construit l'interface
- * initiale et met en place tous les écouteurs d'événements globaux/d'interface.
- * @param {Object} config - La configuration d'affichage (cartes, topBar).
- * @param {Object} callbacks - Les fonctions métier fournies par le contrôleur (main.js).
- */
+// Optimisation : On mémorise les valeurs pour ne toucher le DOM que si nécessaire
+const renderCache = {};
+
+// === 2. INITIALISATION ===
 export function initRenderer(config, callbacks) {
-  // A. Peuplement du cache DOM
   gridEl = document.getElementById("dashboard-grid");
   topBarEl = document.getElementById("topbar");
   overlayEl = document.getElementById("overlay");
   closeBtnEl = document.getElementById("close-overlay");
 
   if (!gridEl || !topBarEl || !overlayEl || !closeBtnEl) {
-    console.error(
-      "Renderer: Un ou plusieurs éléments DOM requis sont manquants (grid, topbar, overlay, close-overlay)."
-    );
+    console.error("Renderer: DOM manquant.");
     return;
   }
 
-  // B. Construction de l'interface (utilise le cache maintenant)
   buildInterface(config, callbacks);
-
-  // C. Activation des événements globaux
   setupGlobalEvents(callbacks);
 }
 
-// === 3. LOGIQUE ÉVÉNEMENTIELLE INTERNE ===
-/**
- * Configure les écouteurs d'événements globaux (fermerture, thème).
- * Cette fonction est interne au renderer.
- * @param {Object} callbacks - Les fonctions métier (ex: onOpen) fournies par main.js.
- */
 function setupGlobalEvents(callbacks) {
-  // 1. Fermeture (Croix)
-  closeBtnEl.addEventListener("click", () => {
-    callbacks.onClose(); // "Main, l'utilisateur veut fermer"
-  });
-
-  // 2. Fermeture (Fond / Backdrop)
-  overlayEl.addEventListener("click", (e) => {
-    callbacks.onClose();
-  });
-
-  // 4. Thème (Double Clic)
+  closeBtnEl.addEventListener("click", () => callbacks.onClose());
+  overlayEl.addEventListener("click", () => callbacks.onClose());
   gridEl.addEventListener("dblclick", (e) => {
-    if (e.target === gridEl) {
-      // On prévient le main, c'est lui qui décidera d'appliquer ou non
-      callbacks.onThemeToggle();
-    }
+    if (e.target === gridEl) callbacks.onThemeToggle();
   });
 }
 
-// La fonction toggleTheme reste ici pour faire le travail "sale" sur le DOM
-// mais elle est pilotée par le main (ou appelée par lui).
 export function toggleTheme() {
   const currentTheme = document.body.getAttribute("data-theme");
   const newTheme = currentTheme === "light" ? "dark" : "light";
   document.body.setAttribute("data-theme", newTheme);
 }
 
-/**
- * PHASE 1 : CONSTRUCTION (BUILD)
- * Appelée une seule fois au démarrage avec la config "en dur".
- */
+// === 3. CONSTRUCTION (BUILD) ===
 export function buildInterface(config, callbacks) {
-  // 1. Build TopBar
-  // On crée les slots basés sur la config
+  // TopBar
   topBarEl.innerHTML = config.monitors
-    .map((item) => {
-      return `
+    .map(
+      (item) => `
       <div class="monitor-block ${item.hasOvelay ? "interactive" : "static"}" 
             id="monitor-${item.id}" 
             data-link="${item.cardLink}"
@@ -98,48 +62,37 @@ export function buildInterface(config, callbacks) {
           </div>
           ${
             item.type === "bar"
-              ? `<div class="monitor-bar-track">
-                  <div class="monitor-bar-fill" style="width: 0%"></div>
-                  </div>`
+              ? `<div class="monitor-bar-track"><div class="monitor-bar-fill" style="width: 0%"></div></div>`
               : ""
           }
           ${item.type === "dot" ? `<div class="monitor-dot"></div>` : ""}
-      </div>
-  `;
-    })
+      </div>`
+    )
     .join("");
 
-  // Events TopBar
   topBarEl.querySelectorAll(".monitor-block.interactive").forEach((el) => {
     el.addEventListener("click", () => callbacks.onOpen(el.dataset.link));
   });
 
-  // 2. Build Grid
+  // Grid
   gridEl.innerHTML = config.cards
-    .map((card) => {
-      return `
+    .map(
+      (card) => `
         <div class="card ${card.hasOvelay ? "interactive" : "static"}" 
             id="card-${card.id}" 
             data-id="${card.id}" 
             style="display: none;"> 
-             
             <h3>${card.title}</h3>
-            
-            <div class="card-body">
-                ${renderCardContent(card.content)}
-            </div>
-            
+            <div class="card-body">${renderCardContent(card.content)}</div>
             ${
               card.hasOvelay
                 ? `<div class="card-watermark">${SVGS.chevron}</div>`
                 : ""
             }
-        </div>
-        `;
-    })
+        </div>`
+    )
     .join("");
 
-  // Events Grid
   gridEl.querySelectorAll(".card.interactive").forEach((el) => {
     el.addEventListener("click", (e) => callbacks.onOpen(el.dataset.id, e));
   });
@@ -153,9 +106,7 @@ function renderCardContent(contentItems) {
         case "cardBar":
           return `
             <div class="card-bar-row" data-el-id="${item.id}">
-                <div class="monitor-bar-track">
-                    <div class="monitor-bar-fill" style="width: 0%"></div>
-                </div>
+                <div class="monitor-bar-track"><div class="monitor-bar-fill" style="width: 0%"></div></div>
                 <div class="card-bar-text">--</div>
             </div>`;
         case "value":
@@ -172,82 +123,139 @@ function renderCardContent(contentItems) {
     .join("");
 }
 
-/**
- * PHASE 2 : MISE A JOUR (UPDATE)
- * Appelée en boucle par le main.js avec le payload structuré
- */
+// === 4. MISE A JOUR OPTIMISÉE (UPDATE) ===
 export function updateInterface(payload) {
-  // 1. GESTION DES MONITORS (TopBar)
+  // A. GESTION DES MONITORS (TopBar)
   if (payload.monitors) {
     payload.monitors.forEach((mon) => {
-      // Maintenant ça matche : mon.id="cpu" -> dom="monitor-cpu"
       const el = document.getElementById(`monitor-${mon.id}`);
       if (!el) return;
 
-      // Texte
-      const textEl = el.querySelector(".monitor-val-text");
-      if (textEl && mon.label) textEl.textContent = mon.label;
-
-      // Barre (si existe)
-      const barEl = el.querySelector(".monitor-bar-fill");
-      if (barEl && mon.percent !== undefined) {
-        barEl.style.width = `${mon.percent}%`;
+      // 1. Texte (Label)
+      if (mon.label !== undefined) {
+        const key = `mon-${mon.id}-lbl`;
+        if (renderCache[key] !== mon.label) {
+          const textEl = el.querySelector(".monitor-val-text");
+          if (textEl) textEl.textContent = mon.label;
+          renderCache[key] = mon.label;
+        }
       }
 
-      // Icone (ex: éclair)
-      const iconEl = el.querySelector(".monitor-status-icon");
-      if (iconEl) {
-        iconEl.innerHTML = mon.icon === "bolt" ? SVGS.bolt : "";
+      // 2. Barre (Percent)
+      if (mon.percent !== undefined) {
+        const key = `mon-${mon.id}-pct`;
+        if (renderCache[key] !== mon.percent) {
+          const barEl = el.querySelector(".monitor-bar-fill");
+          if (barEl) barEl.style.width = `${mon.percent}%`;
+          renderCache[key] = mon.percent;
+        }
       }
 
-      // Classes d'état (ex: warning/normal)
-      if (mon.state) {
-        // Optionnel : gérer les couleurs via data-state
-        el.setAttribute("data-state", mon.state);
+      // 3. Icône (ex: Bolt pour batterie)
+      // Note: mon.icon est soit "bolt", soit vide/undefined
+      if (mon.icon !== undefined) {
+        const key = `mon-${mon.id}-icon`;
+        if (renderCache[key] !== mon.icon) {
+          const iconEl = el.querySelector(".monitor-status-icon");
+          if (iconEl) iconEl.innerHTML = mon.icon === "bolt" ? SVGS.bolt : "";
+          renderCache[key] = mon.icon;
+        }
+      }
+
+      // 4. État (Couleur / Warning)
+      if (mon.state !== undefined) {
+        const key = `mon-${mon.id}-state`;
+        if (renderCache[key] !== mon.state) {
+          el.setAttribute("data-state", mon.state);
+          renderCache[key] = mon.state;
+        }
       }
     });
   }
 
-  // 2. GESTION DES CARDS (Grille)
+  // B. GESTION DES CARDS (Grille)
   if (payload.cards) {
     payload.cards.forEach((card) => {
       const cardEl = document.getElementById(`card-${card.id}`);
       if (!cardEl) return;
 
-      // Forcer l'affichage si c'était caché
-      if (cardEl.style.display === "none") cardEl.style.display = "flex";
+      // Affichage initial (si display: none)
+      // On optimise aussi : on ne lit le style que si on ne l'a pas déjà marqué comme visible
+      const keyVis = `card-${card.id}-vis`;
+      if (!renderCache[keyVis]) {
+        if (getComputedStyle(cardEl).display === "none") {
+          cardEl.style.display = "flex";
+        }
+        renderCache[keyVis] = true;
+      }
 
       if (card.content) {
         card.content.forEach((item) => {
           const targetEl = cardEl.querySelector(`[data-el-id="${item.id}"]`);
           if (!targetEl) return;
 
-          // Cas A : Barre + Texte combinés
+          // Clés de cache uniques basées sur l'ID de l'item
+          const keyVal = `item-${item.id}-val`; // Pour la valeur (texte ou width)
+          const keyDisp = `item-${item.id}-disp`; // Pour le texte affiché
+          const keyLbl = `item-${item.id}-lbl`; // Pour le label dynamique
+
+          // Cas A : Barre + Texte combinés (card-bar-row)
           if (targetEl.classList.contains("card-bar-row")) {
-            const bar = targetEl.querySelector(".monitor-bar-fill");
-            const txt = targetEl.querySelector(".card-bar-text");
-            if (bar && item.value !== undefined)
-              bar.style.width = `${item.value}%`;
-            if (txt && item.display) txt.textContent = item.display;
+            // Mise à jour de la barre
+            if (
+              item.value !== undefined &&
+              renderCache[keyVal] !== item.value
+            ) {
+              const bar = targetEl.querySelector(".monitor-bar-fill");
+              if (bar) bar.style.width = `${item.value}%`;
+              renderCache[keyVal] = item.value;
+            }
+            // Mise à jour du texte à côté de la barre
+            if (item.display && renderCache[keyDisp] !== item.display) {
+              const txt = targetEl.querySelector(".card-bar-text");
+              if (txt) txt.textContent = item.display;
+              renderCache[keyDisp] = item.display;
+            }
           }
-          // Cas B : Valeur texte simple
+          // Cas B : Valeur texte simple (kv ou value)
           else {
-            if (item.display) targetEl.textContent = item.display;
+            // Mise à jour de la valeur principale
+            if (
+              item.display !== undefined &&
+              renderCache[keyDisp] !== item.display
+            ) {
+              targetEl.textContent = item.display;
+              renderCache[keyDisp] = item.display;
+            }
+
+            // Mise à jour du LABEL DYNAMIQUE (Ta demande précédente)
+            // On vérifie si un 'label' est fourni et s'il a changé
+            if (
+              item.label !== undefined &&
+              renderCache[keyLbl] !== item.label
+            ) {
+              // On cherche le frère précédent qui est le label
+              if (targetEl.classList.contains("kv-value")) {
+                const labelEl = targetEl.previousElementSibling;
+                if (labelEl && labelEl.classList.contains("kv-label")) {
+                  labelEl.textContent = item.label;
+                  renderCache[keyLbl] = item.label;
+                }
+              }
+            }
           }
         });
       }
     });
   }
 
-  // 3. GESTION OVERLAY (Si présent dans le payload)
+  // C. GESTION OVERLAY
   if (payload.overlay) {
-    // Logique future pour mettre à jour l'overlay ouvert dynamiquement
+    // Logique future pour l'overlay dynamique
   }
 }
 
-/**
- * GESTION OVERLAY
- */
+// === 5. GESTION OVERLAY (OUVERTURE/FERMETURE) ===
 export function setOverlayState(isOpen, payload = {}, event = null) {
   const content = overlayEl.querySelector(".overlay-content");
   const titleEl = overlayEl.querySelector("#overlay-title");
@@ -264,23 +272,18 @@ export function setOverlayState(isOpen, payload = {}, event = null) {
 
   const title = payload.title || "";
 
-  // 1. Calcul de l'origine (Pop effect) avec hauteur DYNAMIQUE
   if (event && event.currentTarget) {
-    // On récupère la hauteur réelle du topbar à l'instant T
     const topBarHeight = document.getElementById("topbar")?.offsetHeight || 0;
-
     const rect = event.currentTarget.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     let centerY = rect.top + rect.height / 2;
 
-    // Ajustement dynamique
     if (centerY < topBarHeight) centerY = 0;
     else centerY = centerY - topBarHeight;
 
     overlayEl.style.transformOrigin = `${centerX}px ${centerY}px`;
   }
 
-  // 2. Gestion Transition vs Ouverture (Reste inchangé)
   if (overlayEl.classList.contains("active")) {
     overlayEl.style.transition =
       "transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.1)";
@@ -296,7 +299,7 @@ export function setOverlayState(isOpen, payload = {}, event = null) {
     if (titleEl) titleEl.textContent = title;
     if (content) content.style.opacity = "1";
     overlayEl.classList.remove("hidden");
-    void overlayEl.offsetWidth;
+    void overlayEl.offsetWidth; // Force reflow
     overlayEl.classList.add("active");
   }
 }

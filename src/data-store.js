@@ -1,6 +1,8 @@
 export class DataStore {
   constructor() {
     this.version = "5.1 - Pure Raw Data";
+    this.cachedGpu = null; // Pour éviter la boucle infinie de contextes WebGL
+    this.cachedStaticInfo = null;
   }
 
   /**
@@ -10,39 +12,42 @@ export class DataStore {
    */
   async getSystemState(scope = null) {
     // --- PHASE 1 : SELECTION DES API (Optimisation des entrées) ---
-    // On ne déclenche que les fetchs strictement nécessaires.
 
-    // Socle "Live" (Monitors) : Toujours requis
-    const pCpuStats = this._fetchCpuStats(); // Usage + Temp (évite le doublon)
+    // 1. Socle "Live" (Monitors) : Toujours requis pour la TopBar
+    // Ces données sont vitales, on les fetch à chaque tick.
+    const pCpuStats = this._fetchCpuStats();
     const pMem = this._fetchMemory();
     const pBatt = this._fetchBattery();
     const pNet = this._fetchNetwork();
 
-    // Extensions "Dashboard" (Cards)
+    // 2. Initialisation des modules optionnels à NULL (Par défaut: on ne charge rien)
+    // C'est ici l'économie de ressources : si on ne demande pas, on ne lance pas la promesse.
     let pSysStatic = Promise.resolve(null);
     let pStorage = Promise.resolve(null);
     let pDisplay = Promise.resolve(null);
 
-    const isDashboard = scope === "cards";
+    // 3. Aiguillage selon le Scope
 
-    if (isDashboard) {
-      // En mode grille, on veut les infos statiques pour tout le monde
-      pSysStatic = this._fetchSystemStatic(); // OS, GPU, CPU Model...
-      pStorage = this._fetchStorageSummary();
-      pDisplay = this._fetchDisplaySummary();
+    // Cas A : Dashboard complet (Grille) -> On charge les résumés pour remplir les cartes
+    if (scope === "cards") {
+      pSysStatic = this._fetchSystemStatic(); // Info OS/Version
+      pStorage = this._fetchStorageSummary(); // Juste l'espace libre global
+      pDisplay = this._fetchDisplaySummary(); // Juste la résolution principale
     }
-    // Extensions "Overlay" (Détail ciblé)
-    // On ajoute l'appel lourd uniquement si l'overlay spécifique est demandé
+
+    // Cas B : Focus Module spécifique (Overlay Dynamique) -> On charge les détails UNIQUEMENT pour ce module
     else if (scope === "storage") {
-      pStorage = this._fetchStorageDetails(); // Version détaillée (partitions)
+      pStorage = this._fetchStorageDetails(); // Version lourde (avec partitions)
     } else if (scope === "display") {
-      pDisplay = this._fetchDisplayDetails(); // Version détaillée (liste écrans)
+      pDisplay = this._fetchDisplayDetails(); // Version lourde (avec liste des écrans)
     }
-    // Note: Pour CPU, Mem, Batt, Net, les détails lourds sont souvent
-    // récupérables via le même appel ou un appel dédié qu'on pourrait ajouter ici.
+
+    // Cas C : Mode Eco (scope === null)
+    // On ne rentre dans aucun if, les promesses optionnelles restent à null.
+    // Seul le socle (Monitors) sera exécuté.
 
     // --- PHASE 2 : EXECUTION (Parallèle) ---
-
+    // On attend tout le monde. Les promesses initialisées à 'null' se résolvent instantanément.
     const [cpu, mem, batt, net, sysStatic, storage, display] =
       await Promise.all([
         pCpuStats,
@@ -55,101 +60,77 @@ export class DataStore {
       ]);
 
     // --- PHASE 3 : ASSEMBLAGE PAR MODULE (Sorties Brutes) ---
-    // On crée un objet propre par module, avec filtrage Court/Long selon le scope.
-
     const output = {};
-    const isOverlay = typeof scope === "string" && scope !== "cards";
 
-    // 1. MODULE CPU USAGE (Toujours présent si l'API répond)
+    // 1. MONITORS (Le socle vital)
+
+    // CPU
     if (cpu) {
       output.cpuUsage = {
         usagePct: cpu.usageTotal,
         model: cpu.modelName,
       };
-
-      // Données étendues pour l'Overlay USAGE
+      // On n'ajoute les détails (coeurs) que s'ils sont pertinents pour l'overlay
+      // (Note: dans notre implémentation mock actuelle, on a tout, mais on pourrait filtrer ici si l'API était lourde)
       if (scope === "cpuUsage") {
         output.cpuUsage.coresPct = cpu.cores;
         output.cpuUsage.features = cpu.features;
       }
-    }
 
-    // 1b. MODULE CPU TEMP (Séparé et Conditionnel)
-    // On ne crée le module QUE si le matériel a remonté une température valide
-    if (cpu && cpu.temp !== null) {
-      output.cpuTemp = {
-        tempC: cpu.temp,
-      };
-
-      // Données étendues pour l'Overlay TEMP
-      if (scope === "cpuTemp") {
-        output.cpuTemp.zones = cpu.tempZones;
+      // CPU TEMP (Module séparé)
+      if (cpu.temp !== null) {
+        output.cpuTemp = { tempC: cpu.temp };
+        if (scope === "cpuTemp") {
+          output.cpuTemp.zones = cpu.tempZones;
+        }
       }
     }
 
-    // 2. MODULE MEMOIRE
-    // Simplification : On passe l'objet brut de l'API (capacity, availableCapacity)
-    output.memory = mem;
+    // MEMORY
+    if (mem) output.memory = mem;
 
-    // 3. MODULE BATTERIE
-    if (batt) {
-      output.battery = {
-        level: batt.level, // Nom standard W3C (0.0 à 1.0)
-        charging: batt.charging,
-        chargingTime: batt.chargingTime,
-        dischargingTime: batt.dischargingTime,
-      };
-    }
+    // BATTERY
+    if (batt) output.battery = batt; // Contient déjà level, charging, times...
 
-    // 4. MODULE RESEAU
-    if (net) {
-      output.network = {
-        online: net.online,
-        type: net.type,
-      };
-      // L'IP est dispo pour tout le monde si on l'a trouvée
-      if (net.ip) {
-        output.network.ip = net.ip;
-      }
-    }
+    // NETWORK
+    if (net) output.network = net; // Contient online, type, ip...
 
-    // 5. MODULES SECONDAIRES (Seulement si fetchés)
+    // 2. MODULES OPTIONNELS (Existent uniquement si demandés en Phase 1)
 
+    // SYSTEM (Static)
     if (sysStatic) {
-      // Pas de monitor, donc présent uniquement si isDashboard ou scope=system
       output.system = {
         os: sysStatic.os,
         platform: sysStatic.arch,
         browserVer: sysStatic.chromeVer,
+        appVersion: sysStatic.appVersion,
+        languages: sysStatic.chromeLanguages,
+        extensions: sysStatic.chromeExtensions,
       };
-      output.gpu = {
-        model: sysStatic.gpu,
-      };
-      if (scope === "system") {
-        output.system.kernel = "5.15.x";
-        output.system.user = "User";
-      }
     }
 
+    // STORAGE
     if (storage) {
       output.storage = {
         usedBytes: storage.used,
         totalBytes: storage.total,
         name: storage.name,
       };
-      // Si c'est l'appel "Details", on a reçu 'partitions' en plus
+      // Détection automatique : Si la version "Lourde" a été fetchée, elle contient 'partitions'
       if (storage.partitions) {
-        output.storage.partitions = storage.partitions; // Array brut
+        output.storage.partitions = storage.partitions;
       }
     }
 
+    // DISPLAY
     if (display) {
       output.display = {
         width: display.width,
         height: display.height,
       };
+      // Détection automatique : Si la version "Lourde" a été fetchée, elle contient 'screens'
       if (display.screens) {
-        output.display.screens = display.screens; // Array brut
+        output.display.screens = display.screens;
       }
     }
 
@@ -265,44 +246,164 @@ export class DataStore {
     return netInfo;
   }
 
-  async _fetchSystemStatic() {
+  async _fetchStorageSummary() {
+    const details = await this._fetchStorageDetails();
+    if (!details) return null; // Si pas de disque, pas de summary
+
     return {
-      os: "ChromeOS",
-      arch: "x86_64",
-      chromeVer: "120.0",
-      gpu: "Intel UHD",
-      cpuModel: "i5-1240P",
+      used: details.used,
+      total: details.total,
+      name: details.name,
     };
   }
 
-  // Exemple: API légère pour le dashboard
-  async _fetchStorageSummary() {
-    return { used: 60000000000, total: 128000000000, name: "Internal" };
-  }
-  // Exemple: API lourde pour l'overlay (peut être la même avec un paramètre 'detail' en vrai)
   async _fetchStorageDetails() {
-    return {
-      used: 60000000000,
-      total: 128000000000,
-      name: "Internal",
-      partitions: [
-        { id: "root", size: 4000000000 },
-        { id: "user", size: 120000000000 },
-      ],
-    };
+    return new Promise((resolve) => {
+      chrome.system.storage.getInfo(async (units) => {
+        // Règle v1.2 : Si tableau vide, on renvoie null pour cacher la carte
+        if (!units || units.length === 0) {
+          return resolve(null);
+        }
+
+        const partitionsPromises = units.map((unit) => {
+          return new Promise((resUnit) => {
+            chrome.system.storage.getAvailableCapacity(unit.id, (info) => {
+              const free = chrome.runtime.lastError
+                ? 0
+                : info.availableCapacity;
+
+              // Règle v1.2 : Nettoyage du nom (suppression caractères non-ascii)
+              let cleanName = (unit.name || `Partition ${unit.id}`)
+                .replace(/[^\x20-\x7E]/g, "")
+                .trim();
+
+              resUnit({
+                id: unit.id,
+                label: cleanName,
+                size: unit.capacity,
+                free: free,
+                type: unit.type,
+              });
+            });
+          });
+        });
+
+        const partitions = await Promise.all(partitionsPromises);
+
+        // Sécurité supplémentaire : si après filtrage on a un souci
+        if (partitions.length === 0) return resolve(null);
+
+        const mainDisk =
+          partitions.find((p) => p.type === "fixed") || partitions[0];
+
+        resolve({
+          used: mainDisk.size - mainDisk.free,
+          total: mainDisk.size,
+          name: mainDisk.label,
+          partitions: partitions,
+        });
+      });
+    });
   }
 
   async _fetchDisplaySummary() {
-    return { width: 1920, height: 1080 };
+    // Même stratégie : on fetch tout, on filtre après.
+    const details = await this._fetchDisplayDetails();
+    return { width: details.width, height: details.height };
   }
+
   async _fetchDisplayDetails() {
-    return {
-      width: 1920,
-      height: 1080,
-      screens: [
-        { w: 1920, h: 1080 },
-        { w: 2560, h: 1440 },
-      ],
-    };
+    return new Promise((resolve) => {
+      chrome.system.display.getInfo((displays) => {
+        const primary = displays.find((d) => d.isPrimary) || displays[0];
+
+        const screenList = displays.map((d) => ({
+          id: d.id,
+          w: d.bounds.width,
+          h: d.bounds.height,
+          primary: d.isPrimary,
+        }));
+
+        resolve({
+          width: primary.bounds.width,
+          height: primary.bounds.height,
+          // Ajout du GPU ici, cohérent avec l'overlay Display
+          gpu: this._resolveGpuName(),
+          screens: screenList,
+        });
+      });
+    });
+  }
+
+  async _fetchSystemStatic() {
+    // Si on a déjà l'info, on la renvoie immédiatement (promesse résolue)
+    if (this.cachedStaticInfo) {
+      return this.cachedStaticInfo;
+    }
+
+    return new Promise(async (resolve) => {
+      // 1. Infos Plateforme (Arch, NaCl...)
+      const platform = await new Promise((r) =>
+        chrome.runtime.getPlatformInfo(r)
+      );
+
+      // 2. Langues acceptées (pour l'overlay Chrome)
+      const langs = await new Promise((r) => chrome.i18n.getAcceptLanguages(r));
+
+      // 3. Extensions installées (pour l'overlay Chrome)
+      // Nécessite la permission "management" dans manifest.json
+      let extCount = 0;
+      let extList = "N/A";
+      try {
+        const exts = await new Promise((r) => chrome.management.getAll(r));
+        const activeExts = exts.filter(
+          (e) => e.enabled && e.type === "extension"
+        );
+        extCount = activeExts.length;
+        // On affiche le nombre + les 3 premières pour ne pas casser l'UI
+        extList = `${extCount} active(s)`;
+      } catch (e) {
+        console.warn("DataStore: Permission 'management' manquante.");
+      }
+
+      const result = {
+        os: "ChromeOS",
+        arch: platform.arch,
+        chromeVer: /Chrome\/([0-9.]+)/.exec(navigator.userAgent)[1],
+        chromeLanguages: langs.slice(0, 3).join(", "),
+        chromeExtensions: extList,
+        appVersion: chrome.runtime.getManifest().version,
+      };
+
+      this.cachedStaticInfo = result;
+
+      resolve(result);
+    });
+  }
+
+  // --- NOUVELLE MÉTHODE UTILITAIRE (Helper) ---
+  // Permet de centraliser la logique "lourde" du WebGL
+  _resolveGpuName() {
+    if (this.cachedGpu) return this.cachedGpu;
+
+    try {
+      const canvas = document.createElement("canvas");
+      const gl = canvas.getContext("webgl");
+      if (gl) {
+        const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
+        if (debugInfo) {
+          this.cachedGpu = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+        }
+        // Nettoyage immédiat pour éviter le warning "Too many active WebGL contexts"
+        const ext = gl.getExtension("WEBGL_lose_context");
+        if (ext) ext.loseContext();
+      }
+    } catch (e) {
+      console.warn("GPU Detection failed", e);
+    }
+
+    // Fallback si échec ou null
+    this.cachedGpu = this.cachedGpu || "Integrated / Unknown";
+    return this.cachedGpu;
   }
 }

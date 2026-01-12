@@ -8,7 +8,8 @@
     "system.memory",
     "system.storage",
     "system.display",
-    "storage"
+    "storage",
+    "management"
   ],
   "action": {
     "default_popup": "popup.html",

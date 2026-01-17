@@ -1,29 +1,26 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CogExt Dashboard</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header id="topbar"></header>
 
-    <header id="topbar">
-        </header>
-
-    <main id="dashboard-grid">
-        </main>
+    <main id="dashboard-grid"></main>
 
     <div id="overlay" class="hidden">
-        <div class="overlay-content">
-            <button id="close-overlay">×</button>
-            <h2 id="overlay-title">Titre du détail</h2>
-            <div id="overlay-body">
-                <p>Chargement des données...</p>
-            </div>
+      <div class="overlay-content">
+        <button id="close-overlay">×</button>
+        <h3 id="overlay-title">Titre du détail</h3>
+        <div id="overlay-body">
+          <p>Chargement des données...</p>
         </div>
+      </div>
     </div>
 
     <script type="module" src="main.js"></script>
-</body>
+  </body>
 </html>

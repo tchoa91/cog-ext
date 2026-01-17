@@ -1,4 +1,14 @@
-// --- src/main.js ---
+/**
+ * @file        main.js
+ * @description Contrôleur principal du Popup. Orchestre la boucle de rafraîchissement,
+ * gère la logique métier et fait le lien entre le DataStore et le Renderer.
+ * @author      François Bacconnet <https://github.com/tchoa91>
+ * @copyright   2026 François Bacconnet
+ * @license     GPL-3.0
+ * @version     2.0
+ * @homepage    https://ext.tchoa.com
+ * @see         https://github.com/tchoa91/cog-ext
+ */
 
 import {
   initRenderer,
@@ -198,107 +208,110 @@ const UPDATE_INTERVAL = 200;
 const TEXT_UPDATE_RATIO = 5;
 
 let activeOverlayId = null;
+let appUnit = "C";
 
-// --- 3. INITIALISATION (Le Flux que vous avez défini) ---
+// --- 3. INITIALISATION ---
 document.addEventListener("DOMContentLoaded", async () => {
+  // A. Paramètres et callbacks
+
+  // ÉTAPE 1 : Chargement des Préférences (Bloquant pour éviter le flash)
+  // On définit des défauts clairs ici.
+  const defaultPrefs = { theme: "dark", unit: "C" };
+  let prefs = defaultPrefs;
+
+  try {
+    const stored = await chrome.storage.local.get(["theme", "unit"]);
+    // Fusionner avec les défauts au cas où une clé manque
+    prefs = { ...defaultPrefs, ...stored };
+    console.log("💾 Config chargée :", prefs);
+  } catch (e) {
+    console.warn("Erreur lecture storage, utilisation défauts", e);
+  }
+
+  // ÉTAPE 2 : Application de l'état initial
+  // A. Thème (DOM pour CSS)
+  document.body.setAttribute("data-theme", prefs.theme);
+  // B. Unité (Variable JS pour calculs)
+  appUnit = prefs.unit;
+
+  // ÉTAPE 3 : Définition des Actions (Callbacks)
   const callbacks = {
-    // Signal d'ouverture
     onOpen: async (cardId) => {
-      // 1. Gestion Toggle OFF (Fermeture si on clique sur le même)
       if (activeOverlayId === cardId) {
         activeOverlayId = null;
         setOverlayState(false);
         return;
       }
-
-      // 2. Préparation de l'ouverture
       const config = getOverlayConfig(cardId);
       const isDynamic = config ? config.isDynamic : false;
       const title = config ? config.title : cardId.toUpperCase();
 
-      // 3. Cas STATIC (Mode Eco) : "Settings" ou Info fixe
-      // On fait un rendu UNIQUE immédiat pour ne plus y toucher après.
       if (!isDynamic) {
-        console.log(`Main: Ouverture Overlay Statique (${cardId})`);
+        // Pour Settings, on appelle maintenant avec le bon scope pour avoir la version
+        const scope = cardId === "settings" ? "settings" : "cards";
+        const staticData = await store.getSystemState(scope);
 
-        // On récupère juste les infos système statiques (pas besoin de CPU/RAM ici)
-        // Note: On peut demander 'cards' pour avoir les infos génériques,
-        // ou créer un scope spécial si besoin. Ici 'cards' suffit pour avoir "system" etc.
-        const staticData = await store.getSystemState("cards");
+        // On passe activeOverlayId (cardId) pour générer le bon contenu
+        const renderState = transformDataToRenderFormat(
+          staticData,
+          true,
+          cardId,
+        );
 
-        // On force l'objet overlay pour le renderer
-        const renderState = transformDataToRenderFormat(staticData);
-        // On précise manuellement l'ID de l'overlay à afficher maintenant
-        renderState.overlay = { id: cardId, ...renderState.overlay };
-
-        // Injection immédiate dans le DOM
+        // Pas besoin de merger l'overlay manuellement, transform... le fait si l'ID correspond
         updateInterface(renderState);
       }
-
-      // 4. Mise à jour de l'état global
       activeOverlayId = cardId;
       setOverlayState(true, { title: title });
-
-      // Si c'est dynamique, la prochaine frame du gameLoop s'occupera du contenu.
     },
 
-    // Signal de fermeture explicite (croix ou fond)
     onClose: () => {
       activeOverlayId = null;
       setOverlayState(false);
     },
 
-    // Signal de bascule de thème
     onThemeToggle: () => {
-      // 1. On peut sauvegarder la pref ici (ex: localStorage)
-      const newTheme =
-        document.body.getAttribute("data-theme") === "light" ? "dark" : "light";
-      console.log(`Main: Changement de thème vers ${newTheme}`);
-      // 2. On ordonne au renderer d'appliquer le changement
-      toggleTheme();
+      // 1. Bascule
+      const current = document.body.getAttribute("data-theme");
+      const newTheme = current === "light" ? "dark" : "light";
+
+      // 2. Appliquer
+      toggleTheme(); // Fonction du renderer qui fait l'attribut
+
+      // 3. Sauvegarder
+      chrome.storage.local.set({ theme: newTheme });
+      console.log("💾 Thème sauvegardé :", newTheme);
     },
 
-    // Signal de changement d'unité (F/C)
-    // (Sera appelé par un bouton dans l'overlay "Settings" par exemple)
-    // onUnitToggle: () => {
-    //   // Logique de changement d'unité dans le store...
-    //   console.log("Main: Changement d'unité demandé");
-    //   store.toggleTempUnit(); // Méthode hypothétique du store
-    // },
+    onUnitToggle: () => {
+      // 1. Bascule
+      appUnit = appUnit === "C" ? "F" : "C";
+
+      // 2. Sauvegarder
+      chrome.storage.local.set({ unit: appUnit });
+      console.log("💾 Unité sauvegardée :", appUnit);
+
+      // 3. Feedback : Le prochain tick (gameLoop) mettra à jour tous les textes
+    },
   };
 
+  // B. Démarrage Classique
   const initData = await store.getSystemState("cards");
-  // console.log("📦 INIT:", initData);
 
-  // B. Enrichissement de la config (Runtime)
-  // On mappe les cartes UI vers les modules Data pour savoir si on active l'overlay
   const runtimeConfig = {
     ...UI_CONFIG,
     cards: UI_CONFIG.cards.filter((card) => {
-      // 1. Cas spécial : Settings (toujours là)
       if (card.id === "settings") return true;
-
-      // 2. Cas spécial : OS et Chrome dépendent du module "system"
-      if (card.id === "os" || card.id === "chrome") {
-        return !!initData.system;
-      }
-
-      // 3. Cas général : L'ID de la carte correspond à une clé de données (cpu, battery...)
+      if (card.id === "os" || card.id === "chrome") return !!initData.system;
       return !!initData[card.id];
     }),
   };
 
-  // C. Construction Interface
   initRenderer(runtimeConfig, callbacks);
 
-  // ÉTAPE 3 : Main injecte les datas initiales
-  // On transforme le InitPacket en format compatible pour updateInterface
-  const initialState = transformDataToRenderFormat(initData);
-  console.log("📦 INIT_STATE:", initialState);
-
+  const initialState = transformDataToRenderFormat(initData, true, null);
   updateInterface(initialState);
 
-  // Démarrage de la boucle
   requestAnimationFrame(gameLoop);
 });
 
@@ -310,7 +323,11 @@ document.addEventListener("DOMContentLoaded", async () => {
  * @param {Boolean} updateText - Si false, on ne met pas à jour les textes (optimisation 5Hz)
  * @returns {Object} Objet d'état pour updateInterface()
  */
-function transformDataToRenderFormat(modulesData, updateText = true) {
+function transformDataToRenderFormat(
+  modulesData,
+  updateText = true,
+  activeOverlayId,
+) {
   // Structure stricte demandée
   const state = {
     monitors: [],
@@ -321,6 +338,15 @@ function transformDataToRenderFormat(modulesData, updateText = true) {
   // Helper pour le throttle du texte
   // Si updateText est false, on renvoie undefined, ce qui dit au Renderer "Touche pas au DOM"
   const txt = (val) => (updateText ? val : undefined);
+
+  // --- Helper Formatage Température ---
+  const fmtTemp = (val) => {
+    if (val === null || val === undefined) return "--";
+    if (appUnit === "F") {
+      return Math.round((val * 9) / 5 + 32) + "°F";
+    }
+    return Math.round(val) + "°C";
+  };
 
   // --- 1. CPU (Usage & Temp) ---
   if (modulesData.cpuUsage) {
@@ -335,27 +361,40 @@ function transformDataToRenderFormat(modulesData, updateText = true) {
     });
 
     // B. OVERLAY DETECTED?
-    if (modulesData.cpuUsage.coresPct) {
+    if (activeOverlayId === "cpuUsage") {
       state.overlay = {
         id: "cpuUsage",
         content: [
           {
             id: "cpuLoadAverage",
-            type: "olBar",
+            type: "olBar", // Nécessaire pour le renderer
+            title: "Average CPU Load", // Nécessaire pour le renderer
             value: usage,
             display: txt(`${usage}%`),
           },
-          { id: "cpuName", display: txt(modulesData.cpuUsage.model) },
-          // Pour les listes complexes, on peut choisir de tout freiner ou non.
-          // Ici on freine pour éviter le scintillement des chiffres.
           {
             id: "cpuLoadList",
             type: "olLoadList",
-            value: updateText ? modulesData.cpuUsage.coresPct : undefined,
+            title: "CPU Load per core",
+            value: modulesData.cpuUsage.coresPct || [],
+          },
+          {
+            id: "cpuArc",
+            type: "kv",
+            title: "CPU Architecture",
+            display: modulesData.cpuUsage.archName,
+          },
+          {
+            id: "cpuName",
+            type: "kv",
+            title: "CPU Model",
+            display: modulesData.cpuUsage.model,
           },
           {
             id: "cpuFeatures",
-            display: txt((modulesData.cpuUsage.features || []).join(", ")),
+            type: "kv",
+            title: "CPU Features",
+            display: modulesData.cpuUsage.features,
           },
         ],
       };
@@ -378,34 +417,41 @@ function transformDataToRenderFormat(modulesData, updateText = true) {
   // --- 1b. CPU TEMP ---
   if (modulesData.cpuTemp) {
     const temp = modulesData.cpuTemp.tempC;
+    // Utilisation du helper
+    const displayStr = txt(fmtTemp(temp));
 
-    if (modulesData.cpuTemp.zones) {
+    // Préparation des zones formatées (Conversion mathématique brute pour la liste)
+    let zonesFormatted = undefined;
+    if (updateText && modulesData.cpuTemp.zones) {
+      zonesFormatted = modulesData.cpuTemp.zones.map((z) => {
+        if (appUnit === "F") return Math.round((z * 9) / 5 + 32);
+        return Math.round(z);
+      });
+    }
+
+    if (activeOverlayId === "cpuTemp") {
       state.overlay = {
         id: "cpuTemp",
         content: [
           {
             id: "cpuTempAverage",
             type: "olBar",
+            title: "Average CPU Temperature",
             value: temp,
-            display: txt(`${temp}°C`),
+            display: displayStr,
           },
           {
             id: "cpuTempList",
             type: "olTempList",
-            value: updateText ? modulesData.cpuTemp.zones : undefined,
+            unitSymbol: appUnit === "F" ? "°F" : "°C", // Info pour le renderer
+            value: zonesFormatted,
           },
         ],
       };
     } else {
       state.cards.push({
         id: "cpuTemp",
-        content: [
-          {
-            id: "tempBar",
-            value: temp,
-            display: txt(`${temp}°C`),
-          },
-        ],
+        content: [{ id: "tempBar", value: temp, display: displayStr }],
       });
     }
   }
@@ -509,25 +555,42 @@ function transformDataToRenderFormat(modulesData, updateText = true) {
 
   // --- 5. STORAGE ---
   if (modulesData.storage) {
+    // Calcul du % utilisé (commun overlay/card)
+    const usedPct = modulesData.storage.totalBytes
+      ? Math.round(
+          (modulesData.storage.usedBytes / modulesData.storage.totalBytes) *
+            100,
+        )
+      : 0;
+
     // A. OVERLAY
-    if (modulesData.storage.partitions) {
+    if (activeOverlayId === "storage") {
       state.overlay = {
         id: "storage",
         content: [
           {
-            id: "storageTotal",
-            display: txt(
-              (modulesData.storage.totalBytes / 1e9).toFixed(0) + " GB"
-            ),
+            id: "storagePerc",
+            type: "olBar",
+            title: "% used space",
+            value: usedPct, // Pour la barre
+            display: txt(`${usedPct}%`), // Pour le texte
           },
           {
             id: "storageFree",
+            type: "kv", // Rappel du type pour cohérence
             display: txt(
               (
                 (modulesData.storage.totalBytes -
                   modulesData.storage.usedBytes) /
                 1e9
-              ).toFixed(1) + " GB"
+              ).toFixed(1) + " GB",
+            ),
+          },
+          {
+            id: "storageTotal",
+            type: "kv",
+            display: txt(
+              (modulesData.storage.totalBytes / 1e9).toFixed(0) + " GB",
             ),
           },
           {
@@ -543,7 +606,7 @@ function transformDataToRenderFormat(modulesData, updateText = true) {
       const usedPct = modulesData.storage.totalBytes
         ? Math.round(
             (modulesData.storage.usedBytes / modulesData.storage.totalBytes) *
-              100
+              100,
           )
         : 0;
 
@@ -562,7 +625,7 @@ function transformDataToRenderFormat(modulesData, updateText = true) {
                 (modulesData.storage.totalBytes -
                   modulesData.storage.usedBytes) /
                 1e9
-              ).toFixed(1) + " GB"
+              ).toFixed(1) + " GB",
             ),
           },
         ],
@@ -572,10 +635,10 @@ function transformDataToRenderFormat(modulesData, updateText = true) {
 
   // --- 6. DISPLAY ---
   if (modulesData.display) {
-    // A. OVERLAY
-    if (modulesData.display.screens) {
+    // Si c'est l'overlay actif -> Mode Overlay
+    if (activeOverlayId === "display") {
       const others =
-        modulesData.display.screens.length > 1
+        modulesData.display.screens && modulesData.display.screens.length > 1
           ? modulesData.display.screens
               .slice(1)
               .map((s) => `${s.w}x${s.h}`)
@@ -587,17 +650,28 @@ function transformDataToRenderFormat(modulesData, updateText = true) {
         content: [
           {
             id: "primDisplay",
+            type: "kv",
+            title: "Primary Display",
             display: txt(
-              `${modulesData.display.width}x${modulesData.display.height}`
+              `${modulesData.display.width}x${modulesData.display.height}`,
             ),
           },
-          { id: "otherDisplays", display: txt(others) },
-          // Récupération du GPU depuis le module Display (Correction architecture)
-          { id: "gpu", display: txt(modulesData.display.gpu || "Unknown") },
+          {
+            id: "otherDisplays",
+            type: "kv",
+            title: "Secondary",
+            display: txt(others),
+          },
+          {
+            id: "gpu",
+            type: "kv",
+            title: "GPU",
+            display: txt(modulesData.display.gpu || "Unknown"),
+          },
         ],
       };
     }
-    // B. CARD
+    // Sinon -> Mode Carte (C'est ici qu'on passera à l'init)
     else {
       state.cards.push({
         id: "display",
@@ -605,7 +679,7 @@ function transformDataToRenderFormat(modulesData, updateText = true) {
           {
             id: "displayMain",
             display: txt(
-              `${modulesData.display.width}x${modulesData.display.height}`
+              `${modulesData.display.width}x${modulesData.display.height}`,
             ),
           },
           { id: "displayDef", display: txt("Primary") },
@@ -631,54 +705,72 @@ function transformDataToRenderFormat(modulesData, updateText = true) {
       ],
     });
 
-    // OVERLAY CHROME DETECTED (Si on est en mode overlay chrome)
-    if (state.overlay === null && modulesData.system.languages) {
-      // Petit hack : comme "system" est toujours là, on ne peut pas déduire l'overlay
-      // juste par la présence de modulesData.system. Mais si on a fetché les langues,
-      // c'est qu'on a probablement besoin de l'overlay Chrome (ou que c'est en cache).
-      // Cependant, l'orchestrateur (Main) force déjà l'ID de l'overlay si besoin.
-      // Ici on remplit juste si l'ID correspond.
-    }
-
-    // Note : Pour l'overlay Chrome, si l'ID est activé, on peut remplir les champs
-    // J'ajoute une vérification explicite si on doit générer l'overlay Chrome
-    // (Cela suppose que modulesData.system contienne les infos étendues)
-    if (modulesData.system.languages) {
-      // On ne l'ajoute que si c'est l'overlay actif ou demandé
-      // (Dans ton architecture actuelle, 'state.overlay' est unique)
-      // On peut le laisser null ici et laisser le Main gérer l'ID,
-      // mais il faut préparer le contenu "au cas où".
-      // Pour simplifier : Si on a les données étendues, on prépare l'objet.
-      const chromeOverlay = {
+    if (activeOverlayId === "chrome") {
+      state.overlay = {
         id: "chrome",
         content: [
-          { id: "chromeVersion", display: txt(modulesData.system.browserVer) },
-          { id: "chromeLanguages", display: txt(modulesData.system.languages) },
+          {
+            id: "chromeVersion",
+            type: "kv",
+            title: "Version",
+            display: txt(modulesData.system.browserVer),
+          },
+          {
+            id: "chromeLanguages",
+            type: "kv",
+            title: "Languages",
+            display: txt(modulesData.system.languages),
+          },
           {
             id: "chromeExtensions",
-            display: txt(modulesData.system.extensions),
+            type: "kv", // Espace ajouté ici
+            title: "Active Exts",
+            display: txt(modulesData.system.extensions), // Et ici
           },
         ],
       };
-      // Si on est en train de construire l'overlay chrome, on l'assigne
-      // (Le main.js décidera d'utiliser cet objet si activeOverlayId === 'chrome')
-      // Mais comme transformData est stateless, on renvoie l'objet si on a les datas.
-      // Le main écrasera si ce n'est pas le bon ID.
-      if (!state.overlay) state.overlay = chromeOverlay;
     }
   }
 
   // --- 8. SETTINGS ---
-  // On récupère la version depuis system si dispo, sinon fallback
   const ver =
     modulesData.system && modulesData.system.appVersion
       ? modulesData.system.appVersion
       : "unknown";
 
-  state.cards.push({
-    id: "settings",
-    content: [{ id: "appVersion", display: txt(ver) }],
-  });
+  // Lecture de l'état réel pour le switch Thème
+  const currentTheme = document.body.getAttribute("data-theme") || "dark";
+
+  if (activeOverlayId === "settings") {
+    state.overlay = {
+      id: "settings",
+      content: [
+        {
+          id: "appVersion",
+          type: "kv",
+          title: "Version : ",
+          display: txt(ver),
+        },
+        {
+          id: "toggleTheme",
+          type: "switch",
+          title: "Dark/Light Theme",
+          value: currentTheme === "dark", // Coché si Dark
+        },
+        {
+          id: "toggleUnit",
+          type: "switch",
+          title: "Temperature Unit °F",
+          value: appUnit === "F", // Coché si Fahrenheit
+        },
+      ],
+    };
+  } else {
+    state.cards.push({
+      id: "settings",
+      content: [{ id: "appVersion", display: txt(ver) }],
+    });
+  }
 
   return state;
 }
@@ -706,9 +798,31 @@ async function gameLoop(timestamp) {
     // B. FETCH
     const sysData = await store.getSystemState(scope);
 
+    // [DEBUG] Log des données brutes reçues du Store si un overlay est ouvert
+    if (activeOverlayId) {
+      // On ne loggue que sur les ticks majeurs (texte) pour ne pas saturer la console (1 fois/sec)
+      if (updateText) {
+        console.log(
+          `📥 [DataStore -> Main] Données brutes pour l'overlay "${activeOverlayId}" :`,
+          sysData,
+        );
+      }
+    }
+
     // C. TRANSFORMATION
     // On passe le booléen basé sur le tickCount
-    const renderState = transformDataToRenderFormat(sysData, updateText);
+    const renderState = transformDataToRenderFormat(
+      sysData,
+      updateText,
+      activeOverlayId,
+    );
+
+    // [DEBUG] Log complet du Payload envoyé au Renderer
+    // Condition : Uniquement si un overlay est actif ET que c'est un tick de mise à jour du texte (1Hz)
+    // Cela évite de spammer la console 60 fois par seconde tout en montrant l'objet complet.
+    if (renderState.overlay && updateText) {
+      console.log("📦 [Main -> Renderer] Payload complet :", renderState);
+    }
 
     // D. RENDU
     updateInterface(renderState);

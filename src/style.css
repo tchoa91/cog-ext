@@ -81,7 +81,10 @@ body {
   height: 600px;
   background-color: var(--bg-color);
   color: var(--text-main);
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -104,7 +107,9 @@ body {
   font-weight: 700;
 
   /* Transition douce pour le changement de thème */
-  transition: background-color 0.3s, color 0.3s;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
 }
 
 .monitor-block {
@@ -122,7 +127,10 @@ body {
   border: var(--border-subtle);
 
   /* Interaction */
-  transition: transform 0.1s, background-color 0.2s, border-color 0.2s;
+  transition:
+    transform 0.1s,
+    background-color 0.2s,
+    border-color 0.2s;
 }
 .monitor-block.interactive {
   cursor: pointer;
@@ -222,7 +230,9 @@ body {
   flex-direction: column; /* On empile verticalement */
   align-items: flex-start; /* On cale tout à gauche */
   justify-content: flex-start; /* On cale tout en haut */
-  transition: transform 0.1s, background 0.2s;
+  transition:
+    transform 0.1s,
+    background 0.2s;
 }
 .card.interactive {
   cursor: pointer;
@@ -232,7 +242,8 @@ body {
   transform: translateY(-1px);
   box-shadow: var(--shadow);
 }
-.card h3 {
+.card h3,
+#overlay h3 {
   font-size: 1.75rem;
   font-weight: 300;
   z-index: 2;
@@ -344,7 +355,8 @@ body {
   transform: scale(0.5);
 
   /* Transition ralentie (0.45s) pour la visibilité */
-  transition: opacity 0.3s ease,
+  transition:
+    opacity 0.3s ease,
     transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.1);
 }
 
@@ -379,10 +391,192 @@ body {
   color: var(--text-main);
   font-size: 1.8rem;
   cursor: pointer;
-  transition: color 0.2s, transform 0.2s;
+  transition:
+    color 0.2s,
+    transform 0.2s;
   z-index: 10; /* Sécurité pour être bien au-dessus */
 }
 #close-overlay:hover {
   opacity: 1;
   transform: scale(1.1);
+}
+
+/* --- OVERLAY COMPONENTS --- */
+
+/* Conteneurs génériques */
+.overlay-section {
+  margin-bottom: 20px;
+}
+
+.overlay-header-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+/* Key-Value Rows (ex: Model, Arch...) */
+.overlay-kv-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 4px;
+}
+
+.overlay-kv-label {
+  color: var(--text-muted);
+}
+
+.overlay-kv-val {
+  font-weight: 500;
+}
+
+/* CPU Cores Grid */
+.overlay-cores-grid {
+  display: flex;
+  gap: 4px;
+  height: 60px;
+  align-items: flex-end;
+}
+
+.core-track {
+  flex: 1;
+  background: var(--bar-bg);
+  height: 100%;
+  position: relative;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.core-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--accent);
+  transition: height 0.2s;
+  /* La height reste en inline car dynamique */
+}
+
+/* --- OVERLAY : TEMPERATURE GRID (olTempList) --- */
+
+.overlay-temp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  gap: 8px;
+}
+
+.temp-item {
+  background: var(--surface);
+  padding: 6px;
+  border-radius: 4px;
+  text-align: center;
+  border: 1px solid var(--border-subtle);
+}
+
+.temp-label {
+  font-size: 0.75em;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+  text-transform: uppercase;
+}
+
+.temp-val {
+  font-weight: 600;
+  font-size: 0.9em;
+}
+
+/* --- OVERLAY : DISCS LIST (olDiscsList) --- */
+
+.overlay-discs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.disk-item {
+  background: var(--surface);
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
+}
+
+.disk-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9em;
+  margin-bottom: 6px;
+  align-items: baseline;
+}
+
+.disk-name {
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 60%;
+}
+
+.disk-stats {
+  color: var(--text-muted);
+  font-size: 0.85em;
+}
+
+/* --- OVERLAY : SWITCHES --- */
+
+.overlay-switch-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* The Switch Container */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--bar-bg);
+  transition: 0.4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: var(--accent);
+}
+
+input:checked + .slider:before {
+  transform: translateX(18px);
 }

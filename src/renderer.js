@@ -1,3 +1,15 @@
+/**
+ * @file        renderer.js
+ * @description Moteur de rendu (View). Gère exclusivement la manipulation du DOM,
+ * les mises à jour visuelles optimisées (cache) et les événements UI.
+ * @author      François Bacconnet <https://github.com/tchoa91>
+ * @copyright   2026 François Bacconnet
+ * @license     GPL-3.0
+ * @version     2.0
+ * @homepage    https://ext.tchoa.com
+ * @see         https://github.com/tchoa91/cog-ext
+ */
+
 // Constantes graphiques
 const SVGS = {
   chevron: `<svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>`,
@@ -9,12 +21,14 @@ let topBarEl;
 let gridEl;
 let overlayEl;
 let closeBtnEl;
+let appCallbacks = null;
 
 // Optimisation : On mémorise les valeurs pour ne toucher le DOM que si nécessaire
 const renderCache = {};
 
 // === 2. INITIALISATION ===
 export function initRenderer(config, callbacks) {
+  appCallbacks = callbacks;
   gridEl = document.getElementById("dashboard-grid");
   topBarEl = document.getElementById("topbar");
   overlayEl = document.getElementById("overlay");
@@ -31,7 +45,18 @@ export function initRenderer(config, callbacks) {
 
 function setupGlobalEvents(callbacks) {
   closeBtnEl.addEventListener("click", () => callbacks.onClose());
-  overlayEl.addEventListener("click", () => callbacks.onClose());
+  overlayEl.addEventListener("click", (e) => {
+    // CORRECTION : On ferme si on clique sur :
+    // 1. Le backdrop extérieur (overlayEl)
+    // 2. Le conteneur interne vide (overlay-content)
+    // Mais on NE ferme PAS si e.target est un bouton, un texte, un switch, etc.
+    if (
+      e.target === overlayEl ||
+      e.target.classList.contains("overlay-content")
+    ) {
+      callbacks.onClose();
+    }
+  });
   gridEl.addEventListener("dblclick", (e) => {
     if (e.target === gridEl) callbacks.onThemeToggle();
   });
@@ -66,7 +91,7 @@ export function buildInterface(config, callbacks) {
               : ""
           }
           ${item.type === "dot" ? `<div class="monitor-dot"></div>` : ""}
-      </div>`
+      </div>`,
     )
     .join("");
 
@@ -89,7 +114,7 @@ export function buildInterface(config, callbacks) {
                 ? `<div class="card-watermark">${SVGS.chevron}</div>`
                 : ""
             }
-        </div>`
+        </div>`,
     )
     .join("");
 
@@ -123,7 +148,7 @@ function renderCardContent(contentItems) {
     .join("");
 }
 
-// === 4. MISE A JOUR OPTIMISÉE (UPDATE) ===
+// === 4. MISE A JOUR (UPDATE) ===
 export function updateInterface(payload) {
   // A. GESTION DES MONITORS (TopBar)
   if (payload.monitors) {
@@ -251,7 +276,201 @@ export function updateInterface(payload) {
 
   // C. GESTION OVERLAY
   if (payload.overlay) {
-    // Logique future pour l'overlay dynamique
+    const ov = payload.overlay;
+    const overlayBody = document.getElementById("overlay-body");
+
+    // 1. Construction de la structure (Uniquement si l'ID de l'overlay change)
+    if (renderCache["activeOverlay"] !== ov.id) {
+      overlayBody.innerHTML = ov.content
+        .map((item) => {
+          // Type: Barre horizontale (ex: Charge Moyenne)
+          if (item.type === "olBar") {
+            return `
+            <div class="overlay-section">
+                <div class="overlay-header-row">
+                    <span class="overlay-label">${item.title || ""}</span>
+                    <span class="overlay-val" data-oid="${item.id}-txt">--</span>
+                </div>
+                <div class="monitor-bar-track">
+                    <div class="monitor-bar-fill" data-oid="${item.id}-bar" style="width: 0%"></div>
+                </div>
+            </div>`;
+          }
+
+          // Type: Liste de charge (ex: Coeurs CPU)
+          if (item.type === "olLoadList") {
+            return `
+            <div class="overlay-section">
+                <div style="margin-bottom:8px;" class="overlay-label">${item.title || ""}</div>
+                <div class="overlay-cores-grid" data-oid="${item.id}-grid">
+                     </div>
+            </div>`;
+          }
+
+          // Type: Clé/Valeur (ex: Modèle, Architecture)
+          if (item.type === "kv") {
+            return `
+             <div class="overlay-kv-row">
+                <span class="overlay-kv-label">${item.title || ""}</span>
+                <span class="overlay-kv-val" data-oid="${item.id}-txt">--</span>
+             </div>`;
+          }
+
+          // Type: Liste Températures (olTempList)
+          if (item.type === "olTempList") {
+            return `
+            <div class="overlay-section">
+                <div style="margin-bottom:8px;" class="overlay-label">${item.title || ""}</div>
+                <div class="overlay-temp-grid" data-oid="${item.id}-grid">
+                     </div>
+            </div>`;
+          }
+
+          // Type: Liste Disques/Partitions (olDiscsList)
+          if (item.type === "olDiscsList") {
+            return `
+            <div class="overlay-section">
+                <div style="margin-bottom:8px;" class="overlay-label">${item.title || ""}</div>
+                <div class="overlay-discs-list" data-oid="${item.id}-list">
+                     </div>
+            </div>`;
+          }
+
+          // Type: Switch (Toggle)
+          if (item.type === "switch") {
+            return `
+            <div class="overlay-switch-row">
+                <span class="overlay-label">${item.title || ""}</span>
+                <label class="switch">
+                    <input type="checkbox" id="${item.id}" ${item.value ? "checked" : ""}>
+                    <span class="slider"></span>
+                </label>
+            </div>`;
+          }
+
+          return "";
+        })
+        .join("");
+
+      renderCache["activeOverlay"] = ov.id;
+
+      // --- AJOUT : Attachement des événements dynamiques ---
+      // On le fait ici car on vient de recréer le HTML de l'overlay
+      const switches = overlayBody.querySelectorAll('input[type="checkbox"]');
+      switches.forEach((cb) => {
+        cb.addEventListener("change", (e) => {
+          if (!appCallbacks) return;
+
+          // Mapping ID -> Action
+          if (e.target.id === "toggleTheme") {
+            appCallbacks.onThemeToggle();
+          }
+          if (e.target.id === "toggleUnit") appCallbacks.onUnitToggle(); // Futur usage
+        });
+      });
+    }
+
+    // 2. Mise à jour des données (À chaque tick)
+    ov.content.forEach((item) => {
+      // Mise à jour Texte (commun à tous)
+      if (item.display !== undefined) {
+        const txtEl = overlayBody.querySelector(`[data-oid="${item.id}-txt"]`);
+        if (txtEl) txtEl.textContent = item.display;
+      }
+
+      // Mise à jour Barre (olBar)
+      if (item.type === "olBar" && item.value !== undefined) {
+        const barEl = overlayBody.querySelector(`[data-oid="${item.id}-bar"]`);
+        if (barEl) barEl.style.width = `${item.value}%`;
+      }
+
+      // Mise à jour Liste (olLoadList) - Gestion dynamique des enfants
+      if (item.type === "olLoadList" && Array.isArray(item.value)) {
+        const gridEl = overlayBody.querySelector(
+          `[data-oid="${item.id}-grid"]`,
+        );
+        if (gridEl) {
+          // Si le nombre de cœurs diffère (init), on recrée les barres
+          if (gridEl.children.length !== item.value.length) {
+            gridEl.innerHTML = item.value
+              .map(
+                () =>
+                  `<div class="core-track">
+                      <div class="core-fill" style="height: 0%"></div>
+                   </div>`,
+              )
+              .join("");
+          }
+          // Mise à jour des hauteurs
+          Array.from(gridEl.children).forEach((child, i) => {
+            const fill = child.querySelector(".core-fill");
+            if (fill) fill.style.height = `${item.value[i]}%`;
+          });
+        }
+      }
+
+      // Mise à jour Températures (olTempList)
+      if (item.type === "olTempList" && Array.isArray(item.value)) {
+        const gridEl = overlayBody.querySelector(
+          `[data-oid="${item.id}-grid"]`,
+        );
+        const symbol = item.unitSymbol || "°C";
+        // On vérifie si on doit redessiner (changement de nombre de zones ou premier rendu)
+        if (gridEl) {
+          // Astuce perf : On recrée le HTML car le nombre de zones est petit (<20)
+          // et l'opération est légère.
+          gridEl.innerHTML = item.value
+            .map(
+              (temp, i) => `
+                <div class="temp-item">
+                    <div class="temp-label">Zone ${i}</div>
+                    <div class="temp-val">${temp}${symbol}</div>
+                </div>
+             `,
+            )
+            .join("");
+        }
+      }
+
+      // Mise à jour Disques (olDiscsList)
+      if (item.type === "olDiscsList" && Array.isArray(item.value)) {
+        const listEl = overlayBody.querySelector(
+          `[data-oid="${item.id}-list"]`,
+        );
+        if (listEl) {
+          listEl.innerHTML = item.value
+            .map((disk) => {
+              // Calcul pourcentage simple (sécurité div par 0 incluse)
+              const pct = disk.size
+                ? Math.round(((disk.size - disk.free) / disk.size) * 100)
+                : 0;
+
+              return `
+                 <div class="disk-item">
+                    <div class="disk-header">
+                        <span class="disk-name" title="${disk.label}">${disk.label || "Disk"}</span>
+                        <span class="disk-stats">${((disk.size - disk.free) / 1e9).toFixed(1)} / ${(disk.size / 1e9).toFixed(0)} GB</span>
+                    </div>
+                    <div class="monitor-bar-track">
+                        <div class="monitor-bar-fill" style="width: ${pct}%"></div>
+                    </div>
+                 </div>
+                 `;
+            })
+            .join("");
+        }
+      }
+
+      // Mise à jour Switch
+      if (item.type === "switch" && item.value !== undefined) {
+        const cb = overlayBody.querySelector(`#${item.id}`);
+        if (cb && cb.checked !== item.value) {
+          cb.checked = item.value;
+        }
+      }
+
+      // Fin du 2. Mise à jour
+    });
   }
 }
 

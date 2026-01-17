@@ -1,3 +1,15 @@
+/**
+ * @file        data-store.js
+ * @description Couche d'accès aux données (Data Layer). Interroge les APIs système Chrome
+ * (CPU, Memory, Storage...) et normalise les données brutes pour l'application.
+ * @author      François Bacconnet <https://github.com/tchoa91>
+ * @copyright   2026 François Bacconnet
+ * @license     GPL-3.0
+ * @version     2.0
+ * @homepage    https://ext.tchoa.com
+ * @see         https://github.com/tchoa91/cog-ext
+ */
+
 export class DataStore {
   constructor() {
     this.version = "5.1 - Pure Raw Data";
@@ -28,11 +40,14 @@ export class DataStore {
 
     // 3. Aiguillage selon le Scope
 
-    // Cas A : Dashboard complet (Grille) -> On charge les résumés pour remplir les cartes
+    // CORRECTION : On charge TOUJOURS les infos statiques (Version/OS).
+    // Comme c'est mis en cache interne par _fetchSystemStatic, c'est gratuit après le 1er appel.
+    pSysStatic = this._fetchSystemStatic();
+
+    // Cas A : Dashboard complet (Grille)
     if (scope === "cards") {
-      pSysStatic = this._fetchSystemStatic(); // Info OS/Version
-      pStorage = this._fetchStorageSummary(); // Juste l'espace libre global
-      pDisplay = this._fetchDisplaySummary(); // Juste la résolution principale
+      pStorage = this._fetchStorageSummary();
+      pDisplay = this._fetchDisplaySummary();
     }
 
     // Cas B : Focus Module spécifique (Overlay Dynamique) -> On charge les détails UNIQUEMENT pour ce module
@@ -69,12 +84,14 @@ export class DataStore {
       output.cpuUsage = {
         usagePct: cpu.usageTotal,
         model: cpu.modelName,
+        archName: cpu.archName,
+        features: cpu.features,
       };
       // On n'ajoute les détails (coeurs) que s'ils sont pertinents pour l'overlay
       // (Note: dans notre implémentation mock actuelle, on a tout, mais on pourrait filtrer ici si l'API était lourde)
       if (scope === "cpuUsage") {
         output.cpuUsage.coresPct = cpu.cores;
-        output.cpuUsage.features = cpu.features;
+        // output.cpuUsage.features = cpu.features;
       }
 
       // CPU TEMP (Module séparé)
@@ -140,60 +157,73 @@ export class DataStore {
   async _fetchCpuStats() {
     return new Promise((resolve) => {
       chrome.system.cpu.getInfo((info) => {
-        // Variables pour le calcul de CHARGE
+        // [DEBUG] On regarde ce que Chrome nous donne vraiment
+        // console.log("🔍 [DataStore] RAW CPU Info:", info);
+
+        // --- 1. LOGIQUE UTILISATEUR (Nettoyage) ---
+        // Modèle
+        let cpuNameText = "Unknown";
+        if (info.modelName && info.modelName.length > 0) {
+          cpuNameText = info.modelName
+            .replace(/\(R\)/g, "®")
+            .replace(/\(TM\)/, "™");
+        }
+
+        // Architecture
+        const cpuArchText = info.archName
+          ? info.archName.replace(/_/g, "-")
+          : "N/A";
+
+        // Features
+        const cpuFeaturesText =
+          info.features && info.features.length > 0
+            ? info.features.join(", ").toUpperCase().replace(/_/g, ".")
+            : "-";
+
+        // --- 2. CALCUL CHARGE (Code existant) ---
         let totalUsageAcc = 0;
         let coresPct = [];
 
-        // A. CALCUL DIFFERENTIEL DE LA CHARGE
-        // On a besoin de l'état précédent pour comparer T2 - T1
         if (this.previousCpuInfo) {
           coresPct = info.processors.map((proc, i) => {
             const prev = this.previousCpuInfo.processors[i];
-
-            // Delta (Différence de temps total et idle entre les deux mesures)
             const deltaTotal = proc.usage.total - prev.usage.total;
             const deltaIdle = proc.usage.idle - prev.usage.idle;
-
-            // Calcul du pourcentage utilisé
             const pct =
               deltaTotal > 0
                 ? ((deltaTotal - deltaIdle) / deltaTotal) * 100
                 : 0;
-
-            totalUsageAcc += pct; // On cumule pour la moyenne globale
+            totalUsageAcc += pct;
             return Math.round(pct);
           });
         } else {
-          // Premier lancement : pas d'historique, on met tout à 0
           coresPct = info.processors.map(() => 0);
         }
 
-        // On sauvegarde l'état actuel pour le prochain tick
         this.previousCpuInfo = info;
 
-        // B. GESTION TEMPÉRATURE (Spécifique ChromeOS)
+        // --- 3. CALCUL TEMPÉRATURE (Code existant) ---
         let computedTemp = null;
         let zones = [];
-
         if (info.temperatures && info.temperatures.length > 0) {
           zones = info.temperatures;
-          // Moyenne pondérée des sondes
           const sum = zones.reduce((a, b) => a + b, 0);
           computedTemp = Math.round(sum / zones.length);
         }
 
-        // C. RETOUR FINAL
-        resolve({
-          // Partie USAGE
+        // --- 4. RETOUR PROPRE ---
+        const result = {
           usageTotal: Math.round(totalUsageAcc / info.processors.length),
           cores: coresPct,
-          modelName: info.modelName,
-          features: info.features,
-
-          // Partie TEMP (null si non dispo)
+          // On renvoie les versions nettoyées
+          modelName: cpuNameText,
+          archName: cpuArchText,
+          features: cpuFeaturesText,
           temp: computedTemp,
           tempZones: zones,
-        });
+        };
+
+        resolve(result);
       });
     });
   }
@@ -260,11 +290,22 @@ export class DataStore {
   async _fetchStorageDetails() {
     return new Promise((resolve) => {
       chrome.system.storage.getInfo(async (units) => {
-        // Règle v1.2 : Si tableau vide, on renvoie null pour cacher la carte
+        // 1. Si aucun disque détecté, on cache la carte
         if (!units || units.length === 0) {
           return resolve(null);
         }
 
+        // 2. CORRECTION CHROMEOS : Feature Detection stricte
+        // Si la fonction permettant de lire la capacité est absente (cas ChromeOS actuel),
+        // on renvoie null immédiatement pour NE PAS afficher la carte (ni 0, ni erreur).
+        if (typeof chrome.system.storage.getAvailableCapacity !== "function") {
+          console.warn(
+            "Storage API limitée (ChromeOS) : Module Storage désactivé.",
+          );
+          return resolve(null);
+        }
+
+        // 3. Si la fonction existe, on procède au calcul normal
         const partitionsPromises = units.map((unit) => {
           return new Promise((resUnit) => {
             chrome.system.storage.getAvailableCapacity(unit.id, (info) => {
@@ -272,7 +313,7 @@ export class DataStore {
                 ? 0
                 : info.availableCapacity;
 
-              // Règle v1.2 : Nettoyage du nom (suppression caractères non-ascii)
+              // Nettoyage du nom
               let cleanName = (unit.name || `Partition ${unit.id}`)
                 .replace(/[^\x20-\x7E]/g, "")
                 .trim();
@@ -290,7 +331,6 @@ export class DataStore {
 
         const partitions = await Promise.all(partitionsPromises);
 
-        // Sécurité supplémentaire : si après filtrage on a un souci
         if (partitions.length === 0) return resolve(null);
 
         const mainDisk =
@@ -315,6 +355,18 @@ export class DataStore {
   async _fetchDisplayDetails() {
     return new Promise((resolve) => {
       chrome.system.display.getInfo((displays) => {
+        // AJOUT : Gestion du cas tableau vide/undefined
+        if (!displays || displays.length === 0) {
+          console.warn("Display Info: Aucune information retournée.");
+          // On renvoie un objet "vide" pour ne pas casser l'init
+          return resolve({
+            width: 0,
+            height: 0,
+            gpu: "Unknown",
+            screens: [],
+          });
+        }
+
         const primary = displays.find((d) => d.isPrimary) || displays[0];
 
         const screenList = displays.map((d) => ({
@@ -344,7 +396,7 @@ export class DataStore {
     return new Promise(async (resolve) => {
       // 1. Infos Plateforme (Arch, NaCl...)
       const platform = await new Promise((r) =>
-        chrome.runtime.getPlatformInfo(r)
+        chrome.runtime.getPlatformInfo(r),
       );
 
       // 2. Langues acceptées (pour l'overlay Chrome)
@@ -357,7 +409,7 @@ export class DataStore {
       try {
         const exts = await new Promise((r) => chrome.management.getAll(r));
         const activeExts = exts.filter(
-          (e) => e.enabled && e.type === "extension"
+          (e) => e.enabled && e.type === "extension",
         );
         extCount = activeExts.length;
         // On affiche le nombre + les 3 premières pour ne pas casser l'UI

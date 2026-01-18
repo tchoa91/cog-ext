@@ -45,6 +45,8 @@
   --text-muted: #90a4ae;
   --titles: #90a4ae52;
   --accent: #66bb6a;
+  --warning: #fb8c00; /* Orange 400 */
+  --alert: #fb8c00; /* Red 400 */
   /* --border-subtle: none; */
   --border-subtle: 1px solid #59859321;
   --shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
@@ -62,6 +64,8 @@
   --text-muted: #546e7a;
   --titles: #90a4ae70;
   --accent: #5bb45f;
+  --warning: #f57c00;
+  --alert: #e57373;
   --monitor-bg: rgba(0, 0, 0, 0.05);
   --monitor-hover: var(--card-hover);
   --border-subtle: 1px solid #121b1e13;
@@ -166,6 +170,9 @@ body {
   align-items: center;
   margin-right: 4px; /* Espace entre l'éclair et le % */
   color: var(--accent); /* L'éclair prend la couleur verte/accent */
+  transition:
+    color 0.6s ease,
+    fill 0.6s ease;
 }
 
 .monitor-status-icon svg {
@@ -195,16 +202,51 @@ body {
   min-width: 30px; /* Évite le saut si la valeur change de taille */
   text-align: right;
 }
-
 .monitor-bar-fill {
   height: 100%;
   background-color: var(--accent);
   width: 0%;
   border-radius: 5px;
-  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    width 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.6s ease;
+}
+.monitor-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--text-muted); /* Couleur par défaut (gris/éteint) */
+  transition: background-color 0.3s ease;
+  align-self: center;
+  transition: background-color 0.6s ease;
+}
+.monitor-block[data-state="normal"] .monitor-dot {
+  background-color: var(--accent);
+}
+
+/* 2. WARNING (Orange) */
+/* S'applique au Remplissage des barres, aux Icônes et aux Points */
+[data-state="warning"] .monitor-bar-fill,
+[data-state="warning"] .monitor-status-icon,
+[data-state="warning"] .monitor-dot,
+.core-fill[data-state="warning"] {
+  background-color: var(--warning);
+  fill: var(--warning);
+  color: var(--warning); /* Pour les SVG utilisant currentColor */
+}
+
+/* 3. ALERT (Rouge) */
+[data-state="alert"] .monitor-bar-fill,
+[data-state="alert"] .monitor-status-icon,
+[data-state="alert"] .monitor-dot,
+.core-fill[data-state="alert"] {
+  background-color: var(--alert);
+  fill: var(--alert);
+  color: var(--alert);
 }
 
 /* --- ZONE B: Grille --- */
+
 #dashboard-grid {
   flex-grow: 1;
   overflow: hidden;
@@ -454,8 +496,9 @@ body {
   left: 0;
   right: 0;
   background: var(--accent);
-  transition: height 0.2s;
-  /* La height reste en inline car dynamique */
+  transition:
+    height 0.2s,
+    background-color 0.6s ease;
 }
 
 /* --- OVERLAY : TEMPERATURE GRID (olTempList) --- */
@@ -484,6 +527,26 @@ body {
 .temp-val {
   font-weight: 600;
   font-size: 0.9em;
+}
+
+/* --- OVERLAY : TEXT LIST (olTextList) --- */
+.overlay-text-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 300px; /* Sécurité si la liste est très longue */
+  overflow-y: auto; /* Scroll si nécessaire */
+}
+
+.overlay-text-list li {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 0.9rem;
+  color: var(--text-main);
+}
+
+.overlay-text-list li:last-child {
+  border-bottom: none;
 }
 
 /* --- OVERLAY : DISCS LIST (olDiscsList) --- */

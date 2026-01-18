@@ -226,6 +226,14 @@ export function updateInterface(payload) {
 
           // Cas A : Barre + Texte combinés (card-bar-row)
           if (targetEl.classList.contains("card-bar-row")) {
+            const keyState = `item-${item.id}-state`;
+            if (
+              item.state !== undefined &&
+              renderCache[keyState] !== item.state
+            ) {
+              targetEl.setAttribute("data-state", item.state);
+              renderCache[keyState] = item.state;
+            }
             // Mise à jour de la barre
             if (
               item.value !== undefined &&
@@ -326,6 +334,15 @@ export function updateInterface(payload) {
             </div>`;
           }
 
+          // Type: Liste textuelle simple (olTextList)
+          if (item.type === "olTextList") {
+            return `
+            <div class="overlay-section">
+                <div class="overlay-label" style="margin-bottom:5px;">${item.title || ""}</div>
+                <ul class="overlay-text-list" data-oid="${item.id}-list"></ul>
+            </div>`;
+          }
+
           // Type: Liste Disques/Partitions (olDiscsList)
           if (item.type === "olDiscsList") {
             return `
@@ -384,6 +401,19 @@ export function updateInterface(payload) {
         if (barEl) barEl.style.width = `${item.value}%`;
       }
 
+      // Mise à jour TextList (olTextList)
+      if (item.type === "olTextList" && Array.isArray(item.value)) {
+        const listEl = overlayBody.querySelector(
+          `[data-oid="${item.id}-list"]`,
+        );
+        if (listEl) {
+          // On recrée les <li> à chaque fois (léger pour du texte simple)
+          listEl.innerHTML = item.value
+            .map((line) => `<li>${line}</li>`)
+            .join("");
+        }
+      }
+
       // Mise à jour Liste (olLoadList) - Gestion dynamique des enfants
       if (item.type === "olLoadList" && Array.isArray(item.value)) {
         const gridEl = overlayBody.querySelector(
@@ -403,8 +433,16 @@ export function updateInterface(payload) {
           }
           // Mise à jour des hauteurs
           Array.from(gridEl.children).forEach((child, i) => {
+            const data = item.value[i];
+            const pct = typeof data === "object" ? data.pct : data;
+            const state = typeof data === "object" ? data.state : undefined;
+
             const fill = child.querySelector(".core-fill");
-            if (fill) fill.style.height = `${item.value[i]}%`;
+            if (fill) {
+              fill.style.height = `${pct}%`;
+              if (state) fill.setAttribute("data-state", state);
+              else fill.removeAttribute("data-state");
+            }
           });
         }
       }

@@ -347,41 +347,35 @@ export class DataStore {
   }
 
   async _fetchDisplaySummary() {
-    // Même stratégie : on fetch tout, on filtre après.
-    const details = await this._fetchDisplayDetails();
-    return { width: details.width, height: details.height };
+    return await this._fetchDisplayDetails();
   }
 
   async _fetchDisplayDetails() {
     return new Promise((resolve) => {
       chrome.system.display.getInfo((displays) => {
-        // AJOUT : Gestion du cas tableau vide/undefined
         if (!displays || displays.length === 0) {
           console.warn("Display Info: Aucune information retournée.");
-          // On renvoie un objet "vide" pour ne pas casser l'init
-          return resolve({
-            width: 0,
-            height: 0,
-            gpu: "Unknown",
-            screens: [],
-          });
+          return resolve({ width: 0, height: 0, gpu: "Unknown", screens: [] });
         }
 
-        const primary = displays.find((d) => d.isPrimary) || displays[0];
-
+        // 1. On mappe TOUTES les infos utiles (Nom, Interne, Résolution)
         const screenList = displays.map((d) => ({
           id: d.id,
           w: d.bounds.width,
           h: d.bounds.height,
           primary: d.isPrimary,
+          internal: d.isInternal, // <--- AJOUT : Booléen (Vrai si écran de laptop/tablette)
+          name: d.name || "Monitor", // <--- AJOUT : Nom du constructeur/modèle
         }));
 
+        // 2. On isole le primaire pour un accès rapide (facultatif mais pratique)
+        const primary = screenList.find((s) => s.primary) || screenList[0];
+
         resolve({
-          width: primary.bounds.width,
-          height: primary.bounds.height,
-          // Ajout du GPU ici, cohérent avec l'overlay Display
+          width: primary.w,
+          height: primary.h,
           gpu: this._resolveGpuName(),
-          screens: screenList,
+          screens: screenList, // La liste contient maintenant les noms et types
         });
       });
     });
@@ -406,14 +400,20 @@ export class DataStore {
       // Nécessite la permission "management" dans manifest.json
       let extCount = 0;
       let extList = "N/A";
+
       try {
         const exts = await new Promise((r) => chrome.management.getAll(r));
         const activeExts = exts.filter(
           (e) => e.enabled && e.type === "extension",
         );
-        extCount = activeExts.length;
-        // On affiche le nombre + les 3 premières pour ne pas casser l'UI
-        extList = `${extCount} active(s)`;
+
+        if (activeExts.length > 0) {
+          extList = activeExts
+            .map((e) => e.name)
+            .sort((a, b) => a.localeCompare(b));
+        } else {
+          extList = ["None"];
+        }
       } catch (e) {
         console.warn("DataStore: Permission 'management' manquante.");
       }

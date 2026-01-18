@@ -348,20 +348,47 @@ function transformDataToRenderFormat(
     return Math.round(val) + "°C";
   };
 
+  // --- Helper de calcul d'état ---
+  const getLoadState = (
+    val,
+    warnThreshold,
+    alertThreshold,
+    isRising = true,
+  ) => {
+    if (val === null || val === undefined) return "normal";
+    if (isRising) {
+      // Pour CPU, RAM, Temp : alerte si on DÉPASSE le seuil
+      if (val >= alertThreshold) return "alert";
+      if (val >= warnThreshold) return "warning";
+      return "normal";
+    } else {
+      // Pour Batterie : alerte si on DESCEND SOUS le seuil
+      if (val <= alertThreshold) return "alert";
+      if (val <= warnThreshold) return "warning";
+      return "normal";
+    }
+  };
+
   // --- 1. CPU (Usage & Temp) ---
   if (modulesData.cpuUsage) {
     const usage = modulesData.cpuUsage.usagePct;
+    const cpuState = getLoadState(usage, 50, 80);
 
     // A. MONITOR
     state.monitors.push({
       id: "cpu",
       label: txt(`${usage}%`), // Texte freiné
       percent: usage, // Barre fluide (5Hz)
-      state: usage > 80 ? "high" : "normal",
+      state: cpuState,
     });
 
     // B. OVERLAY DETECTED?
     if (activeOverlayId === "cpuUsage") {
+      // Préparation des données pour les cœurs avec leur état individuel
+      const coresData = (modulesData.cpuUsage.coresPct || []).map((c) => ({
+        pct: c,
+        state: getLoadState(c, 50, 80), // On réutilise ton helper
+      }));
       state.overlay = {
         id: "cpuUsage",
         content: [
@@ -371,12 +398,13 @@ function transformDataToRenderFormat(
             title: "Average CPU Load", // Nécessaire pour le renderer
             value: usage,
             display: txt(`${usage}%`),
+            state: cpuState,
           },
           {
             id: "cpuLoadList",
             type: "olLoadList",
             title: "CPU Load per core",
-            value: modulesData.cpuUsage.coresPct || [],
+            value: coresData,
           },
           {
             id: "cpuArc",
@@ -408,6 +436,7 @@ function transformDataToRenderFormat(
             id: "loadBar",
             value: usage,
             display: txt(`${usage}%`),
+            state: cpuState,
           },
         ],
       });
@@ -417,8 +446,8 @@ function transformDataToRenderFormat(
   // --- 1b. CPU TEMP ---
   if (modulesData.cpuTemp) {
     const temp = modulesData.cpuTemp.tempC;
-    // Utilisation du helper
     const displayStr = txt(fmtTemp(temp));
+    const tempState = getLoadState(temp, 81, 101);
 
     // Préparation des zones formatées (Conversion mathématique brute pour la liste)
     let zonesFormatted = undefined;
@@ -439,6 +468,7 @@ function transformDataToRenderFormat(
             title: "Average CPU Temperature",
             value: temp,
             display: displayStr,
+            state: tempState,
           },
           {
             id: "cpuTempList",
@@ -451,7 +481,9 @@ function transformDataToRenderFormat(
     } else {
       state.cards.push({
         id: "cpuTemp",
-        content: [{ id: "tempBar", value: temp, display: displayStr }],
+        content: [
+          { id: "tempBar", value: temp, display: displayStr, state: tempState },
+        ],
       });
     }
   }
@@ -462,18 +494,19 @@ function transformDataToRenderFormat(
     const available = modulesData.memory.availableCapacity;
     const used = total - available;
     const pct = Math.round((used / total) * 100);
+    const memState = getLoadState(pct, 81, 96);
 
     state.monitors.push({
       id: "mem",
       label: txt(`${pct}%`),
       percent: pct,
-      state: pct > 90 ? "high" : "normal",
+      state: memState,
     });
 
     state.cards.push({
       id: "memory",
       content: [
-        { id: "memBar", value: pct, display: txt(`${pct}%`) },
+        { id: "memBar", value: pct, display: txt(`${pct}%`), state: memState },
         { id: "memtotal", display: txt((total / 1e9).toFixed(1) + " GB") },
         { id: "memUsed", display: txt((used / 1e9).toFixed(1) + " GB") },
       ],
@@ -484,13 +517,14 @@ function transformDataToRenderFormat(
   if (modulesData.battery) {
     const pct = Math.round(modulesData.battery.level * 100);
     const isCharging = modulesData.battery.charging;
+    const battState = getLoadState(pct, 50, 15, false);
 
     state.monitors.push({
       id: "batt",
       label: txt(`${pct}%`),
       percent: pct,
       icon: isCharging ? "bolt" : "",
-      state: pct < 20 && !isCharging ? "warning" : "normal",
+      state: battState,
     });
 
     // Logique Temps Restant / Charge
@@ -520,7 +554,12 @@ function transformDataToRenderFormat(
     state.cards.push({
       id: "battery",
       content: [
-        { id: "battBar", value: pct, display: txt(`${pct}%`) },
+        {
+          id: "battBar",
+          value: pct,
+          display: txt(`${pct}%`),
+          state: battState,
+        },
         {
           id: "battStatus",
           display: txt(isCharging ? "Charging" : "On battery"),
@@ -528,7 +567,7 @@ function transformDataToRenderFormat(
         {
           id: "battTime",
           display: txt(timeText),
-          label: txt(labelText), // Mise à jour dynamique du label
+          label: txt(labelText),
         },
       ],
     });
@@ -537,17 +576,22 @@ function transformDataToRenderFormat(
   // --- 4. NETWORK ---
   if (modulesData.network) {
     const isOnline = modulesData.network.online;
+    const netState = isOnline ? "normal" : "alert";
 
     state.monitors.push({
       id: "net",
       label: txt(isOnline ? "ON" : "OFF"),
-      state: isOnline ? "normal" : "warning",
+      state: netState,
     });
 
     state.cards.push({
       id: "network",
       content: [
-        { id: "netStatus", display: txt(isOnline ? "Online" : "Offline") },
+        {
+          id: "netStatus",
+          display: txt(isOnline ? "Online" : "Offline"),
+          state: netState,
+        },
         { id: "netIp", display: txt(modulesData.network.ip || "Hidden/Local") },
       ],
     });
@@ -635,15 +679,26 @@ function transformDataToRenderFormat(
 
   // --- 6. DISPLAY ---
   if (modulesData.display) {
-    // Si c'est l'overlay actif -> Mode Overlay
+    // Récupération de l'écran principal (via la liste enrichie)
+    const screens = modulesData.display.screens || [];
+    const prim = screens.find((s) => s.primary) ||
+      screens[0] || { w: 0, h: 0, internal: false, name: "Unknown" };
+
+    // Logique de Nommage : "Internal Display" ou "Nom du Monitor"
+    const primName = prim.internal ? "Internal Display" : prim.name;
+    const primRes = `${prim.w} x ${prim.h}`;
+
+    // A. MODE OVERLAY
     if (activeOverlayId === "display") {
-      const others =
-        modulesData.display.screens && modulesData.display.screens.length > 1
-          ? modulesData.display.screens
-              .slice(1)
-              .map((s) => `${s.w}x${s.h}`)
-              .join(", ")
-          : "None";
+      // Formatage des écrans secondaires : "Nom (WxH)"
+      const othersList = screens
+        .filter((s) => !s.primary)
+        .map((s) => {
+          const n = s.internal ? "Internal" : s.name;
+          return `${n} : ${s.w} x ${s.h}`;
+        });
+
+      const othersText = othersList.length > 0 ? othersList.join(", ") : "None";
 
       state.overlay = {
         id: "display",
@@ -652,15 +707,15 @@ function transformDataToRenderFormat(
             id: "primDisplay",
             type: "kv",
             title: "Primary Display",
-            display: txt(
-              `${modulesData.display.width}x${modulesData.display.height}`,
-            ),
+            // Demande : Info complète (Nom + Résolution)
+            display: txt(`${primName} : ${primRes}`),
           },
           {
             id: "otherDisplays",
             type: "kv",
             title: "Secondary",
-            display: txt(others),
+            // Demande : Info complète pour les autres aussi
+            display: txt(othersText),
           },
           {
             id: "gpu",
@@ -671,18 +726,19 @@ function transformDataToRenderFormat(
         ],
       };
     }
-    // Sinon -> Mode Carte (C'est ici qu'on passera à l'init)
+    // B. MODE CARTE
     else {
       state.cards.push({
         id: "display",
         content: [
           {
             id: "displayMain",
-            display: txt(
-              `${modulesData.display.width}x${modulesData.display.height}`,
-            ),
+            display: txt(primName),
           },
-          { id: "displayDef", display: txt("Primary") },
+          {
+            id: "displayDef",
+            display: txt(primRes),
+          },
         ],
       });
     }
@@ -721,11 +777,12 @@ function transformDataToRenderFormat(
             title: "Languages",
             display: txt(modulesData.system.languages),
           },
+          // CORRECTION : Utilisation du nouveau type liste
           {
             id: "chromeExtensions",
-            type: "kv", // Espace ajouté ici
-            title: "Active Exts",
-            display: txt(modulesData.system.extensions), // Et ici
+            type: "olTextList", // Nouveau type renderer
+            title: "Active Extensions",
+            value: modulesData.system.extensions, // On passe le tableau
           },
         ],
       };

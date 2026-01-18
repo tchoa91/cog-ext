@@ -199,6 +199,17 @@ const UI_CONFIG = {
 const store = new DataStore();
 
 // --- 2. STATE & TIMING ---
+
+// CONFIGURATION DES SEUILS (Warn = Orange, Alert = Rouge)
+const THRESHOLDS = {
+  cpu: { warn: 70, alert: 90 }, // % Usage
+  cpuCores: { warn: 60, alert: 85 },
+  temp: { warn: 80, alert: 95 }, // °C
+  memory: { warn: 81, alert: 96 }, // % Usage
+  battery: { warn: 30, alert: 15 }, // % Restant (Sens inversé)
+  storage: { warn: 90, alert: 95 }, // % Usage
+};
+
 let tickCount = 0;
 let lastTime = 0;
 
@@ -236,7 +247,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // ÉTAPE 3 : Définition des Actions (Callbacks)
   const callbacks = {
-    onOpen: async (cardId) => {
+    onOpen: async (cardId, event) => {
+      const clickedEl = event ? event.currentTarget : null;
       if (activeOverlayId === cardId) {
         activeOverlayId = null;
         setOverlayState(false);
@@ -262,7 +274,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         updateInterface(renderState);
       }
       activeOverlayId = cardId;
-      setOverlayState(true, { title: title });
+      setOverlayState(true, { title: title }, { currentTarget: clickedEl });
       tickCount = TEXT_UPDATE_RATIO - 1;
     },
 
@@ -373,7 +385,11 @@ function transformDataToRenderFormat(
   // --- 1. CPU (Usage & Temp) ---
   if (modulesData.cpuUsage) {
     const usage = modulesData.cpuUsage.usagePct;
-    const cpuState = getLoadState(usage, 50, 80);
+    const cpuState = getLoadState(
+      usage,
+      THRESHOLDS.cpu.warn,
+      THRESHOLDS.cpu.alert,
+    );
 
     // A. MONITOR
     state.monitors.push({
@@ -388,7 +404,11 @@ function transformDataToRenderFormat(
       // Préparation des données pour les cœurs avec leur état individuel
       const coresData = (modulesData.cpuUsage.coresPct || []).map((c) => ({
         pct: c,
-        state: getLoadState(c, 50, 80), // On réutilise ton helper
+        state: getLoadState(
+          c,
+          THRESHOLDS.cpuCores.warn,
+          THRESHOLDS.cpuCores.alert,
+        ), // On réutilise ton helper
       }));
       state.overlay = {
         id: "cpuUsage",
@@ -448,7 +468,14 @@ function transformDataToRenderFormat(
   if (modulesData.cpuTemp) {
     const temp = modulesData.cpuTemp.tempC;
     const displayStr = txt(fmtTemp(temp));
-    const tempState = getLoadState(temp, 81, 101);
+    const tempState = getLoadState(
+      temp,
+      THRESHOLDS.temp.warn,
+      THRESHOLDS.temp.alert,
+    );
+    // Conversion sur une échelle de 120°C
+    // Exemple : 60°C deviendra 50%
+    const tempPct = Math.min(Math.round((temp / 120) * 100), 100);
 
     // Préparation des zones formatées (Conversion mathématique brute pour la liste)
     let zonesFormatted = undefined;
@@ -467,7 +494,7 @@ function transformDataToRenderFormat(
             id: "cpuTempAverage",
             type: "olBar",
             title: "Average CPU Temperature",
-            value: temp,
+            value: tempPct,
             display: displayStr,
             state: tempState,
           },
@@ -483,7 +510,12 @@ function transformDataToRenderFormat(
       state.cards.push({
         id: "cpuTemp",
         content: [
-          { id: "tempBar", value: temp, display: displayStr, state: tempState },
+          {
+            id: "tempBar",
+            value: tempPct,
+            display: displayStr,
+            state: tempState,
+          },
         ],
       });
     }
@@ -495,7 +527,11 @@ function transformDataToRenderFormat(
     const available = modulesData.memory.availableCapacity;
     const used = total - available;
     const pct = Math.round((used / total) * 100);
-    const memState = getLoadState(pct, 81, 96);
+    const memState = getLoadState(
+      pct,
+      THRESHOLDS.memory.warn,
+      THRESHOLDS.memory.alert,
+    );
 
     state.monitors.push({
       id: "mem",
@@ -525,7 +561,12 @@ function transformDataToRenderFormat(
   if (modulesData.battery) {
     const pct = Math.round(modulesData.battery.level * 100);
     const isCharging = modulesData.battery.charging;
-    const battState = getLoadState(pct, 50, 15, false);
+    const battState = getLoadState(
+      pct,
+      THRESHOLDS.battery.warn,
+      THRESHOLDS.battery.alert,
+      false,
+    );
 
     state.monitors.push({
       id: "batt",
@@ -622,7 +663,11 @@ function transformDataToRenderFormat(
         )
       : 0;
 
-    const storageState = getLoadState(usedPct, 90, 95);
+    const storageState = getLoadState(
+      usedPct,
+      THRESHOLDS.storage.warn,
+      THRESHOLDS.storage.alert,
+    );
 
     // A. OVERLAY
     if (activeOverlayId === "storage") {
@@ -880,17 +925,6 @@ async function gameLoop(timestamp) {
     // B. FETCH
     const sysData = await store.getSystemState(scope);
 
-    // [DEBUG] Log des données brutes reçues du Store si un overlay est ouvert
-    /* if (activeOverlayId) {
-      // On ne loggue que sur les ticks majeurs (texte) pour ne pas saturer la console (1 fois/sec)
-      if (updateText) {
-        console.log(
-          `📥 [DataStore -> Main] Données brutes pour l'overlay "${activeOverlayId}" :`,
-          sysData,
-        );
-      }
-    } */
-
     // C. TRANSFORMATION
     // On passe le booléen basé sur le tickCount
     const renderState = transformDataToRenderFormat(
@@ -902,12 +936,12 @@ async function gameLoop(timestamp) {
     // [DEBUG] Log complet du Payload envoyé au Renderer
     // Condition : Uniquement si un overlay est actif ET que c'est un tick de mise à jour du texte (1Hz)
     // Cela évite de spammer la console 60 fois par seconde tout en montrant l'objet complet.
-    if (renderState.overlay && updateText) {
+    /* if (renderState.overlay && updateText) {
       console.log(
         `📦 [Main -> Renderer] Payload complet pour l'overlay "${activeOverlayId}" : `,
         renderState,
       );
-    }
+    } */
 
     // D. RENDU
     updateInterface(renderState);

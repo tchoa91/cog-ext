@@ -398,7 +398,18 @@ export function updateInterface(payload) {
       // Mise à jour Barre (olBar)
       if (item.type === "olBar" && item.value !== undefined) {
         const barEl = overlayBody.querySelector(`[data-oid="${item.id}-bar"]`);
-        if (barEl) barEl.style.width = `${item.value}%`;
+        if (barEl) {
+          barEl.style.width = `${item.value}%`;
+          const sectionEl = barEl.closest(".overlay-section");
+
+          if (sectionEl) {
+            if (item.state) {
+              sectionEl.setAttribute("data-state", item.state);
+            } else {
+              sectionEl.removeAttribute("data-state");
+            }
+          }
+        }
       }
 
       // Mise à jour TextList (olTextList)
@@ -522,6 +533,12 @@ export function setOverlayState(isOpen, payload = {}, event = null) {
     setTimeout(() => {
       if (!overlayEl.classList.contains("active")) {
         overlayEl.classList.add("hidden");
+        // CORRECTION : On vide le contenu et le cache pour éviter le "ghosting"
+        const overlayBody = document.getElementById("overlay-body");
+        if (overlayBody) overlayBody.innerHTML = "";
+        // IMPORTANT : On force le renderer à reconstruire le DOM au prochain appel
+        // (renderCache est la variable globale définie en haut du fichier)
+        renderCache["activeOverlay"] = null;
       }
     }, 300);
     return;
@@ -542,10 +559,9 @@ export function setOverlayState(isOpen, payload = {}, event = null) {
   }
 
   if (overlayEl.classList.contains("active")) {
-    overlayEl.style.transition =
-      "transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.1)";
+    // overlayEl.style.transition = "transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.1)";
     if (content) {
-      content.style.transition = "opacity 0.15s ease";
+      // content.style.transition = "opacity 0.15s ease";
       content.style.opacity = "0";
       setTimeout(() => {
         if (titleEl) titleEl.textContent = title;

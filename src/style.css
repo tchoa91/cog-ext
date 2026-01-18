@@ -46,7 +46,7 @@
   --titles: #90a4ae52;
   --accent: #66bb6a;
   --warning: #fb8c00; /* Orange 400 */
-  --alert: #EF5350; /* Red 400 */
+  --alert: #ef5350; /* Red 400 */
   /* --border-subtle: none; */
   --border-subtle: 1px solid #59859321;
   --shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
@@ -65,7 +65,7 @@
   --titles: #90a4ae70;
   --accent: #5bb45f;
   --warning: #f57c00;
-  --alert: #EF5350;
+  --alert: #ef5350;
   --monitor-bg: rgba(0, 0, 0, 0.05);
   --monitor-hover: var(--card-hover);
   --border-subtle: 1px solid #121b1e13;
@@ -378,7 +378,7 @@ body {
   line-height: 0.6em;
 }
 
-/* --- ZONE C: Overlay (CORRIGÉ) --- */
+/* --- ZONE C: Overlay --- */
 #overlay {
   position: absolute;
   top: var(--topbar-height); /* Commence SOUS la barre */
@@ -392,23 +392,64 @@ body {
   align-items: center;
   padding: 10px; /* Marge autour de la carte interne */
 
-  /* Animation setup */
+  /* État initial (Fermé) */
   opacity: 0;
+  transform: scale(0.7);
+  visibility: hidden;
   pointer-events: none;
 
-  /* On démarre plus petit pour que le zoom soit bien visible */
-  transform: scale(0.5);
-
-  /* Transition ralentie (0.45s) pour la visibilité */
+  /* TRANSITION DE FERMETURE (Rapide et propre) */
+  /* On attend 0s pour l'opacité, mais on retarde la visibility pour laisser le fade-out finir */
   transition:
-    opacity 0.3s ease,
-    transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.1);
+    opacity 0.2s ease,
+    transform 0.2s cubic-bezier(0.4, 0, 1, 1),
+    visibility 0s linear 0.2s;
 }
 
+/* État actif (Ouvert) */
 #overlay.active {
   opacity: 1;
-  pointer-events: auto;
   transform: scale(1);
+  visibility: visible;
+  pointer-events: auto;
+
+  /* TRANSITION D'OUVERTURE (Hero Bounce) */
+  /* transform-origin est géré par le JS (renderer.js) au point de clic */
+  transition:
+    opacity 0.2s ease,
+    transform 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.15); /* Rebond élastique léger */
+}
+
+/* 2. LE TITRE (L'illusion de continuité) */
+/* Assure-toi que #overlay-title a la même typo que .card h3 */
+#overlay-title {
+  opacity: 0;
+  transform: translateY(10px); /* Part d'un peu plus bas */
+  transition:
+    opacity 0.1s ease,
+    transform 0.1s ease; /* Disparition immédiate si fermeture */
+}
+
+#overlay.active #overlay-title {
+  opacity: 1;
+  transform: translateY(0);
+  /* DÉLAI MAGIQUE : Le titre arrive pendant que la boite s'ouvre (à 0.1s) */
+  transition:
+    opacity 0.3s ease 0.1s,
+    transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) 0.1s;
+}
+
+/* 3. LE CONTENU (Les détails complexes) */
+.overlay-content {
+  opacity: 0;
+  /* Fermeture : Disparition immédiate pour ne pas voir le contenu s'écraser */
+  transition: opacity 0.1s ease 0s;
+}
+
+#overlay.active .overlay-content {
+  opacity: 1;
+  /* DÉLAI MAGIQUE 2 : Le contenu n'arrive que quand la boîte est quasi stable (0.25s) */
+  transition: opacity 0.4s ease 0.25s;
 }
 
 /* Le conteneur interne (la "carte" de détail) */
@@ -472,7 +513,8 @@ body {
   padding-bottom: 4px;
 }
 
-.overlay-kv-label, .overlay-label {
+.overlay-kv-label,
+.overlay-label {
   color: var(--text-muted);
 }
 

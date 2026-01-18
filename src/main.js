@@ -223,7 +223,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const stored = await chrome.storage.local.get(["theme", "unit"]);
     // Fusionner avec les défauts au cas où une clé manque
     prefs = { ...defaultPrefs, ...stored };
-    console.log("💾 Config chargée :", prefs);
+    //console.log("💾 Config chargée :", prefs);
   } catch (e) {
     console.warn("Erreur lecture storage, utilisation défauts", e);
   }
@@ -263,6 +263,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
       activeOverlayId = cardId;
       setOverlayState(true, { title: title });
+      tickCount = TEXT_UPDATE_RATIO - 1;
     },
 
     onClose: () => {
@@ -280,7 +281,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       // 3. Sauvegarder
       chrome.storage.local.set({ theme: newTheme });
-      console.log("💾 Thème sauvegardé :", newTheme);
+      //console.log("💾 Thème sauvegardé :", newTheme);
     },
 
     onUnitToggle: () => {
@@ -289,7 +290,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       // 2. Sauvegarder
       chrome.storage.local.set({ unit: appUnit });
-      console.log("💾 Unité sauvegardée :", appUnit);
+      //console.log("💾 Unité sauvegardée :", appUnit);
 
       // 3. Feedback : Le prochain tick (gameLoop) mettra à jour tous les textes
     },
@@ -428,7 +429,7 @@ function transformDataToRenderFormat(
       };
     }
     // C. CARD
-    else {
+    else if (!activeOverlayId) {
       state.cards.push({
         id: "cpuUsage",
         content: [
@@ -478,7 +479,7 @@ function transformDataToRenderFormat(
           },
         ],
       };
-    } else {
+    } else if (!activeOverlayId) {
       state.cards.push({
         id: "cpuTemp",
         content: [
@@ -503,14 +504,21 @@ function transformDataToRenderFormat(
       state: memState,
     });
 
-    state.cards.push({
-      id: "memory",
-      content: [
-        { id: "memBar", value: pct, display: txt(`${pct}%`), state: memState },
-        { id: "memtotal", display: txt((total / 1e9).toFixed(1) + " GB") },
-        { id: "memUsed", display: txt((used / 1e9).toFixed(1) + " GB") },
-      ],
-    });
+    if (!activeOverlayId) {
+      state.cards.push({
+        id: "memory",
+        content: [
+          {
+            id: "memBar",
+            value: pct,
+            display: txt(`${pct}%`),
+            state: memState,
+          },
+          { id: "memtotal", display: txt((total / 1e9).toFixed(1) + " GB") },
+          { id: "memUsed", display: txt((used / 1e9).toFixed(1) + " GB") },
+        ],
+      });
+    }
   }
 
   // --- 3. BATTERY ---
@@ -551,26 +559,28 @@ function transformDataToRenderFormat(
       }
     }
 
-    state.cards.push({
-      id: "battery",
-      content: [
-        {
-          id: "battBar",
-          value: pct,
-          display: txt(`${pct}%`),
-          state: battState,
-        },
-        {
-          id: "battStatus",
-          display: txt(isCharging ? "Charging" : "On battery"),
-        },
-        {
-          id: "battTime",
-          display: txt(timeText),
-          label: txt(labelText),
-        },
-      ],
-    });
+    if (!activeOverlayId) {
+      state.cards.push({
+        id: "battery",
+        content: [
+          {
+            id: "battBar",
+            value: pct,
+            display: txt(`${pct}%`),
+            state: battState,
+          },
+          {
+            id: "battStatus",
+            display: txt(isCharging ? "Charging" : "On battery"),
+          },
+          {
+            id: "battTime",
+            display: txt(timeText),
+            label: txt(labelText),
+          },
+        ],
+      });
+    }
   }
 
   // --- 4. NETWORK ---
@@ -584,17 +594,22 @@ function transformDataToRenderFormat(
       state: netState,
     });
 
-    state.cards.push({
-      id: "network",
-      content: [
-        {
-          id: "netStatus",
-          display: txt(isOnline ? "Online" : "Offline"),
-          state: netState,
-        },
-        { id: "netIp", display: txt(modulesData.network.ip || "Hidden/Local") },
-      ],
-    });
+    if (!activeOverlayId) {
+      state.cards.push({
+        id: "network",
+        content: [
+          {
+            id: "netStatus",
+            display: txt(isOnline ? "Online" : "Offline"),
+            state: netState,
+          },
+          {
+            id: "netIp",
+            display: txt(modulesData.network.ip || "Hidden/Local"),
+          },
+        ],
+      });
+    }
   }
 
   // --- 5. STORAGE ---
@@ -607,6 +622,8 @@ function transformDataToRenderFormat(
         )
       : 0;
 
+    const storageState = getLoadState(usedPct, 90, 95);
+
     // A. OVERLAY
     if (activeOverlayId === "storage") {
       state.overlay = {
@@ -616,12 +633,13 @@ function transformDataToRenderFormat(
             id: "storagePerc",
             type: "olBar",
             title: "% used space",
-            value: usedPct, // Pour la barre
-            display: txt(`${usedPct}%`), // Pour le texte
+            value: usedPct,
+            display: txt(`${usedPct}%`),
+            state: storageState,
           },
           {
             id: "storageFree",
-            type: "kv", // Rappel du type pour cohérence
+            type: "kv",
             display: txt(
               (
                 (modulesData.storage.totalBytes -
@@ -646,7 +664,7 @@ function transformDataToRenderFormat(
       };
     }
     // B. CARD
-    else {
+    else if (!activeOverlayId) {
       const usedPct = modulesData.storage.totalBytes
         ? Math.round(
             (modulesData.storage.usedBytes / modulesData.storage.totalBytes) *
@@ -661,6 +679,7 @@ function transformDataToRenderFormat(
             id: "storagePerc",
             value: 100 - usedPct,
             display: txt(`${100 - usedPct}%`),
+            state: storageState,
           },
           {
             id: "storageFree",
@@ -727,7 +746,7 @@ function transformDataToRenderFormat(
       };
     }
     // B. MODE CARTE
-    else {
+    else if (!activeOverlayId) {
       state.cards.push({
         id: "display",
         content: [
@@ -746,20 +765,22 @@ function transformDataToRenderFormat(
 
   // --- 7. SYSTEM / OS / CHROME ---
   if (modulesData.system) {
-    state.cards.push({
-      id: "os",
-      content: [
-        { id: "osName", display: txt(modulesData.system.os || "ChromeOS") },
-        { id: "osPlatform", display: txt(modulesData.system.platform) },
-      ],
-    });
+    if (!activeOverlayId) {
+      state.cards.push({
+        id: "os",
+        content: [
+          { id: "osName", display: txt(modulesData.system.os || "ChromeOS") },
+          { id: "osPlatform", display: txt(modulesData.system.platform) },
+        ],
+      });
 
-    state.cards.push({
-      id: "chrome",
-      content: [
-        { id: "chromeVersion", display: txt(modulesData.system.browserVer) },
-      ],
-    });
+      state.cards.push({
+        id: "chrome",
+        content: [
+          { id: "chromeVersion", display: txt(modulesData.system.browserVer) },
+        ],
+      });
+    }
 
     if (activeOverlayId === "chrome") {
       state.overlay = {
@@ -822,12 +843,16 @@ function transformDataToRenderFormat(
         },
       ],
     };
-  } else {
+  } else if (!activeOverlayId) {
     state.cards.push({
       id: "settings",
       content: [{ id: "appVersion", display: txt(ver) }],
     });
   }
+
+  /* if (activeOverlayId) {
+    state.cards = [];
+  } */
 
   return state;
 }
@@ -856,7 +881,7 @@ async function gameLoop(timestamp) {
     const sysData = await store.getSystemState(scope);
 
     // [DEBUG] Log des données brutes reçues du Store si un overlay est ouvert
-    if (activeOverlayId) {
+    /* if (activeOverlayId) {
       // On ne loggue que sur les ticks majeurs (texte) pour ne pas saturer la console (1 fois/sec)
       if (updateText) {
         console.log(
@@ -864,7 +889,7 @@ async function gameLoop(timestamp) {
           sysData,
         );
       }
-    }
+    } */
 
     // C. TRANSFORMATION
     // On passe le booléen basé sur le tickCount
@@ -878,7 +903,10 @@ async function gameLoop(timestamp) {
     // Condition : Uniquement si un overlay est actif ET que c'est un tick de mise à jour du texte (1Hz)
     // Cela évite de spammer la console 60 fois par seconde tout en montrant l'objet complet.
     if (renderState.overlay && updateText) {
-      console.log("📦 [Main -> Renderer] Payload complet :", renderState);
+      console.log(
+        `📦 [Main -> Renderer] Payload complet pour l'overlay "${activeOverlayId}" : `,
+        renderState,
+      );
     }
 
     // D. RENDU

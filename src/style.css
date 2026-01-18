@@ -46,7 +46,7 @@
   --titles: #90a4ae52;
   --accent: #66bb6a;
   --warning: #fb8c00; /* Orange 400 */
-  --alert: #fb8c00; /* Red 400 */
+  --alert: #EF5350; /* Red 400 */
   /* --border-subtle: none; */
   --border-subtle: 1px solid #59859321;
   --shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
@@ -65,7 +65,7 @@
   --titles: #90a4ae70;
   --accent: #5bb45f;
   --warning: #f57c00;
-  --alert: #e57373;
+  --alert: #EF5350;
   --monitor-bg: rgba(0, 0, 0, 0.05);
   --monitor-hover: var(--card-hover);
   --border-subtle: 1px solid #121b1e13;
@@ -294,6 +294,9 @@ body {
   margin: 5px 0 0 0; /* Espace sous le titre */
   color: var(--titles); /* Utilisation de VOTRE variable */
 }
+#overlay h3 {
+  margin-bottom: 30px;
+}
 .card-body {
   width: 100%;
   display: flex;
@@ -422,6 +425,7 @@ body {
   position: relative;
   box-shadow: 0 5px 6px rgba(0, 0, 0, 0.05);
   border: 1px solid var(--border-subtle);
+  font-size: 1.5em;
 }
 
 #close-overlay {
@@ -449,6 +453,9 @@ body {
 .overlay-section {
   margin-bottom: 20px;
 }
+.overlay-val {
+  font-weight: 600;
+}
 
 .overlay-header-row {
   display: flex;
@@ -465,7 +472,7 @@ body {
   padding-bottom: 4px;
 }
 
-.overlay-kv-label {
+.overlay-kv-label, .overlay-label {
   color: var(--text-muted);
 }
 
@@ -505,16 +512,16 @@ body {
 
 .overlay-temp-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
   gap: 8px;
 }
 
 .temp-item {
-  background: var(--surface);
+  /* background: var(--surface); */
   padding: 6px;
   border-radius: 4px;
   text-align: center;
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--text-muted);
 }
 
 .temp-label {
@@ -526,7 +533,6 @@ body {
 
 .temp-val {
   font-weight: 600;
-  font-size: 0.9em;
 }
 
 /* --- OVERLAY : TEXT LIST (olTextList) --- */
@@ -536,6 +542,7 @@ body {
   margin: 0;
   max-height: 300px; /* Sécurité si la liste est très longue */
   overflow-y: auto; /* Scroll si nécessaire */
+  text-align: right;
 }
 
 .overlay-text-list li {

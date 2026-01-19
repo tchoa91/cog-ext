@@ -22,6 +22,7 @@ let gridEl;
 let overlayEl;
 let closeBtnEl;
 let appCallbacks = null;
+let lastFocusedElement = null;
 
 // Optimisation : On mémorise les valeurs pour ne toucher le DOM que si nécessaire
 const renderCache = {};
@@ -77,6 +78,9 @@ export function buildInterface(config, callbacks) {
       <div class="monitor-block ${item.hasOvelay ? "interactive" : "static"}" 
             id="monitor-${item.id}" 
             data-link="${item.cardLink}"
+            tabindex="${item.hasOvelay ? "0" : "-1"}" 
+            role="${item.hasOvelay ? "button" : "none"}"
+            aria-label="Open ${item.title} details"
             ${!item.hasOvelay ? 'style="cursor: default;"' : ""}>
           <div class="monitor-header">
             <span class="monitor-label">${item.title}</span>
@@ -95,8 +99,16 @@ export function buildInterface(config, callbacks) {
     )
     .join("");
 
+  // Écouteurs pour la TopBar
   topBarEl.querySelectorAll(".monitor-block.interactive").forEach((el) => {
     el.addEventListener("click", () => callbacks.onOpen(el.dataset.link));
+    // 2. ACCESSIBILITÉ : Clavier (Entrée ou Espace)
+    el.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault(); // Empêche le scroll page avec Espace
+        callbacks.onOpen(el.dataset.link, e);
+      }
+    });
   });
 
   // Grid
@@ -104,8 +116,11 @@ export function buildInterface(config, callbacks) {
     .map(
       (card) => `
         <div class="card ${card.hasOvelay ? "interactive" : "static"}" 
-            id="card-${card.id}" 
-            data-id="${card.id}" 
+            id="card-${card.id}"
+            data-id="${card.id}"
+            tabindex="${card.hasOvelay ? "0" : "-1"}"
+            role="${card.hasOvelay ? "button" : "none"}"
+            aria-label="Open ${card.title} details"
             style="display: none;"> 
             <h3>${card.title}</h3>
             <div class="card-body">${renderCardContent(card.content)}</div>
@@ -120,6 +135,12 @@ export function buildInterface(config, callbacks) {
 
   gridEl.querySelectorAll(".card.interactive").forEach((el) => {
     el.addEventListener("click", (e) => callbacks.onOpen(el.dataset.id, e));
+    el.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        callbacks.onOpen(el.dataset.id, e);
+      }
+    });
   });
 }
 
@@ -371,8 +392,7 @@ export function updateInterface(payload) {
 
       renderCache["activeOverlay"] = ov.id;
 
-      // --- AJOUT : Attachement des événements dynamiques ---
-      // On le fait ici car on vient de recréer le HTML de l'overlay
+      // --- Attachement des événements dynamiques ---
       const switches = overlayBody.querySelectorAll('input[type="checkbox"]');
       switches.forEach((cb) => {
         cb.addEventListener("change", (e) => {
@@ -382,7 +402,16 @@ export function updateInterface(payload) {
           if (e.target.id === "toggleTheme") {
             appCallbacks.onThemeToggle();
           }
-          if (e.target.id === "toggleUnit") appCallbacks.onUnitToggle(); // Futur usage
+          if (e.target.id === "toggleUnit") appCallbacks.onUnitToggle();
+        });
+        // 2. ACCESSIBILITÉ : Support de la touche "Entrée"
+        // (La touche "Espace" est déjà gérée nativement par l'élément <input>)
+        cb.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            // On simule un clic : cela bascule la case et déclenche l'événement 'change' ci-dessus
+            cb.click();
+          }
         });
       });
     }
@@ -527,8 +556,23 @@ export function updateInterface(payload) {
 export function setOverlayState(isOpen, payload = {}, event = null) {
   const content = overlayEl.querySelector(".overlay-content");
   const titleEl = overlayEl.querySelector("#overlay-title");
+  const toggleBackgroundAccess = (disable) => {
+    const bgElements = document.querySelectorAll(
+      ".monitor-block.interactive, .card.interactive",
+    );
+    bgElements.forEach((el) => {
+      if (disable) {
+        el.setAttribute("tabindex", "-1"); // Retire du cycle Tab
+        el.setAttribute("aria-hidden", "true"); // Cache aux lecteurs d'écran
+      } else {
+        el.setAttribute("tabindex", "0"); // Remet dans le cycle Tab
+        el.removeAttribute("aria-hidden");
+      }
+    });
+  };
 
   if (!isOpen) {
+    toggleBackgroundAccess(false); // 1. On réactive le fond
     overlayEl.classList.remove("active");
     setTimeout(() => {
       if (!overlayEl.classList.contains("active")) {
@@ -541,8 +585,22 @@ export function setOverlayState(isOpen, payload = {}, event = null) {
         renderCache["activeOverlay"] = null;
       }
     }, 300);
+    if (lastFocusedElement) {
+      lastFocusedElement.focus();
+      lastFocusedElement = null; // On vide la mémoire
+    }
     return;
   }
+
+  // C. LOGIQUE D'OUVERTURE
+  if (event && event.currentTarget) {
+    lastFocusedElement = event.currentTarget;
+  }
+  toggleBackgroundAccess(true); // 1. On désactive le fond
+  // On place le focus sur le bouton de fermeture par sécurité
+  setTimeout(() => {
+    if (closeBtnEl) closeBtnEl.focus();
+  }, 100);
 
   const title = payload.title || "";
 

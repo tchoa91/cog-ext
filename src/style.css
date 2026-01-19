@@ -208,8 +208,8 @@ body {
   width: 0%;
   border-radius: 5px;
   transition:
-    width 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-    background-color 0.6s ease;
+    width 0.2s linear,
+    background-color 0.2s ease;
 }
 .monitor-dot {
   width: 10px;
@@ -475,13 +475,14 @@ body {
   right: 15px;
   background: none;
   border: none;
+  padding: 0 5px;
   color: var(--text-main);
   font-size: 1.8rem;
   cursor: pointer;
   transition:
     color 0.2s,
     transform 0.2s;
-  z-index: 10; /* Sécurité pour être bien au-dessus */
+  z-index: 10;
 }
 #close-overlay:hover {
   opacity: 1;
@@ -546,8 +547,8 @@ body {
   right: 0;
   background: var(--accent);
   transition:
-    height 0.2s,
-    background-color 0.6s ease;
+    height 0.2s linear,
+    background-color 0.2s ease;
 }
 
 /* --- OVERLAY : TEMPERATURE GRID (olTempList) --- */
@@ -691,4 +692,14 @@ input:checked + .slider {
 
 input:checked + .slider:before {
   transform: translateX(18px);
+}
+
+/* ACCESSIBILITÉ : Focus visible pour les Switchs */
+/* Quand l'input (masqué) reçoit le focus clavier, on illumine le slider voisin */
+/* On applique un encadrement simple (type "cadre blanc") aux switches quand ils ont le focus.
+   On utilise var(--text-main) pour que ce soit blanc en thème sombre et noir en thème clair,
+   sans ajouter de nouvelles couleurs en dur. */
+.switch input:focus + .slider {
+  outline: 2px solid var(--text-main);
+  outline-offset: 2px;
 }

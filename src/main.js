@@ -158,9 +158,9 @@ const UI_CONFIG = {
       title: "Display details",
       isDynamic: true,
       content: [
-        { id: "primDisplay", type: "kv", title: "Primary Display" },
-        { id: "otherDisplays", type: "kv", title: "Other Displays" },
         { id: "gpu", type: "kv", title: "GPU :" },
+        { id: "primDisplay", type: "kv", title: "Primary Display" },
+        { id: "otherDisplays", type: "olTextListv", title: "Other Displays" },
       ],
     },
     {
@@ -754,7 +754,7 @@ function transformDataToRenderFormat(
 
     // A. MODE OVERLAY
     if (activeOverlayId === "display") {
-      // Formatage des écrans secondaires : "Nom (WxH)"
+      // Formatage des écrans secondaires : "Nom : W x H"
       const othersList = screens
         .filter((s) => !s.primary)
         .map((s) => {
@@ -762,11 +762,18 @@ function transformDataToRenderFormat(
           return `${n} : ${s.w} x ${s.h}`;
         });
 
-      const othersText = othersList.length > 0 ? othersList.join(", ") : "None";
+      // Gestion du cas "Aucun écran secondaire" pour la liste
+      if (othersList.length === 0) othersList.push("None");
 
       state.overlay = {
         id: "display",
         content: [
+          {
+            id: "gpu",
+            type: "kv",
+            title: "GPU",
+            display: txt(modulesData.display.gpu || "Unknown"),
+          },
           {
             id: "primDisplay",
             type: "kv",
@@ -776,16 +783,9 @@ function transformDataToRenderFormat(
           },
           {
             id: "otherDisplays",
-            type: "kv",
-            title: "Secondary",
-            // Demande : Info complète pour les autres aussi
-            display: txt(othersText),
-          },
-          {
-            id: "gpu",
-            type: "kv",
-            title: "GPU",
-            display: txt(modulesData.display.gpu || "Unknown"),
+            type: "olTextList",
+            title: "Secondary Displays",
+            value: updateText ? othersList : undefined,
           },
         ],
       };

@@ -61,6 +61,18 @@ function setupGlobalEvents(callbacks) {
   gridEl.addEventListener("dblclick", (e) => {
     if (e.target === gridEl) callbacks.onThemeToggle();
   });
+  // Gestion des liens dans l'overlay (ex: Footer)
+  const overlayBody = document.getElementById("overlay-body");
+  if (overlayBody) {
+    overlayBody.addEventListener("click", (e) => {
+      // Si on clique sur un lien (ou un enfant de lien)
+      const link = e.target.closest("a");
+      if (link && link.href) {
+        e.preventDefault(); // On bloque la navigation standard du popup
+        callbacks.onLinkClick(link.href); // On délègue l'action au contrôleur
+      }
+    });
+  }
 }
 
 export function toggleTheme() {
@@ -384,6 +396,11 @@ export function updateInterface(payload) {
                     <span class="slider"></span>
                 </label>
             </div>`;
+          }
+
+          // Type HTML (Texte libre / Footer)
+          if (item.type === "html") {
+            return `<div class="overlay-html">${item.value || ""}</div>`;
           }
 
           return "";

@@ -703,3 +703,22 @@ input:checked + .slider:before {
   outline: 2px solid var(--text-main);
   outline-offset: 2px;
 }
+
+/* --- OVERLAY : HTML GENERIC (Footer, Infos...) --- */
+.overlay-html {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid var(--border-subtle);
+  /* text-align: center; */
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.overlay-html a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+.overlay-html a:hover {
+  text-decoration: underline;
+}

@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "COGext : System Monitor",
+  "default_locale": "en",
+  "name": "__MSG_appName__",
   "version": "2.0",
-  "description": "A modern dashboard to monitor CPU, RAM, Battery, and Network. Lightweight, privacy-friendly, with Dark & Light modes.",
+  "description": "__MSG_appDesc__",
   "author": "François Bacconnet",
   "permissions": [
     "system.cpu",

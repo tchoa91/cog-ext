@@ -19,49 +19,52 @@ import {
 
 import { DataStore } from "./data-store.js";
 
+// --- Raccourci i18n ---
+const t = chrome.i18n.getMessage;
+
 // --- 1. CONFIGURATION (L'intention d'affichage) ---
 
 const UI_CONFIG = {
   monitors: [
     {
       id: "cpu",
-      title: "CPU",
+      title: t("monitor_cpu"), // Au lieu de "CPU"
       cardLink: "cpuUsage",
       type: "bar",
       hasOvelay: true,
     },
-    { id: "mem", title: "MEM", cardLink: "memory", type: "bar" },
-    { id: "batt", title: "BAT", cardLink: "battery", type: "bar" },
-    { id: "net", title: "NET", cardLink: "network", type: "dot" },
+    { id: "mem", title: t("monitor_mem"), cardLink: "memory", type: "bar" },
+    { id: "batt", title: t("monitor_batt"), cardLink: "battery", type: "bar" },
+    { id: "net", title: t("monitor_net"), cardLink: "network", type: "dot" },
   ],
   cards: [
     {
       id: "cpuUsage",
-      title: "CPU Load",
+      title: t("card_cpu_title"),
       hasOvelay: true,
       isDynamic: true,
       content: [{ id: "loadBar", type: "cardBar" }],
     },
     {
       id: "memory",
-      title: "Memory",
+      title: t("card_mem_title"),
       isDynamic: true,
       content: [
         { id: "memBar", type: "cardBar" },
-        { id: "memtotal", type: "kv", title: "Total memory" },
-        { id: "memUsed", type: "kv", title: "Used memory" },
+        { id: "memtotal", type: "kv", title: t("label_mem_total") },
+        { id: "memUsed", type: "kv", title: t("label_mem_used") },
       ],
     },
     {
       id: "cpuTemp",
-      title: "CPU Temperature",
+      title: t("card_temp_title"),
       hasOvelay: true,
       isDynamic: true,
       content: [{ id: "tempBar", type: "cardBar" }],
     },
     {
       id: "battery",
-      title: "Battery",
+      title: t("card_batt_title"),
       isDynamic: true,
       content: [
         { id: "battBar", type: "cardBar" },
@@ -69,13 +72,13 @@ const UI_CONFIG = {
         {
           id: "battTime",
           type: "kv",
-          title: "Time before full charge/discharge : ",
+          title: t("label_batt_time_general"),
         },
       ],
     },
     {
       id: "display",
-      title: "Display",
+      title: t("card_disp_title"),
       hasOvelay: true,
       isDynamic: true,
       content: [
@@ -85,111 +88,136 @@ const UI_CONFIG = {
     },
     {
       id: "network",
-      title: "Network",
+      title: t("card_net_title"),
       isDynamic: true,
       content: [
         { id: "netStatus", type: "value" },
-        { id: "netIp", type: "kv", title: "IP : " },
+        { id: "netIp", type: "kv", title: t("label_ip") },
       ],
     },
     {
       id: "chrome",
-      title: "Chrome",
+      title: t("card_chrome_title"),
       hasOvelay: true,
       content: [{ id: "chromeVersion", type: "value" }],
     },
     {
       id: "os",
-      title: "OS",
+      title: t("card_os_title"),
       content: [
         { id: "osName", type: "value" },
-        { id: "osPlatform", type: "kv", title: "Platform : " },
+        { id: "osPlatform", type: "kv", title: t("label_platform") },
       ],
     },
     {
       id: "storage",
-      title: "Storage",
+      title: t("card_storage_title"),
       hasOvelay: true,
       isDynamic: true,
       content: [
-        { id: "storagePerc", type: "olBar", title: "% free space" },
-        { id: "storageFree", type: "kv", title: "Free space" },
+        {
+          id: "storagePerc",
+          type: "olBar",
+          title: t("label_storage_free_pct"),
+        },
+        { id: "storageFree", type: "kv", title: t("label_storage_free") },
       ],
     },
     {
       id: "settings",
-      title: "COGext - settings",
+      title: t("card_settings_title"),
       hasOvelay: true,
-      content: [{ id: "appVersion", type: "kv", title: "Version : " }],
+      content: [{ id: "appVersion", type: "kv", title: t("label_version") }],
     },
   ],
   overlays: [
     {
       id: "cpuUsage",
-      title: "CPU Load details",
+      title: t("overlay_cpu_title"),
       isDynamic: true,
       content: [
-        { id: "cpuLoadAverage", type: "olBar", title: "Average CPU Load" },
-        { id: "cpuLoadList", type: "olLoadList", title: "CPU Load per core" },
-        { id: "cpuArc", type: "kv", title: "CPU Architecture" },
-        { id: "cpuName", type: "kv", title: "CPU Model" },
-        { id: "cpuFeatures", type: "kv", title: "CPU Features" },
+        { id: "cpuLoadAverage", type: "olBar", title: t("detail_cpu_avg") },
+        { id: "cpuLoadList", type: "olLoadList", title: t("detail_cpu_core") },
+        { id: "cpuArc", type: "kv", title: t("detail_cpu_arch") },
+        { id: "cpuName", type: "kv", title: t("detail_cpu_model") },
+        { id: "cpuFeatures", type: "kv", title: t("detail_cpu_features") },
       ],
     },
     {
       id: "cpuTemp",
-      title: "CPU Temperature details",
+      title: t("overlay_temp_title"),
       isDynamic: true,
       content: [
         {
           id: "cpuTempAverage",
           type: "olBar",
-          title: "Average CPU Temperature",
+          title: t("detail_temp_avg"),
         },
         {
           id: "cpuTempList",
           type: "olTempList",
-          title: "CPU Temperature per sensor",
+          title: t("detail_temp_sensor"),
         },
       ],
     },
     {
       id: "display",
-      title: "Display details",
+      title: t("overlay_disp_title"),
       isDynamic: true,
       content: [
-        { id: "gpu", type: "kv", title: "GPU :" },
-        { id: "primDisplay", type: "kv", title: "Primary Display" },
-        { id: "otherDisplays", type: "olTextListv", title: "Other Displays" },
+        { id: "gpu", type: "kv", title: t("detail_gpu") },
+        { id: "primDisplay", type: "kv", title: t("detail_disp_prim") },
+        {
+          id: "otherDisplays",
+          type: "olTextList",
+          title: t("detail_disp_other"),
+        },
       ],
     },
     {
       id: "chrome",
-      title: "Chrome details",
+      title: t("overlay_chrome_title"),
       content: [
-        { id: "chromeVersion", type: "kv", title: "Version : " },
-        { id: "chromeLanguages", type: "kv", title: "Languages :" },
-        { id: "chromeExtensions", type: "kv", title: "Extensions :" },
+        { id: "chromeVersion", type: "kv", title: t("label_version") },
+        { id: "chromeLanguages", type: "kv", title: t("detail_chrome_langs") },
+        {
+          id: "chromeExtensions",
+          type: "olTextList",
+          title: t("detail_chrome_exts"),
+        },
       ],
     },
     {
       id: "storage",
-      title: "Storage details",
+      title: t("overlay_storage_title"),
       isDynamic: true,
       content: [
-        { id: "storagePerc", type: "olBar", title: "% free space" },
-        { id: "storageFree", type: "kv", title: "Free space" },
-        { id: "storageTotal", type: "kv", title: "Total space" },
-        { id: "storageList", type: "olDiscsList", title: "Discs :" },
+        {
+          id: "storagePerc",
+          type: "olBar",
+          title: t("label_storage_used_pct"),
+        },
+        { id: "storageFree", type: "kv", title: t("label_storage_free") },
+        { id: "storageTotal", type: "kv", title: t("detail_storage_total") },
+        {
+          id: "storageList",
+          type: "olDiscsList",
+          title: t("detail_storage_discs"),
+        },
       ],
     },
     {
       id: "settings",
-      title: "COGext - settings",
+      title: t("card_settings_title"),
       content: [
-        { id: "appVersion", type: "kv", title: "Version :" },
-        { id: "toggleTheme", type: "switch", title: "Dark/Light Theme" },
-        { id: "toggleUnit", type: "switch", title: "Temperature Unit °C/°F" },
+        { id: "appVersion", type: "kv", title: t("label_version") },
+        { id: "toggleTheme", type: "switch", title: t("settings_theme") },
+        { id: "toggleUnit", type: "switch", title: t("settings_unit") },
+        {
+          id: "settingsFooter",
+          type: "html",
+          value: t("settings_footer"),
+        },
       ],
     },
   ],
@@ -306,6 +334,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       // 3. Feedback : Le prochain tick (gameLoop) mettra à jour tous les textes
     },
+
+    // Ouvre un nouvel onglet Chrome
+    onLinkClick: (url) => {
+      chrome.tabs.create({ url: url });
+    },
   };
 
   // B. Démarrage Classique
@@ -328,6 +361,243 @@ document.addEventListener("DOMContentLoaded", async () => {
   requestAnimationFrame(gameLoop);
 });
 
+/**
+ * LE RÉSOLVEUR : Transforme une donnée brute en format d'affichage pour un widget précis.
+ * @param {String} itemId - L'ID de l'élément (ex: 'cpuLoadAverage')
+ * @param {Object} data - L'objet de données COMPLET (pour accès croisé si besoin)
+ * @param {Boolean} updateText - Si false, on ne génère pas les chaînes de caractères (perf)
+ * @param {Boolean} isMonitor - Si true, formatage spécifique pour la TopBar
+ */
+function resolveWidgetData(itemId, data, updateText, isMonitor = false) {
+  const res = {};
+  const txt = (val) => (updateText ? val : undefined);
+
+  // Fonctions locales (Scope limité pour clarté)
+  const getLoadState = (val, thresholds, isRising = true) => {
+    if (val == null) return "normal";
+    if (isRising) {
+      if (val >= thresholds.alert) return "alert";
+      if (val >= thresholds.warn) return "warning";
+    } else {
+      if (val <= thresholds.alert) return "alert";
+      if (val <= thresholds.warn) return "warning";
+    }
+    return "normal";
+  };
+
+  const fmtTemp = (val) => {
+    if (val == null) return "--";
+    return appUnit === "F"
+      ? Math.round((val * 9) / 5 + 32) + "°F"
+      : Math.round(val) + "°C";
+  };
+
+  // --- 1. CPU ---
+  if (data.cpuUsage) {
+    if (
+      itemId === "cpu" ||
+      itemId === "loadBar" ||
+      itemId === "cpuLoadAverage"
+    ) {
+      res.value = data.cpuUsage.usagePct;
+      res.display = txt(`${data.cpuUsage.usagePct}%`);
+      if (isMonitor) {
+        res.percent = data.cpuUsage.usagePct;
+        res.label = res.display;
+      }
+      res.state = getLoadState(data.cpuUsage.usagePct, THRESHOLDS.cpu);
+    }
+    if (itemId === "cpuLoadList") {
+      res.value = (data.cpuUsage.coresPct || []).map((c) => ({
+        pct: c,
+        state: getLoadState(c, THRESHOLDS.cpuCores),
+      }));
+    }
+    if (itemId === "cpuArc") res.display = txt(data.cpuUsage.archName);
+    if (itemId === "cpuName") res.display = txt(data.cpuUsage.model);
+    if (itemId === "cpuFeatures") res.display = txt(data.cpuUsage.features);
+  }
+
+  // --- 2. CPU TEMP ---
+  if (data.cpuTemp) {
+    const t = data.cpuTemp.tempC;
+    // Jauge calibrée sur 120°C max
+    const tPct = t ? Math.min(Math.round((t / 120) * 100), 100) : 0;
+
+    if (itemId === "tempBar" || itemId === "cpuTempAverage") {
+      res.value = tPct;
+      res.display = txt(fmtTemp(t));
+      res.state = getLoadState(t, THRESHOLDS.temp);
+    }
+    if (itemId === "cpuTempList") {
+      res.unitSymbol = appUnit === "F" ? "°F" : "°C";
+      if (updateText && data.cpuTemp.zones) {
+        res.value = data.cpuTemp.zones.map((z) =>
+          appUnit === "F" ? Math.round((z * 9) / 5 + 32) : Math.round(z),
+        );
+      }
+    }
+  }
+
+  // --- 3. MEMORY ---
+  if (data.memory) {
+    const total = data.memory.capacity;
+    const used = total - data.memory.availableCapacity;
+    const pct = Math.round((used / total) * 100);
+
+    if (itemId === "mem" || itemId === "memBar") {
+      res.value = pct;
+      res.display = txt(`${pct}%`);
+      res.state = getLoadState(pct, THRESHOLDS.memory);
+      if (isMonitor) {
+        res.percent = pct;
+        res.label = res.display;
+      }
+    }
+    if (itemId === "memtotal")
+      res.display = txt((total / 1e9).toFixed(1) + " GB");
+    if (itemId === "memUsed")
+      res.display = txt((used / 1e9).toFixed(1) + " GB");
+  }
+
+  // --- 4. BATTERY ---
+  if (data.battery) {
+    const pct = Math.round(data.battery.level * 100);
+
+    if (itemId === "batt" || itemId === "battBar") {
+      res.display = txt(`${pct}%`);
+      if (isMonitor) {
+        res.percent = pct;
+        res.label = res.display;
+        res.icon = data.battery.charging ? "bolt" : "";
+      }
+      res.value = pct;
+      res.state = getLoadState(pct, THRESHOLDS.battery, false); // false = Alerte si ça descend
+    }
+    if (itemId === "battStatus")
+      res.display = txt(
+        data.battery.charging ? t("status_charging") : t("status_on_battery"),
+      );
+
+    // Logique Temps Restant
+    if (itemId === "battTime") {
+      let timeText = "--";
+      let labelText = t("status_time_left");
+      const seconds = data.battery.charging
+        ? data.battery.chargingTime
+        : data.battery.dischargingTime;
+
+      if (data.battery.charging && pct === 100) {
+        timeText = "";
+        labelText = "";
+      } else if (seconds && isFinite(seconds)) {
+        const totalMins = Math.round(seconds / 60);
+        labelText = data.battery.charging
+          ? t("status_full_charge_in")
+          : t("status_time_left");
+        timeText =
+          totalMins > 59
+            ? `${Math.floor(totalMins / 60)}:${(totalMins % 60).toString().padStart(2, "0")}`
+            : `${totalMins} min`;
+      }
+      res.display = txt(timeText);
+      res.label = txt(labelText);
+    }
+  }
+
+  // --- 5. NETWORK ---
+  if (data.network) {
+    if (itemId === "net") {
+      // Monitor
+      res.state = data.network.online ? "normal" : "alert";
+      res.label = txt(data.network.online ? t("status_on") : t("status_off"));
+    }
+    if (itemId === "netStatus") {
+      res.display = txt(
+        data.network.online ? t("status_online") : t("status_offline"),
+      );
+      res.state = data.network.online ? "normal" : "alert";
+    }
+    if (itemId === "netIp")
+      res.display = txt(data.network.ip || t("status_hidden"));
+  }
+
+  // --- 6. DISPLAY ---
+  if (data.display) {
+    const screens = data.display.screens || [];
+    const prim = screens.find((s) => s.primary) ||
+      screens[0] || { w: 0, h: 0, name: t("disp_unknown") };
+    const primName = prim.internal ? t("disp_internal") : prim.name;
+    const primRes = `${prim.w} x ${prim.h}`;
+
+    if (itemId === "displayMain") res.display = txt(primName);
+    if (itemId === "displayDef") res.display = txt(primRes);
+
+    if (itemId === "primDisplay") res.display = txt(`${primName} : ${primRes}`);
+    if (itemId === "otherDisplays") {
+      const others = screens
+        .filter((s) => !s.primary)
+        .map((s) => {
+          const name = s.internal
+            ? t("disp_internal_short")
+            : s.name || t("disp_unknown");
+          return `${name} : ${s.w} x ${s.h}`;
+        });
+      if (others.length === 0) others.push(t("disp_none"));
+      res.value = updateText ? others : undefined;
+    }
+    if (itemId === "gpu") res.display = txt(data.display.gpu);
+  }
+
+  // --- 7. SYSTEM (Chrome/OS) ---
+  if (data.system) {
+    if (itemId === "osName") res.display = txt(data.system.os || "ChromeOS");
+    if (itemId === "osPlatform") res.display = txt(data.system.platform);
+    if (itemId === "chromeVersion") res.display = txt(data.system.browserVer);
+    if (itemId === "chromeLanguages") res.display = txt(data.system.languages);
+    if (itemId === "chromeExtensions") {
+      const raw = data.system.extensions;
+      res.value = Array.isArray(raw) ? raw : [raw || t("disp_none")];
+    }
+    if (itemId === "appVersion") res.display = txt(data.system.appVersion);
+  }
+
+  // --- 8. STORAGE ---
+  if (data.storage) {
+    const usedPct = data.storage.totalBytes
+      ? Math.round((data.storage.usedBytes / data.storage.totalBytes) * 100)
+      : 0;
+    const freeGb = (
+      (data.storage.totalBytes - data.storage.usedBytes) /
+      1e9
+    ).toFixed(1);
+
+    if (itemId === "storagePerc") {
+      res.value = usedPct; // Pour Overlay (Barre remplie = espace utilisé)
+      // Pour Card : valeur inversée (Espace Libre) si souhaité, ou garder utilisé.
+      // Selon votre config actuelle "storagePerc" est une barre.
+      // Dans la carte "storage", c'est souvent "Free space".
+      // ATTENTION : Votre code actuel utilisait "100 - usedPct" pour la carte.
+      // Si c'est le même ID "storagePerc", le résolveur doit choisir.
+      // Ici je renvoie l'état brut, à voir selon votre préférence visuelle.
+      res.display = txt(`${usedPct}%`);
+      res.state = getLoadState(usedPct, THRESHOLDS.storage);
+    }
+    if (itemId === "storageFree") res.display = txt(freeGb + " GB");
+    if (itemId === "storageTotal")
+      res.display = txt((data.storage.totalBytes / 1e9).toFixed(0) + " GB");
+    if (itemId === "storageList")
+      res.value = updateText ? data.storage.partitions : undefined;
+  }
+
+  // --- 9. SETTINGS ---
+  if (itemId === "toggleTheme")
+    res.value = document.body.getAttribute("data-theme") !== "light";
+  if (itemId === "toggleUnit") res.value = appUnit === "F";
+
+  return res;
+}
+
 // --- 4. TRANSFORMATEUR DE DONNÉES (Adapter / Mapper) ---
 /**
  * Adapte les données du DataStore vers le format Renderer.
@@ -335,569 +605,96 @@ document.addEventListener("DOMContentLoaded", async () => {
  * @param {Object} modulesData - L'objet 'modules' du paquet INIT ou UPDATE
  * @param {Boolean} updateText - Si false, on ne met pas à jour les textes (optimisation 5Hz)
  * @returns {Object} Objet d'état pour updateInterface()
+ *
+ * Orchestrateur principal de transformation.
+ * VERSION CORRIGÉE : Plus de blocage strict. On tente de résoudre chaque widget.
+ * Si l'API n'a pas encore répondu, resolveWidgetData renverra un objet vide
+ * et le Renderer ne touchera pas au DOM (qui affichera "--" en attendant).
  */
 function transformDataToRenderFormat(
   modulesData,
   updateText = true,
   activeOverlayId,
 ) {
-  // Structure stricte demandée
   const state = {
     monitors: [],
     cards: [],
     overlay: null,
   };
 
-  // Helper pour le throttle du texte
-  // Si updateText est false, on renvoie undefined, ce qui dit au Renderer "Touche pas au DOM"
-  const txt = (val) => (updateText ? val : undefined);
+  // --- A. MONITORS (Le Socle : Toujours présent) ---
+  UI_CONFIG.monitors.forEach((monConfig) => {
+    // Plus de checkDataSource ici. On appelle directement le résolveur.
+    const data = resolveWidgetData(monConfig.id, modulesData, updateText, true);
 
-  // --- Helper Formatage Température ---
-  const fmtTemp = (val) => {
-    if (val === null || val === undefined) return "--";
-    if (appUnit === "F") {
-      return Math.round((val * 9) / 5 + 32) + "°F";
+    // Si resolveWidgetData renvoie des clés (value, display...), on ajoute.
+    // Même si c'est vide, on peut l'envoyer, le renderer ignorera les champs manquants.
+    if (data) {
+      state.monitors.push({
+        id: monConfig.id,
+        ...data,
+      });
     }
-    return Math.round(val) + "°C";
-  };
+  });
 
-  // --- Helper de calcul d'état ---
-  const getLoadState = (
-    val,
-    warnThreshold,
-    alertThreshold,
-    isRising = true,
-  ) => {
-    if (val === null || val === undefined) return "normal";
-    if (isRising) {
-      // Pour CPU, RAM, Temp : alerte si on DÉPASSE le seuil
-      if (val >= alertThreshold) return "alert";
-      if (val >= warnThreshold) return "warning";
-      return "normal";
-    } else {
-      // Pour Batterie : alerte si on DESCEND SOUS le seuil
-      if (val <= alertThreshold) return "alert";
-      if (val <= warnThreshold) return "warning";
-      return "normal";
-    }
-  };
+  // --- B. LOGIQUE DE SCOPE (Overlay vs Dashboard) ---
 
-  // --- 1. CPU (Usage & Temp) ---
-  if (modulesData.cpuUsage) {
-    const usage = modulesData.cpuUsage.usagePct;
-    const cpuState = getLoadState(
-      usage,
-      THRESHOLDS.cpu.warn,
-      THRESHOLDS.cpu.alert,
+  // 1. Détermine si un Overlay Dynamique est actif
+  let targetOverlayConfig = null;
+  if (activeOverlayId) {
+    // On cherche d'abord dans les overlays explicites
+    targetOverlayConfig = UI_CONFIG.overlays.find(
+      (c) => c.id === activeOverlayId,
     );
-
-    // A. MONITOR
-    state.monitors.push({
-      id: "cpu",
-      label: txt(`${usage}%`), // Texte freiné
-      percent: usage, // Barre fluide (5Hz)
-      state: cpuState,
-    });
-
-    // B. OVERLAY DETECTED?
-    if (activeOverlayId === "cpuUsage") {
-      // Préparation des données pour les cœurs avec leur état individuel
-      const coresData = (modulesData.cpuUsage.coresPct || []).map((c) => ({
-        pct: c,
-        state: getLoadState(
-          c,
-          THRESHOLDS.cpuCores.warn,
-          THRESHOLDS.cpuCores.alert,
-        ), // On réutilise ton helper
-      }));
-      state.overlay = {
-        id: "cpuUsage",
-        content: [
-          {
-            id: "cpuLoadAverage",
-            type: "olBar", // Nécessaire pour le renderer
-            title: "Average CPU Load", // Nécessaire pour le renderer
-            value: usage,
-            display: txt(`${usage}%`),
-            state: cpuState,
-          },
-          {
-            id: "cpuLoadList",
-            type: "olLoadList",
-            title: "CPU Load per core",
-            value: coresData,
-          },
-          {
-            id: "cpuArc",
-            type: "kv",
-            title: "CPU Architecture",
-            display: modulesData.cpuUsage.archName,
-          },
-          {
-            id: "cpuName",
-            type: "kv",
-            title: "CPU Model",
-            display: modulesData.cpuUsage.model,
-          },
-          {
-            id: "cpuFeatures",
-            type: "kv",
-            title: "CPU Features",
-            display: modulesData.cpuUsage.features,
-          },
-        ],
-      };
-    }
-    // C. CARD
-    else if (!activeOverlayId) {
-      state.cards.push({
-        id: "cpuUsage",
-        content: [
-          {
-            id: "loadBar",
-            value: usage,
-            display: txt(`${usage}%`),
-            state: cpuState,
-          },
-        ],
-      });
+    // Sinon, on vérifie si c'est une carte dynamique "agrandie"
+    if (!targetOverlayConfig) {
+      const cardConf = UI_CONFIG.cards.find((c) => c.id === activeOverlayId);
+      if (cardConf && cardConf.isDynamic) targetOverlayConfig = cardConf;
     }
   }
 
-  // --- 1b. CPU TEMP ---
-  if (modulesData.cpuTemp) {
-    const temp = modulesData.cpuTemp.tempC;
-    const displayStr = txt(fmtTemp(temp));
-    const tempState = getLoadState(
-      temp,
-      THRESHOLDS.temp.warn,
-      THRESHOLDS.temp.alert,
-    );
-    // Conversion sur une échelle de 120°C
-    // Exemple : 60°C deviendra 50%
-    const tempPct = Math.min(Math.round((temp / 120) * 100), 100);
-
-    // Préparation des zones formatées (Conversion mathématique brute pour la liste)
-    let zonesFormatted = undefined;
-    if (updateText && modulesData.cpuTemp.zones) {
-      zonesFormatted = modulesData.cpuTemp.zones.map((z) => {
-        if (appUnit === "F") return Math.round((z * 9) / 5 + 32);
-        return Math.round(z);
-      });
-    }
-
-    if (activeOverlayId === "cpuTemp") {
-      state.overlay = {
-        id: "cpuTemp",
-        content: [
-          {
-            id: "cpuTempAverage",
-            type: "olBar",
-            title: "Average CPU Temperature",
-            value: tempPct,
-            display: displayStr,
-            state: tempState,
-          },
-          {
-            id: "cpuTempList",
-            type: "olTempList",
-            unitSymbol: appUnit === "F" ? "°F" : "°C", // Info pour le renderer
-            value: zonesFormatted,
-          },
-        ],
-      };
-    } else if (!activeOverlayId) {
-      state.cards.push({
-        id: "cpuTemp",
-        content: [
-          {
-            id: "tempBar",
-            value: tempPct,
-            display: displayStr,
-            state: tempState,
-          },
-        ],
-      });
-    }
-  }
-
-  // --- 2. MEMORY ---
-  if (modulesData.memory) {
-    const total = modulesData.memory.capacity;
-    const available = modulesData.memory.availableCapacity;
-    const used = total - available;
-    const pct = Math.round((used / total) * 100);
-    const memState = getLoadState(
-      pct,
-      THRESHOLDS.memory.warn,
-      THRESHOLDS.memory.alert,
-    );
-
-    state.monitors.push({
-      id: "mem",
-      label: txt(`${pct}%`),
-      percent: pct,
-      state: memState,
-    });
-
-    if (!activeOverlayId) {
-      state.cards.push({
-        id: "memory",
-        content: [
-          {
-            id: "memBar",
-            value: pct,
-            display: txt(`${pct}%`),
-            state: memState,
-          },
-          { id: "memtotal", display: txt((total / 1e9).toFixed(1) + " GB") },
-          { id: "memUsed", display: txt((used / 1e9).toFixed(1) + " GB") },
-        ],
-      });
-    }
-  }
-
-  // --- 3. BATTERY ---
-  if (modulesData.battery) {
-    const pct = Math.round(modulesData.battery.level * 100);
-    const isCharging = modulesData.battery.charging;
-    const battState = getLoadState(
-      pct,
-      THRESHOLDS.battery.warn,
-      THRESHOLDS.battery.alert,
-      false,
-    );
-
-    state.monitors.push({
-      id: "batt",
-      label: txt(`${pct}%`),
-      percent: pct,
-      icon: isCharging ? "bolt" : "",
-      state: battState,
-    });
-
-    // Logique Temps Restant / Charge
-    let timeText = "--";
-    let labelText = "Battery time left : ";
-    const seconds = isCharging
-      ? modulesData.battery.chargingTime
-      : modulesData.battery.dischargingTime;
-
-    if (isCharging && pct === 100) {
-      timeText = "";
-      labelText = "";
-    } else if (seconds && isFinite(seconds)) {
-      const totalMins = Math.round(seconds / 60);
-
-      labelText = isCharging ? "Full charge in : " : "Battery time left : ";
-
-      if (totalMins > 59) {
-        const h = Math.floor(totalMins / 60);
-        const m = totalMins % 60;
-        timeText = `${h}:${m.toString().padStart(2, "0")}`;
-      } else {
-        timeText = `${totalMins} min`;
-      }
-    }
-
-    if (!activeOverlayId) {
-      state.cards.push({
-        id: "battery",
-        content: [
-          {
-            id: "battBar",
-            value: pct,
-            display: txt(`${pct}%`),
-            state: battState,
-          },
-          {
-            id: "battStatus",
-            display: txt(isCharging ? "Charging" : "On battery"),
-          },
-          {
-            id: "battTime",
-            display: txt(timeText),
-            label: txt(labelText),
-          },
-        ],
-      });
-    }
-  }
-
-  // --- 4. NETWORK ---
-  if (modulesData.network) {
-    const isOnline = modulesData.network.online;
-    const netState = isOnline ? "normal" : "alert";
-
-    state.monitors.push({
-      id: "net",
-      label: txt(isOnline ? "ON" : "OFF"),
-      state: netState,
-    });
-
-    if (!activeOverlayId) {
-      state.cards.push({
-        id: "network",
-        content: [
-          {
-            id: "netStatus",
-            display: txt(isOnline ? "Online" : "Offline"),
-            state: netState,
-          },
-          {
-            id: "netIp",
-            display: txt(modulesData.network.ip || "Hidden/Local"),
-          },
-        ],
-      });
-    }
-  }
-
-  // --- 5. STORAGE ---
-  if (modulesData.storage) {
-    // Calcul du % utilisé (commun overlay/card)
-    const usedPct = modulesData.storage.totalBytes
-      ? Math.round(
-          (modulesData.storage.usedBytes / modulesData.storage.totalBytes) *
-            100,
-        )
-      : 0;
-
-    const storageState = getLoadState(
-      usedPct,
-      THRESHOLDS.storage.warn,
-      THRESHOLDS.storage.alert,
-    );
-
-    // A. OVERLAY
-    if (activeOverlayId === "storage") {
-      state.overlay = {
-        id: "storage",
-        content: [
-          {
-            id: "storagePerc",
-            type: "olBar",
-            title: "% used space",
-            value: usedPct,
-            display: txt(`${usedPct}%`),
-            state: storageState,
-          },
-          {
-            id: "storageFree",
-            type: "kv",
-            display: txt(
-              (
-                (modulesData.storage.totalBytes -
-                  modulesData.storage.usedBytes) /
-                1e9
-              ).toFixed(1) + " GB",
-            ),
-          },
-          {
-            id: "storageTotal",
-            type: "kv",
-            display: txt(
-              (modulesData.storage.totalBytes / 1e9).toFixed(0) + " GB",
-            ),
-          },
-          {
-            id: "storageList",
-            type: "olDiscsList",
-            value: updateText ? modulesData.storage.partitions : undefined,
-          },
-        ],
-      };
-    }
-    // B. CARD
-    else if (!activeOverlayId) {
-      const usedPct = modulesData.storage.totalBytes
-        ? Math.round(
-            (modulesData.storage.usedBytes / modulesData.storage.totalBytes) *
-              100,
-          )
-        : 0;
-
-      state.cards.push({
-        id: "storage",
-        content: [
-          {
-            id: "storagePerc",
-            value: 100 - usedPct,
-            display: txt(`${100 - usedPct}%`),
-            state: storageState,
-          },
-          {
-            id: "storageFree",
-            display: txt(
-              (
-                (modulesData.storage.totalBytes -
-                  modulesData.storage.usedBytes) /
-                1e9
-              ).toFixed(1) + " GB",
-            ),
-          },
-        ],
-      });
-    }
-  }
-
-  // --- 6. DISPLAY ---
-  if (modulesData.display) {
-    // Récupération de l'écran principal (via la liste enrichie)
-    const screens = modulesData.display.screens || [];
-    const prim = screens.find((s) => s.primary) ||
-      screens[0] || { w: 0, h: 0, internal: false, name: "Unknown" };
-
-    // Logique de Nommage : "Internal Display" ou "Nom du Monitor"
-    const primName = prim.internal ? "Internal Display" : prim.name;
-    const primRes = `${prim.w} x ${prim.h}`;
-
-    // A. MODE OVERLAY
-    if (activeOverlayId === "display") {
-      // Formatage des écrans secondaires : "Nom : W x H"
-      const othersList = screens
-        .filter((s) => !s.primary)
-        .map((s) => {
-          const n = s.internal ? "Internal" : s.name;
-          return `${n} : ${s.w} x ${s.h}`;
-        });
-
-      // Gestion du cas "Aucun écran secondaire" pour la liste
-      if (othersList.length === 0) othersList.push("None");
-
-      state.overlay = {
-        id: "display",
-        content: [
-          {
-            id: "gpu",
-            type: "kv",
-            title: "GPU",
-            display: txt(modulesData.display.gpu || "Unknown"),
-          },
-          {
-            id: "primDisplay",
-            type: "kv",
-            title: "Primary Display",
-            // Demande : Info complète (Nom + Résolution)
-            display: txt(`${primName} : ${primRes}`),
-          },
-          {
-            id: "otherDisplays",
-            type: "olTextList",
-            title: "Secondary Displays",
-            value: updateText ? othersList : undefined,
-          },
-        ],
-      };
-    }
-    // B. MODE CARTE
-    else if (!activeOverlayId) {
-      state.cards.push({
-        id: "display",
-        content: [
-          {
-            id: "displayMain",
-            display: txt(primName),
-          },
-          {
-            id: "displayDef",
-            display: txt(primRes),
-          },
-        ],
-      });
-    }
-  }
-
-  // --- 7. SYSTEM / OS / CHROME ---
-  if (modulesData.system) {
-    if (!activeOverlayId) {
-      state.cards.push({
-        id: "os",
-        content: [
-          { id: "osName", display: txt(modulesData.system.os || "ChromeOS") },
-          { id: "osPlatform", display: txt(modulesData.system.platform) },
-        ],
-      });
-
-      state.cards.push({
-        id: "chrome",
-        content: [
-          { id: "chromeVersion", display: txt(modulesData.system.browserVer) },
-        ],
-      });
-    }
-
-    if (activeOverlayId === "chrome") {
-      state.overlay = {
-        id: "chrome",
-        content: [
-          {
-            id: "chromeVersion",
-            type: "kv",
-            title: "Version",
-            display: txt(modulesData.system.browserVer),
-          },
-          {
-            id: "chromeLanguages",
-            type: "kv",
-            title: "Languages",
-            display: txt(modulesData.system.languages),
-          },
-          // CORRECTION : Utilisation du nouveau type liste
-          {
-            id: "chromeExtensions",
-            type: "olTextList", // Nouveau type renderer
-            title: "Active Extensions",
-            value: modulesData.system.extensions, // On passe le tableau
-          },
-        ],
-      };
-    }
-  }
-
-  // --- 8. SETTINGS ---
-  const ver =
-    modulesData.system && modulesData.system.appVersion
-      ? modulesData.system.appVersion
-      : "unknown";
-
-  // Lecture de l'état réel pour le switch Thème
-  const currentTheme = document.body.getAttribute("data-theme") || "dark";
-
-  if (activeOverlayId === "settings") {
+  // CAS 1 : OVERLAY ACTIF (FOCUS)
+  if (targetOverlayConfig) {
     state.overlay = {
-      id: "settings",
-      content: [
-        {
-          id: "appVersion",
-          type: "kv",
-          title: "Version : ",
-          display: txt(ver),
-        },
-        {
-          id: "toggleTheme",
-          type: "switch",
-          title: "Dark/Light Theme",
-          value: currentTheme === "dark", // Coché si Dark
-        },
-        {
-          id: "toggleUnit",
-          type: "switch",
-          title: "Temperature Unit °F",
-          value: appUnit === "F", // Coché si Fahrenheit
-        },
-      ],
+      id: targetOverlayConfig.id,
+      title: targetOverlayConfig.title,
+      content: targetOverlayConfig.content.map((itemConfig) => {
+        const itemData = resolveWidgetData(
+          itemConfig.id,
+          modulesData,
+          updateText,
+          false,
+        );
+        return { ...itemConfig, ...itemData };
+      }),
+      // On garde tout, même si vide, pour ne pas casser la structure visuelle
     };
-  } else if (!activeOverlayId) {
-    state.cards.push({
-      id: "settings",
-      content: [{ id: "appVersion", display: txt(ver) }],
-    });
   }
 
-  /* if (activeOverlayId) {
-    state.cards = [];
-  } */
+  // CAS 2 : DASHBOARD (GRILLE)
+  else {
+    UI_CONFIG.cards.forEach((cardConfig) => {
+      // Plus de checkDataSource. Si modulesData.storage est null,
+      // resolveWidgetData renverra {} pour ses items, et le DOM ne bougera pas.
+
+      const cardContent = cardConfig.content.map((itemConfig) => {
+        const itemData = resolveWidgetData(
+          itemConfig.id,
+          modulesData,
+          updateText,
+          false,
+        );
+        return { ...itemConfig, ...itemData };
+      });
+      // Note : Je ne filtre plus (.filter) ici pour laisser les items exister
+      // même s'ils n'ont pas encore de données (ex: titre statique, layout).
+
+      state.cards.push({
+        id: cardConfig.id,
+        content: cardContent,
+      });
+    });
+  }
 
   return state;
 }

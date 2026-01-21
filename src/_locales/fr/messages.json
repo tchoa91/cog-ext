@@ -65,6 +65,7 @@
   "status_on_battery": { "message": "Sur batterie" },
   "status_full_charge_in": { "message": "Charge complète dans :" },
   "status_time_left": { "message": "Temps restant :" },
+  "status_powered": { "message": "Branchée" },
 
   "status_online": { "message": "En ligne" },
   "status_offline": { "message": "Hors ligne" },

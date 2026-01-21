@@ -574,18 +574,8 @@ export function setOverlayState(isOpen, payload = {}, event = null) {
   const content = overlayEl.querySelector(".overlay-content");
   const titleEl = overlayEl.querySelector("#overlay-title");
   const toggleBackgroundAccess = (disable) => {
-    const bgElements = document.querySelectorAll(
-      ".monitor-block.interactive, .card.interactive",
-    );
-    bgElements.forEach((el) => {
-      if (disable) {
-        el.setAttribute("tabindex", "-1"); // Retire du cycle Tab
-        el.setAttribute("aria-hidden", "true"); // Cache aux lecteurs d'écran
-      } else {
-        el.setAttribute("tabindex", "0"); // Remet dans le cycle Tab
-        el.removeAttribute("aria-hidden");
-      }
-    });
+    if (topBarEl) topBarEl.inert = disable;
+    if (gridEl) gridEl.inert = disable;
   };
 
   if (!isOpen) {
@@ -594,7 +584,6 @@ export function setOverlayState(isOpen, payload = {}, event = null) {
     setTimeout(() => {
       if (!overlayEl.classList.contains("active")) {
         overlayEl.classList.add("hidden");
-        // CORRECTION : On vide le contenu et le cache pour éviter le "ghosting"
         const overlayBody = document.getElementById("overlay-body");
         if (overlayBody) overlayBody.innerHTML = "";
         // IMPORTANT : On force le renderer à reconstruire le DOM au prochain appel
@@ -604,12 +593,12 @@ export function setOverlayState(isOpen, payload = {}, event = null) {
     }, 300);
     if (lastFocusedElement) {
       lastFocusedElement.focus();
-      lastFocusedElement = null; // On vide la mémoire
+      lastFocusedElement = null;
     }
     return;
   }
 
-  // C. LOGIQUE D'OUVERTURE
+  // LOGIQUE D'OUVERTURE
   if (event && event.currentTarget) {
     lastFocusedElement = event.currentTarget;
   }
@@ -634,9 +623,7 @@ export function setOverlayState(isOpen, payload = {}, event = null) {
   }
 
   if (overlayEl.classList.contains("active")) {
-    // overlayEl.style.transition = "transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.1)";
     if (content) {
-      // content.style.transition = "opacity 0.15s ease";
       content.style.opacity = "0";
       setTimeout(() => {
         if (titleEl) titleEl.textContent = title;

@@ -23,12 +23,11 @@ import { DataStore } from "./data-store.js";
 const t = chrome.i18n.getMessage;
 
 // --- 1. CONFIGURATION (L'intention d'affichage) ---
-
 const UI_CONFIG = {
   monitors: [
     {
       id: "cpu",
-      title: t("monitor_cpu"), // Au lieu de "CPU"
+      title: t("monitor_cpu"),
       cardLink: "cpuUsage",
       type: "bar",
       hasOvelay: true,
@@ -474,10 +473,15 @@ function resolveWidgetData(itemId, data, updateText, isMonitor = false) {
       res.value = pct;
       res.state = getLoadState(pct, THRESHOLDS.battery, false); // false = Alerte si ça descend
     }
-    if (itemId === "battStatus")
-      res.display = txt(
-        data.battery.charging ? t("status_charging") : t("status_on_battery"),
-      );
+    if (itemId === "battStatus") {
+      if (data.battery.charging) {
+        res.display = txt(
+          pct === 100 ? t("status_powered") : t("status_charging"),
+        );
+      } else {
+        res.display = txt(t("status_on_battery"));
+      }
+    }
 
     // Logique Temps Restant
     if (itemId === "battTime") {
@@ -624,9 +628,7 @@ function transformDataToRenderFormat(
 
   // --- A. MONITORS (Le Socle : Toujours présent) ---
   UI_CONFIG.monitors.forEach((monConfig) => {
-    // Plus de checkDataSource ici. On appelle directement le résolveur.
     const data = resolveWidgetData(monConfig.id, modulesData, updateText, true);
-
     // Si resolveWidgetData renvoie des clés (value, display...), on ajoute.
     // Même si c'est vide, on peut l'envoyer, le renderer ignorera les champs manquants.
     if (data) {
@@ -674,9 +676,6 @@ function transformDataToRenderFormat(
   // CAS 2 : DASHBOARD (GRILLE)
   else {
     UI_CONFIG.cards.forEach((cardConfig) => {
-      // Plus de checkDataSource. Si modulesData.storage est null,
-      // resolveWidgetData renverra {} pour ses items, et le DOM ne bougera pas.
-
       const cardContent = cardConfig.content.map((itemConfig) => {
         const itemData = resolveWidgetData(
           itemConfig.id,
@@ -686,8 +685,6 @@ function transformDataToRenderFormat(
         );
         return { ...itemConfig, ...itemData };
       });
-      // Note : Je ne filtre plus (.filter) ici pour laisser les items exister
-      // même s'ils n'ont pas encore de données (ex: titre statique, layout).
 
       state.cards.push({
         id: cardConfig.id,
@@ -730,14 +727,15 @@ async function gameLoop(timestamp) {
       activeOverlayId,
     );
 
-    // [DEBUG] Log complet du Payload envoyé au Renderer
-    // Condition : Uniquement si un overlay est actif ET que c'est un tick de mise à jour du texte (1Hz)
-    // Cela évite de spammer la console 60 fois par seconde tout en montrant l'objet complet.
-    /* if (renderState.overlay && updateText) {
-      console.log(
-        `📦 [Main -> Renderer] Payload complet pour l'overlay "${activeOverlayId}" : `,
-        renderState,
+    // [DEBUG] Traces complètes (1Hz)
+    /* if (updateText) {
+      console.groupCollapsed(
+        `🔍 Debug Loop [Tick ${tickCount}] 🎯 Scope : ${scope}`,
       );
+      //console.log("🎯 Scope :", scope);
+      console.log("📥 SysData (Source) :", sysData);
+      console.log("📤 RenderState (Output) :", renderState);
+      console.groupEnd();
     } */
 
     // D. RENDU

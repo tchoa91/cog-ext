@@ -40,9 +40,14 @@ export class DataStore {
 
     // 3. Aiguillage selon le Scope
 
-    // CORRECTION : On charge TOUJOURS les infos statiques (Version/OS).
-    // Comme c'est mis en cache interne par _fetchSystemStatic, c'est gratuit après le 1er appel.
-    pSysStatic = this._fetchSystemStatic();
+    // CORRECTION :
+    // - "cards" : Dashboard (Besoin pour carte OS et Chrome)
+    // - "settings" : Overlay Réglages (Besoin pour version App)
+    // - "chrome" : Overlay Chrome (Besoin pour extensions/langues)
+    // - "cpuUsage" : Overlay CPU (Besoin des infos système architecture/modèle)
+    if (["cards", "settings", "chrome", "cpuUsage"].includes(scope)) {
+      pSysStatic = this._fetchSystemStatic();
+    }
 
     // Cas A : Dashboard complet (Grille)
     if (scope === "cards") {

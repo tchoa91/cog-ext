@@ -1,0 +1,82 @@
+{
+  "appName": { "message": "COGext : System Monitor" },
+  "appDesc": {
+    "message": "A modern dashboard to monitor CPU, RAM, Battery, and Network. Lightweight, privacy-friendly, with Dark & Light modes."
+  },
+
+  "monitor_cpu": { "message": "CPU" },
+  "monitor_mem": { "message": "MEM" },
+  "monitor_batt": { "message": "BAT" },
+  "monitor_net": { "message": "NET" },
+
+  "card_cpu_title": { "message": "CPU Load" },
+  "card_mem_title": { "message": "Memory" },
+  "card_temp_title": { "message": "CPU Temperature" },
+  "card_batt_title": { "message": "Battery" },
+  "card_disp_title": { "message": "Display" },
+  "card_net_title": { "message": "Network" },
+  "card_chrome_title": { "message": "Chrome" },
+  "card_os_title": { "message": "OS" },
+  "card_storage_title": { "message": "Storage" },
+  "card_settings_title": { "message": "COGext - settings" },
+
+  "label_mem_total": { "message": "Total memory" },
+  "label_mem_used": { "message": "Used memory" },
+  "label_batt_time_general": {
+    "message": "Time before full charge/discharge :"
+  },
+  "label_ip": { "message": "IP :" },
+  "label_platform": { "message": "Platform :" },
+  "label_storage_free": { "message": "Free space" },
+  "label_storage_free_pct": { "message": "% free space" },
+  "label_storage_used_pct": { "message": "% used space" },
+  "label_version": { "message": "Version :" },
+
+  "overlay_cpu_title": { "message": "CPU Load details" },
+  "overlay_temp_title": { "message": "CPU Temperature details" },
+  "overlay_disp_title": { "message": "Display details" },
+  "overlay_chrome_title": { "message": "Chrome details" },
+  "overlay_storage_title": { "message": "Storage details" },
+
+  "detail_cpu_avg": { "message": "Average CPU Load" },
+  "detail_cpu_core": { "message": "CPU Load per core" },
+  "detail_cpu_arch": { "message": "CPU Architecture" },
+  "detail_cpu_model": { "message": "CPU Model" },
+  "detail_cpu_features": { "message": "CPU Features" },
+
+  "detail_temp_avg": { "message": "Average CPU Temperature" },
+  "detail_temp_sensor": { "message": "CPU Temperature per sensor" },
+
+  "detail_disp_prim": { "message": "Primary Display" },
+  "detail_disp_other": { "message": "Secondary Displays" },
+  "detail_gpu": { "message": "GPU :" },
+
+  "detail_chrome_langs": { "message": "Languages :" },
+  "detail_chrome_exts": { "message": "Active Extensions" },
+
+  "detail_storage_total": { "message": "Total space" },
+  "detail_storage_discs": { "message": "Discs:" },
+
+  "settings_theme": { "message": "Theme: Light/Dark " },
+  "settings_unit": { "message": "Temperature Unit: °C/°F" },
+  "settings_footer": {
+    "message": "2026 - GPL-3.0 - François Bacconnet <a href='https://ext.tchoa.com'>my website</a>"
+  },
+
+  "status_charging": { "message": "Charging" },
+  "status_on_battery": { "message": "On battery" },
+  "status_full_charge_in": { "message": "Full charge in:" },
+  "status_time_left": { "message": "Battery time left:" },
+  "status_powered": { "message": "Powered" },
+
+  "status_online": { "message": "Online" },
+  "status_offline": { "message": "Offline" },
+  "status_on": { "message": "ON" },
+  "status_off": { "message": "OFF" },
+  "status_hidden": { "message": "Hidden/Local" },
+
+  "disp_internal": { "message": "Internal Display" },
+  "disp_internal_short": { "message": "Internal" },
+  "disp_unknown": { "message": "Unknown" },
+  "disp_none": { "message": "None" }
+}

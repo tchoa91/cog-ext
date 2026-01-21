@@ -1,0 +1,10 @@
+# Fichiers de documentation perso
+ROADMAP.md
+structure_v2.json
+
+# Fichiers systèmes ou IDE (bonnes pratiques)
+.DS_Store
+Thumbs.db
+.vscode/
+*.zip
+*.crx

@@ -1,0 +1,724 @@
+/* --- 0. TYPOGRAPHIE (Uniquement 400 et 600) --- */
+@font-face {
+  font-family: "Inter";
+  src: url("assets/fonts/Inter-300.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("assets/fonts/Inter-500.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("assets/fonts/Inter-700.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* --- 1. VARIABLES & THÈMES --- */
+:root {
+  --topbar-height: 90px;
+  --grid-gap: 15px;
+
+  /* Design System */
+  --radius-lg: 12px;
+  --font-main: "Inter", system-ui, sans-serif;
+
+  /* THÈME SOMBRE */
+  --bg-color: #151f23;
+
+  /* Hiérarchie des fonds : Fond < Monitor < Carte < Hover */
+  --monitor-bg: #182428;
+  --card-bg: linear-gradient(to bottom right, #213137, #1b292e);
+  --card-hover: linear-gradient(to bottom right, #2a4047, #23353b);
+  --monitor-hover: var(--card-hover);
+
+  /* Overlay */
+  --modal-bg: var(--card-hover);
+  --overlay-backdrop: var(--bg-color);
+
+  /* Textes & Accents */
+  --text-main: #eceff1;
+  --text-muted: #90a4ae;
+  --titles: #90a4ae52;
+  --accent: #66bb6a;
+  --warning: #fb8c00; /* Orange 400 */
+  --alert: #ef5350; /* Red 400 */
+  /* --border-subtle: none; */
+  --border-subtle: 1px solid #59859321;
+  --shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  --bar-bg: #111;
+}
+
+/* THÈME CLAIR (S'active via JS plus tard) */
+[data-theme="light"] {
+  --bg-color: #f0f4f5;
+  --card-bg: #e6eaeb;
+  --card-hover: #ffffff;
+  --modal-bg: var(--card-hover);
+  --overlay-backdrop: var(--bg-color);
+  --text-main: #263238;
+  --text-muted: #546e7a;
+  --titles: #90a4ae70;
+  --accent: #5bb45f;
+  --warning: #f57c00;
+  --alert: #ef5350;
+  --monitor-bg: rgba(0, 0, 0, 0.05);
+  --monitor-hover: var(--card-hover);
+  --border-subtle: 1px solid #121b1e13;
+  --shadow: 2px 2px 4px rgba(0, 0, 0, 0.06);
+  --bar-bg: #7a7b7a;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+body {
+  width: 600px;
+  height: 600px;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- ZONE A: TopBar --- */
+#topbar {
+  height: var(--topbar-height);
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 15px;
+  gap: 15px;
+  z-index: 200; /* Au-dessus de l'overlay */
+  position: relative;
+  /* background-color: var(--bg-color); */
+  color: var(--text-main);
+  font-family: var(--font-main); /* Nouvelle font */
+  font-weight: 700;
+
+  /* Transition douce pour le changement de thème */
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+}
+
+.monitor-block {
+  flex: 1;
+  height: auto;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* cursor: pointer; */
+  margin: 10px 0 0;
+  padding: 0 12px;
+  background-color: var(--monitor-bg); /* Fond sombre/clair selon thème */
+  border-radius: var(--radius-lg);
+  border: var(--border-subtle);
+
+  /* Interaction */
+  transition:
+    transform 0.1s,
+    background-color 0.2s,
+    border-color 0.2s;
+}
+.monitor-block.interactive {
+  cursor: pointer;
+}
+.monitor-block.interactive:hover {
+  background: var(--monitor-hover);
+  box-shadow: var(--shadow);
+  transform: translateY(-1px);
+}
+
+.monitor-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  font-weight: 700; /* Utilise la version semi-bold */
+  color: var(--text-main);
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.monitor-label {
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.monitor-header > div {
+  display: flex;
+  align-items: center; /* Aligne l'éclair et le texte verticalement */
+}
+
+.monitor-status-icon {
+  display: flex;
+  align-items: center;
+  margin-right: 4px; /* Espace entre l'éclair et le % */
+  color: var(--accent); /* L'éclair prend la couleur verte/accent */
+  transition:
+    color 0.6s ease,
+    fill 0.6s ease;
+}
+
+.monitor-status-icon svg {
+  width: 16px; /* Taille discrète */
+  height: 16px;
+  fill: currentColor;
+}
+
+.monitor-bar-track {
+  width: 100%;
+  height: 10px;
+  background-color: var(--bar-bg);
+  border-radius: 5px;
+  overflow: hidden;
+}
+.bar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 10px; /* Espace entre barre et texte */
+}
+.bar-value {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-main);
+  min-width: 30px; /* Évite le saut si la valeur change de taille */
+  text-align: right;
+}
+.monitor-bar-fill {
+  height: 100%;
+  background-color: var(--accent);
+  width: 0%;
+  border-radius: 5px;
+  transition:
+    width 0.2s linear,
+    background-color 0.2s ease;
+}
+.monitor-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--text-muted); /* Couleur par défaut (gris/éteint) */
+  transition: background-color 0.3s ease;
+  align-self: center;
+  transition: background-color 0.6s ease;
+}
+.monitor-block[data-state="normal"] .monitor-dot {
+  background-color: var(--accent);
+}
+
+/* 2. WARNING (Orange) */
+/* S'applique au Remplissage des barres, aux Icônes et aux Points */
+[data-state="warning"] .monitor-bar-fill,
+[data-state="warning"] .monitor-status-icon,
+[data-state="warning"] .monitor-dot,
+.core-fill[data-state="warning"] {
+  background-color: var(--warning);
+  fill: var(--warning);
+  color: var(--warning); /* Pour les SVG utilisant currentColor */
+}
+
+/* 3. ALERT (Rouge) */
+[data-state="alert"] .monitor-bar-fill,
+[data-state="alert"] .monitor-status-icon,
+[data-state="alert"] .monitor-dot,
+.core-fill[data-state="alert"] {
+  background-color: var(--alert);
+  fill: var(--alert);
+  color: var(--alert);
+}
+
+/* --- ZONE B: Grille --- */
+
+#dashboard-grid {
+  flex-grow: 1;
+  overflow: hidden;
+  padding: var(--grid-gap);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(5, 1fr);
+  gap: var(--grid-gap);
+}
+
+.card:last-child:nth-child(odd) {
+  grid-column: span 2;
+}
+
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  border: var(--border-subtle);
+  position: relative;
+  padding: 0 10px;
+  /* MODIFICATION FLEXBOX */
+  display: flex;
+  flex-direction: column; /* On empile verticalement */
+  align-items: flex-start; /* On cale tout à gauche */
+  justify-content: flex-start; /* On cale tout en haut */
+  transition:
+    transform 0.1s,
+    background 0.2s;
+}
+.card.interactive {
+  cursor: pointer;
+}
+.card.interactive:hover {
+  background: var(--card-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+}
+.card h3,
+#overlay h3 {
+  font-size: 1.75rem;
+  font-weight: 300;
+  z-index: 2;
+  width: 100%; /* Prend toute la largeur */
+  line-height: 0.7em;
+  margin: 5px 0 0 0; /* Espace sous le titre */
+  color: var(--titles); /* Utilisation de VOTRE variable */
+}
+#overlay h3 {
+  margin-bottom: 30px;
+}
+.card-body {
+  width: 100%;
+  display: flex;
+  /* C'est la clé : on autorise les éléments à se mettre côte à côte */
+  flex-flow: row wrap;
+  align-items: center;
+  padding-left: 10px;
+  gap: 6px; /* Espace standard entre les éléments */
+  z-index: 3;
+}
+.card-icon {
+  width: 24px;
+  height: 24px;
+  fill: #666;
+  z-index: 2;
+  transition: fill 0.2s;
+}
+.card.interactive:hover .card-icon {
+  fill: var(--text-main);
+}
+.card-watermark {
+  position: absolute;
+  right: -5px;
+  bottom: -10px;
+  width: 60px;
+  height: 60px;
+  opacity: 0.12; /* Augmenté de 0.04 à 0.12 pour visibilité */
+  pointer-events: none;
+  fill: var(--text-main);
+  transition: opacity 0.2s; /* Transition douce si on veut animer plus tard */
+}
+/* La grosse valeur (ex: 45%) */
+.card-main-value {
+  font-size: 1rem; /* Assez gros */
+  font-weight: 500;
+  color: var(--text-main); /* VOTRE variable */
+  line-height: 1;
+  /* Pousse cet élément tout à droite de la ligne courante */
+  /* margin-left: auto; */
+}
+
+/* Les lignes Clé/Valeur (ex: IP : 192...) */
+.card-kv-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--text-muted); /* VOTRE variable */
+  /* Force le retour à la ligne pour ces éléments */
+  width: 100%;
+  line-height: 0.8em;
+  /* margin-top: 4px; */ /* Un petit peu d'espace si nécessaire */
+}
+
+/* La valeur spécifique dans une ligne KV */
+.card-kv-row .kv-value {
+  color: var(--text-main); /* VOTRE variable pour faire ressortir la data */
+  font-weight: 500;
+}
+/* Nouveau composant : Ligne Barre + Texte */
+.card-bar-row {
+  width: 100%;
+  display: flex;
+  align-items: center; /* Alignement vertical centré */
+  justify-content: space-between; /* Barre à gauche, Texte tout à droite */
+  /* margin-bottom: 8px; */ /* Espacement sous la ligne */
+}
+/* Contrainte stricte sur la barre dans ce contexte */
+.card-bar-row .monitor-bar-track {
+  width: 190px; /* Largeur demandée */
+  flex: 0 0 190px; /* Empêche le rétrécissement ou l'agrandissement */
+}
+/* Le texte */
+.card-bar-text {
+  font-weight: 700;
+  color: var(--text-main);
+  font-size: 1rem;
+  text-align: right; /* Sécurité si le texte est long */
+  line-height: 0.6em;
+}
+
+/* --- ZONE C: Overlay --- */
+#overlay {
+  position: absolute;
+  top: var(--topbar-height); /* Commence SOUS la barre */
+  left: 0;
+  width: 100%;
+  height: calc(100% - var(--topbar-height)); /* Remplit le reste */
+  background: var(--overlay-backdrop);
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px; /* Marge autour de la carte interne */
+
+  /* État initial (Fermé) */
+  opacity: 0;
+  transform: scale(0.7);
+  visibility: hidden;
+  pointer-events: none;
+
+  /* TRANSITION DE FERMETURE (Rapide et propre) */
+  /* On attend 0s pour l'opacité, mais on retarde la visibility pour laisser le fade-out finir */
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s cubic-bezier(0.4, 0, 1, 1),
+    visibility 0s linear 0.2s;
+}
+
+/* État actif (Ouvert) */
+#overlay.active {
+  opacity: 1;
+  transform: scale(1);
+  visibility: visible;
+  pointer-events: auto;
+
+  /* TRANSITION D'OUVERTURE (Hero Bounce) */
+  /* transform-origin est géré par le JS (renderer.js) au point de clic */
+  transition:
+    opacity 0.2s ease,
+    transform 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.15); /* Rebond élastique léger */
+}
+
+/* 2. LE TITRE (L'illusion de continuité) */
+/* Assure-toi que #overlay-title a la même typo que .card h3 */
+#overlay-title {
+  opacity: 0;
+  transform: translateY(10px); /* Part d'un peu plus bas */
+  transition:
+    opacity 0.1s ease,
+    transform 0.1s ease; /* Disparition immédiate si fermeture */
+}
+
+#overlay.active #overlay-title {
+  opacity: 1;
+  transform: translateY(0);
+  /* DÉLAI MAGIQUE : Le titre arrive pendant que la boite s'ouvre (à 0.1s) */
+  transition:
+    opacity 0.3s ease 0.1s,
+    transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) 0.1s;
+}
+
+/* 3. LE CONTENU (Les détails complexes) */
+.overlay-content {
+  opacity: 0;
+  /* Fermeture : Disparition immédiate pour ne pas voir le contenu s'écraser */
+  transition: opacity 0.1s ease 0s;
+}
+
+#overlay.active .overlay-content {
+  opacity: 1;
+  /* DÉLAI MAGIQUE 2 : Le contenu n'arrive que quand la boîte est quasi stable (0.25s) */
+  transition: opacity 0.4s ease 0.25s;
+}
+
+/* Le conteneur interne (la "carte" de détail) */
+.overlay-content {
+  /* Utilise la variable "Lumineuse/Modal" du thème */
+  background: var(--modal-bg);
+  color: var(--text-main); /* Force la couleur du texte du thème */
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-lg);
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0 5px 6px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-subtle);
+  font-size: 1.5em;
+}
+
+#close-overlay {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  padding: 0 5px;
+  color: var(--text-main);
+  font-size: 1.8rem;
+  cursor: pointer;
+  transition:
+    color 0.2s,
+    transform 0.2s;
+  z-index: 10;
+}
+#close-overlay:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* --- OVERLAY COMPONENTS --- */
+
+/* Conteneurs génériques */
+.overlay-section {
+  margin-bottom: 20px;
+}
+.overlay-val {
+  font-weight: 600;
+}
+
+.overlay-header-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+/* Key-Value Rows (ex: Model, Arch...) */
+.overlay-kv-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 4px;
+}
+
+.overlay-kv-label,
+.overlay-label {
+  color: var(--text-muted);
+}
+
+.overlay-kv-val {
+  font-weight: 500;
+}
+
+/* CPU Cores Grid */
+.overlay-cores-grid {
+  display: flex;
+  gap: 4px;
+  height: 60px;
+  align-items: flex-end;
+}
+
+.core-track {
+  flex: 1;
+  background: var(--bar-bg);
+  height: 100%;
+  position: relative;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.core-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--accent);
+  transition:
+    height 0.2s linear,
+    background-color 0.2s ease;
+}
+
+/* --- OVERLAY : TEMPERATURE GRID (olTempList) --- */
+
+.overlay-temp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  gap: 8px;
+}
+
+.temp-item {
+  /* background: var(--surface); */
+  padding: 6px;
+  border-radius: 4px;
+  text-align: center;
+  border: 1px solid var(--text-muted);
+}
+
+.temp-label {
+  font-size: 0.75em;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+  text-transform: uppercase;
+}
+
+.temp-val {
+  font-weight: 600;
+}
+
+/* --- OVERLAY : TEXT LIST (olTextList) --- */
+.overlay-text-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 300px; /* Sécurité si la liste est très longue */
+  overflow-y: auto; /* Scroll si nécessaire */
+  text-align: right;
+}
+
+.overlay-text-list li {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 0.9rem;
+  color: var(--text-main);
+}
+
+.overlay-text-list li:last-child {
+  border-bottom: none;
+}
+
+/* --- OVERLAY : DISCS LIST (olDiscsList) --- */
+
+.overlay-discs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.disk-item {
+  background: var(--surface);
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
+}
+
+.disk-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9em;
+  margin-bottom: 6px;
+  align-items: baseline;
+}
+
+.disk-name {
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 60%;
+}
+
+.disk-stats {
+  color: var(--text-muted);
+  font-size: 0.85em;
+}
+
+/* --- OVERLAY : SWITCHES --- */
+
+.overlay-switch-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* The Switch Container */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--bar-bg);
+  transition: 0.4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: var(--accent);
+}
+
+input:checked + .slider:before {
+  transform: translateX(18px);
+}
+
+/* ACCESSIBILITÉ : Focus visible pour les Switchs */
+/* Quand l'input (masqué) reçoit le focus clavier, on illumine le slider voisin */
+/* On applique un encadrement simple (type "cadre blanc") aux switches quand ils ont le focus.
+   On utilise var(--text-main) pour que ce soit blanc en thème sombre et noir en thème clair,
+   sans ajouter de nouvelles couleurs en dur. */
+.switch input:focus + .slider {
+  outline: 2px solid var(--text-main);
+  outline-offset: 2px;
+}
+
+/* --- OVERLAY : HTML GENERIC (Footer, Infos...) --- */
+.overlay-html {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid var(--border-subtle);
+  /* text-align: center; */
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.overlay-html a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+.overlay-html a:hover {
+  text-decoration: underline;
+}

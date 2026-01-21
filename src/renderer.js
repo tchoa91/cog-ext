@@ -574,7 +574,7 @@ export function setOverlayState(isOpen, payload = {}, event = null) {
   const content = overlayEl.querySelector(".overlay-content");
   const titleEl = overlayEl.querySelector("#overlay-title");
   const toggleBackgroundAccess = (disable) => {
-    if (topBarEl) topBarEl.inert = disable;
+    //if (topBarEl) topBarEl.inert = disable;
     if (gridEl) gridEl.inert = disable;
   };
 

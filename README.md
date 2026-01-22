@@ -2,7 +2,7 @@
 
 COGext is a lightweight, high-performance system monitor extension for the Chrome browser. It provides a real-time, glanceable overview of your system's health (CPU, RAM, Battery, Network) wrapped in a modern, native-feeling interface.
 
-<img width="256" height="256" alt="COGext_0_1224px" src="https://github.com/user-attachments/assets/940f61ef-cba6-4e5e-8e59-d40834224923" />
+<img width="128" height="128" alt="Logo COGext" src="./src/assets/icon128.png" />
 
 ## 🧠 V2.0 Design Philosophy: From List to Dashboard
 

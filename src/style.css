@@ -635,6 +635,55 @@ body {
   font-size: 0.85em;
 }
 
+/* --- COMPOSANT : DISK (Card & Overlay) --- */
+
+/* Conteneur Ligne (Utilisé dans la Carte) */
+.card-disk-row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline; /* Aligne le texte sur la ligne de base */
+  gap: 10px;
+}
+
+/* Conteneur Liste (Utilisé dans l'Overlay) */
+.overlay-disk-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.overlay-disk-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.overlay-disk-item:last-child {
+  border-bottom: none;
+}
+
+/* Styles communs Texte */
+.disk-name {
+  font-weight: 600; /* Gras mais pas trop */
+  color: var(--text-main);
+  font-size: 0.95rem;
+  /* Gestion des noms longs */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1; /* Prend la place dispo */
+  margin-right: 10px;
+}
+
+.disk-info {
+  font-size: 0.85rem; /* Plus petit */
+  color: var(--text-muted); /* Discret */
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums; /* Chiffres alignés */
+}
+
 /* --- OVERLAY : SWITCHES --- */
 
 .overlay-switch-row {

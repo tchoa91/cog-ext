@@ -112,15 +112,7 @@ const UI_CONFIG = {
       id: "storage",
       title: t("card_storage_title"),
       hasOvelay: true,
-      isDynamic: true,
-      content: [
-        {
-          id: "storagePerc",
-          type: "olBar",
-          title: t("label_storage_free_pct"),
-        },
-        { id: "storageFree", type: "kv", title: t("label_storage_free") },
-      ],
+      content: [{ id: "storageMain", type: "disk" }],
     },
     {
       id: "settings",
@@ -189,18 +181,10 @@ const UI_CONFIG = {
     {
       id: "storage",
       title: t("overlay_storage_title"),
-      isDynamic: true,
       content: [
         {
-          id: "storagePerc",
-          type: "olBar",
-          title: t("label_storage_used_pct"),
-        },
-        { id: "storageFree", type: "kv", title: t("label_storage_free") },
-        { id: "storageTotal", type: "kv", title: t("detail_storage_total") },
-        {
           id: "storageList",
-          type: "olDiscsList",
+          type: "disk",
           title: t("detail_storage_discs"),
         },
       ],
@@ -568,30 +552,37 @@ function resolveWidgetData(itemId, data, updateText, isMonitor = false) {
 
   // --- 8. STORAGE ---
   if (data.storage) {
-    const usedPct = data.storage.totalBytes
-      ? Math.round((data.storage.usedBytes / data.storage.totalBytes) * 100)
-      : 0;
-    const freeGb = (
-      (data.storage.totalBytes - data.storage.usedBytes) /
-      1e9
-    ).toFixed(1);
+    // Fonction utilitaire locale pour le formatage "disk"
+    const formatDiskData = (disk) => {
+      if (!disk) return { name: "N/A", info: "--" };
 
-    if (itemId === "storagePerc") {
-      res.value = usedPct; // Pour Overlay (Barre remplie = espace utilisé)
-      // Pour Card : valeur inversée (Espace Libre) si souhaité, ou garder utilisé.
-      // Selon votre config actuelle "storagePerc" est une barre.
-      // Dans la carte "storage", c'est souvent "Free space".
-      // ATTENTION : Votre code actuel utilisait "100 - usedPct" pour la carte.
-      // Si c'est le même ID "storagePerc", le résolveur doit choisir.
-      // Ici je renvoie l'état brut, à voir selon votre préférence visuelle.
-      res.display = txt(`${usedPct}%`);
-      res.state = getLoadState(usedPct, THRESHOLDS.storage);
+      const total = (disk.capacity / 1e9).toFixed(0) + " Go";
+      let infoText = total;
+      if (disk.availableCapacity !== null) {
+        const free = (disk.availableCapacity / 1e9).toFixed(0) + " Go";
+        infoText = `${free} ${t("label_free")} / ${total}`;
+      }
+      return {
+        name: `${disk.name} (${disk.type})`,
+        info: infoText,
+      };
+    };
+
+    // Cas 1 : La Carte (Premier disque uniquement)
+    if (itemId === "storageMain") {
+      // On prend le premier disque dispo (interne ou externe)
+      const firstDisk = data.storage[0];
+      // Si aucun disque (ex: ChromeOS sans DD ext), on renvoie null pour masquer la carte
+      // ou un placeholder si tu préfères. Ici on suit la logique "pas de disque = pas de carte"
+      if (!firstDisk) return null;
+
+      res.value = formatDiskData(firstDisk);
     }
-    if (itemId === "storageFree") res.display = txt(freeGb + " GB");
-    if (itemId === "storageTotal")
-      res.display = txt((data.storage.totalBytes / 1e9).toFixed(0) + " GB");
-    if (itemId === "storageList")
-      res.value = updateText ? data.storage.partitions : undefined;
+
+    // Cas 2 : L'Overlay (Liste de tous les disques)
+    if (itemId === "storageList") {
+      res.value = data.storage.map(formatDiskData);
+    }
   }
 
   // --- 9. SETTINGS ---

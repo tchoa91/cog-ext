@@ -13,8 +13,9 @@
 export class DataStore {
   constructor() {
     this.version = "5.1 - Pure Raw Data";
-    this.cachedGpu = null; // Pour éviter la boucle infinie de contextes WebGL
+    this.cachedGpu = null;
     this.cachedStaticInfo = null;
+    this.cachedStorage = null;
   }
 
   /**
@@ -133,15 +134,7 @@ export class DataStore {
 
     // STORAGE
     if (storage) {
-      output.storage = {
-        usedBytes: storage.used,
-        totalBytes: storage.total,
-        name: storage.name,
-      };
-      // Détection automatique : Si la version "Lourde" a été fetchée, elle contient 'partitions'
-      if (storage.partitions) {
-        output.storage.partitions = storage.partitions;
-      }
+      output.storage = storage;
     }
 
     // DISPLAY
@@ -282,71 +275,63 @@ export class DataStore {
   }
 
   async _fetchStorageSummary() {
-    const details = await this._fetchStorageDetails();
-    if (!details) return null; // Si pas de disque, pas de summary
-
-    return {
-      used: details.used,
-      total: details.total,
-      name: details.name,
-    };
+    return await this._fetchStorageDetails();
   }
 
   async _fetchStorageDetails() {
+    // 1. Si on a déjà les données en cache, on les renvoie direct (Statique)
+    if (this.cachedStorage) return this.cachedStorage;
+
     return new Promise((resolve) => {
       chrome.system.storage.getInfo(async (units) => {
-        // 1. Si aucun disque détecté, on cache la carte
+        // Si aucun disque, on renvoie null et on ne cache rien (pour retenter plus tard si branchement)
         if (!units || units.length === 0) {
           return resolve(null);
         }
 
-        // 2. CORRECTION CHROMEOS : Feature Detection stricte
-        // Si la fonction permettant de lire la capacité est absente (cas ChromeOS actuel),
-        // on renvoie null immédiatement pour NE PAS afficher la carte (ni 0, ni erreur).
-        if (typeof chrome.system.storage.getAvailableCapacity !== "function") {
-          console.warn(
-            "Storage API limitée (ChromeOS) : Module Storage désactivé.",
-          );
-          return resolve(null);
-        }
+        // Préparation des appels asynchrones pour l'espace libre
+        const canCheckFreeSpace =
+          typeof chrome.system.storage.getAvailableCapacity === "function";
 
-        // 3. Si la fonction existe, on procède au calcul normal
         const partitionsPromises = units.map((unit) => {
           return new Promise((resUnit) => {
-            chrome.system.storage.getAvailableCapacity(unit.id, (info) => {
-              const free = chrome.runtime.lastError
-                ? 0
-                : info.availableCapacity;
+            const safeCapacity = unit.capacity || 0;
 
-              // Nettoyage du nom
-              let cleanName = (unit.name || `Partition ${unit.id}`)
-                .replace(/[^\x20-\x7E]/g, "")
-                .trim();
+            // Nettoyage basique du nom
+            // Note: sur ChromeOS, le nom est souvent vide ou générique, on garde l'ID si besoin
+            let cleanName = (
+              unit.name || unit.id.replace(/[^a-z0-9]/gi, " ")
+            ).trim();
+            if (!cleanName) cleanName = "Drive";
 
-              resUnit({
-                id: unit.id,
-                label: cleanName,
-                size: unit.capacity,
-                free: free,
-                type: unit.type,
+            const baseInfo = {
+              name: cleanName,
+              type: unit.type,
+              capacity: safeCapacity,
+              // Par défaut availableCapacity est null (et pas 0, pour distinguer "plein" de "inconnu")
+              availableCapacity: null,
+            };
+
+            // Si l'API le permet et que le disque a une taille
+            if (canCheckFreeSpace && safeCapacity > 0) {
+              chrome.system.storage.getAvailableCapacity(unit.id, (info) => {
+                if (!chrome.runtime.lastError && info) {
+                  baseInfo.availableCapacity = info.availableCapacity;
+                }
+                resUnit(baseInfo);
               });
-            });
+            } else {
+              resUnit(baseInfo);
+            }
           });
         });
 
         const partitions = await Promise.all(partitionsPromises);
 
-        if (partitions.length === 0) return resolve(null);
+        // On stocke le résultat brute (c'est le main.js qui filtrera le 1er disque)
+        this.cachedStorage = partitions;
 
-        const mainDisk =
-          partitions.find((p) => p.type === "fixed") || partitions[0];
-
-        resolve({
-          used: mainDisk.size - mainDisk.free,
-          total: mainDisk.size,
-          name: mainDisk.label,
-          partitions: partitions,
-        });
+        resolve(partitions);
       });
     });
   }

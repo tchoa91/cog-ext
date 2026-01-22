@@ -25,9 +25,7 @@
   "label_batt_time_general": { "message": "Temps avant charge/décharge :" },
   "label_ip": { "message": "IP :" },
   "label_platform": { "message": "Plateforme :" },
-  "label_storage_free": { "message": "Espace libre" },
-  "label_storage_free_pct": { "message": "% espace libre" },
-  "label_storage_used_pct": { "message": "% espace utilisé" },
+  "label_free": { "message": "libre" },
   "label_version": { "message": "Version :" },
 
   "overlay_cpu_title": { "message": "Détails Charge CPU" },
@@ -52,7 +50,6 @@
   "detail_chrome_langs": { "message": "Langues :" },
   "detail_chrome_exts": { "message": "Extensions Actives" },
 
-  "detail_storage_total": { "message": "Espace total" },
   "detail_storage_discs": { "message": "Disques :" },
 
   "settings_theme": { "message": "Thème (Clair/Sombre)" },

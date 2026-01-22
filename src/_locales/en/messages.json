@@ -27,9 +27,7 @@
   },
   "label_ip": { "message": "IP :" },
   "label_platform": { "message": "Platform :" },
-  "label_storage_free": { "message": "Free space" },
-  "label_storage_free_pct": { "message": "% free space" },
-  "label_storage_used_pct": { "message": "% used space" },
+  "label_free": { "message": "free" },
   "label_version": { "message": "Version :" },
 
   "overlay_cpu_title": { "message": "CPU Load details" },
@@ -54,7 +52,6 @@
   "detail_chrome_langs": { "message": "Languages :" },
   "detail_chrome_exts": { "message": "Active Extensions" },
 
-  "detail_storage_total": { "message": "Total space" },
   "detail_storage_discs": { "message": "Discs:" },
 
   "settings_theme": { "message": "Theme: Light/Dark " },

@@ -174,6 +174,12 @@ function renderCardContent(contentItems) {
                     <span class="kv-label">${item.title || ""}</span>
                     <span class="kv-value" data-el-id="${item.id}">--</span>
                   </div>`;
+        case "disk":
+          return `
+            <div class="card-disk-row">
+                <span class="disk-name" data-el-id="${item.id}-name">--</span>
+                <span class="disk-info" data-el-id="${item.id}-info">--</span>
+            </div>`;
         default:
           return "";
       }
@@ -249,6 +255,33 @@ export function updateInterface(payload) {
 
       if (card.content) {
         card.content.forEach((item) => {
+          // --- 1. CAS SPÉCIAL : DISK (Composite) ---
+          // Ce type n'a pas d'ID unique sur un conteneur, mais sur ses enfants (-name et -info)
+          if (item.type === "disk") {
+            if (!item.value) return;
+
+            const nameEl = cardEl.querySelector(
+              `[data-el-id="${item.id}-name"]`,
+            );
+            const infoEl = cardEl.querySelector(
+              `[data-el-id="${item.id}-info"]`,
+            );
+
+            // Update Nom (Gros)
+            if (nameEl && renderCache[`${item.id}-n`] !== item.value.name) {
+              nameEl.textContent = item.value.name;
+              renderCache[`${item.id}-n`] = item.value.name;
+            }
+            // Update Info (Petit)
+            if (infoEl && renderCache[`${item.id}-i`] !== item.value.info) {
+              infoEl.textContent = item.value.info;
+              renderCache[`${item.id}-i`] = item.value.info;
+            }
+            return; // On a traité le disque, on passe à l'item suivant
+          }
+
+          // --- 2. CAS CLASSIQUES (Élément cible unique) ---
+          // On cherche l'élément par son ID exact
           const targetEl = cardEl.querySelector(`[data-el-id="${item.id}"]`);
           if (!targetEl) return;
 
@@ -294,13 +327,11 @@ export function updateInterface(payload) {
               renderCache[keyDisp] = item.display;
             }
 
-            // Mise à jour du LABEL DYNAMIQUE (Ta demande précédente)
-            // On vérifie si un 'label' est fourni et s'il a changé
+            // Mise à jour du LABEL DYNAMIQUE
             if (
               item.label !== undefined &&
               renderCache[keyLbl] !== item.label
             ) {
-              // On cherche le frère précédent qui est le label
               if (targetEl.classList.contains("kv-value")) {
                 const labelEl = targetEl.previousElementSibling;
                 if (labelEl && labelEl.classList.contains("kv-label")) {
@@ -376,13 +407,12 @@ export function updateInterface(payload) {
             </div>`;
           }
 
-          // Type: Liste Disques/Partitions (olDiscsList)
-          if (item.type === "olDiscsList") {
+          // Type : Liste de Disques (disk)
+          if (item.type === "disk") {
             return `
             <div class="overlay-section">
                 <div style="margin-bottom:8px;" class="overlay-label">${item.title || ""}</div>
-                <div class="overlay-discs-list" data-oid="${item.id}-list">
-                     </div>
+                <ul class="overlay-disk-list" data-oid="${item.id}-list"></ul>
             </div>`;
           }
 
@@ -527,31 +557,22 @@ export function updateInterface(payload) {
         }
       }
 
-      // Mise à jour Disques (olDiscsList)
-      if (item.type === "olDiscsList" && Array.isArray(item.value)) {
+      // MISE À JOUR DISK LIST
+      if (item.type === "disk" && Array.isArray(item.value)) {
         const listEl = overlayBody.querySelector(
           `[data-oid="${item.id}-list"]`,
         );
         if (listEl) {
+          // On génère la liste. Format identique à la carte mais en liste <li>
           listEl.innerHTML = item.value
-            .map((disk) => {
-              // Calcul pourcentage simple (sécurité div par 0 incluse)
-              const pct = disk.size
-                ? Math.round(((disk.size - disk.free) / disk.size) * 100)
-                : 0;
-
-              return `
-                 <div class="disk-item">
-                    <div class="disk-header">
-                        <span class="disk-name" title="${disk.label}">${disk.label || "Disk"}</span>
-                        <span class="disk-stats">${((disk.size - disk.free) / 1e9).toFixed(1)} / ${(disk.size / 1e9).toFixed(0)} GB</span>
-                    </div>
-                    <div class="monitor-bar-track">
-                        <div class="monitor-bar-fill" style="width: ${pct}%"></div>
-                    </div>
-                 </div>
-                 `;
-            })
+            .map(
+              (disk) => `
+                <li class="overlay-disk-item">
+                    <span class="disk-name">${disk.name}</span>
+                    <span class="disk-info">${disk.info}</span>
+                </li>
+            `,
+            )
             .join("");
         }
       }

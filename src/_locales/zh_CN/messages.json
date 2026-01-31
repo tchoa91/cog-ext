@@ -1,0 +1,79 @@
+{
+  "appName": { "message": "COGext : 系统监控" },
+  "appDesc": {
+    "message": "一款用于监控 CPU、内存、电池和网络的现代仪表板。轻量、隐私友好，支持深色和浅色模式。"
+  },
+
+  "monitor_cpu": { "message": "处理器" },
+  "monitor_mem": { "message": "内存" },
+  "monitor_batt": { "message": "电池" },
+  "monitor_net": { "message": "网络" },
+
+  "card_cpu_title": { "message": "CPU 负载" },
+  "card_mem_title": { "message": "内存" },
+  "card_temp_title": { "message": "CPU 温度" },
+  "card_batt_title": { "message": "电池" },
+  "card_disp_title": { "message": "显示器" },
+  "card_net_title": { "message": "网络" },
+  "card_chrome_title": { "message": "Chrome" },
+  "card_os_title": { "message": "操作系统" },
+  "card_storage_title": { "message": "存储" },
+  "card_settings_title": { "message": "COGext - 设置" },
+
+  "label_mem_total": { "message": "总内存" },
+  "label_mem_used": { "message": "已用内存" },
+  "label_batt_time_general": {
+    "message": "距充满/耗尽剩余时间："
+  },
+  "label_ip": { "message": "IP 地址：" },
+  "label_platform": { "message": "平台：" },
+  "label_free": { "message": "可用" },
+  "label_version": { "message": "版本：" },
+
+  "overlay_cpu_title": { "message": "CPU 负载详情" },
+  "overlay_temp_title": { "message": "CPU 温度详情" },
+  "overlay_disp_title": { "message": "显示详情" },
+  "overlay_chrome_title": { "message": "Chrome 详情" },
+  "overlay_storage_title": { "message": "存储详情" },
+
+  "detail_cpu_avg": { "message": "平均 CPU 负载" },
+  "detail_cpu_core": { "message": "每核心 CPU 负载" },
+  "detail_cpu_arch": { "message": "CPU 架构" },
+  "detail_cpu_model": { "message": "CPU 型号" },
+  "detail_cpu_features": { "message": "CPU 特性" },
+
+  "detail_temp_avg": { "message": "平均 CPU 温度" },
+  "detail_temp_sensor": { "message": "每传感器 CPU 温度" },
+
+  "detail_disp_prim": { "message": "主显示器" },
+  "detail_disp_other": { "message": "次要显示器" },
+  "detail_gpu": { "message": "显卡 (GPU)：" },
+
+  "detail_chrome_langs": { "message": "语言：" },
+  "detail_chrome_exts": { "message": "已启用的扩展程序" },
+
+  "detail_storage_discs": { "message": "磁盘：" },
+
+  "settings_theme": { "message": "主题：浅色/深色" },
+  "settings_unit": { "message": "温度单位：°C/°F" },
+  "settings_footer": {
+    "message": "2026 - GPL-3.0 - François Bacconnet <a href='https://ext.tchoa.com'>我的网站</a>"
+  },
+
+  "status_charging": { "message": "正在充电" },
+  "status_on_battery": { "message": "电池供电" },
+  "status_full_charge_in": { "message": "距充满还需：" },
+  "status_time_left": { "message": "电池剩余时间：" },
+  "status_powered": { "message": "接通电源" },
+
+  "status_online": { "message": "在线" },
+  "status_offline": { "message": "离线" },
+  "status_on": { "message": "开启" },
+  "status_off": { "message": "关闭" },
+  "status_hidden": { "message": "隐藏/本地" },
+
+  "disp_internal": { "message": "内置显示器" },
+  "disp_internal_short": { "message": "内置" },
+  "disp_unknown": { "message": "未知" },
+  "disp_none": { "message": "无" }
+}

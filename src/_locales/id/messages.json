@@ -1,0 +1,79 @@
+{
+  "appName": { "message": "COGext: Monitor Sistem" },
+  "appDesc": {
+    "message": "Dashboard modern untuk memantau CPU, RAM, Baterai, dan Jaringan. Ringan, menjaga privasi, dengan mode Gelap & Terang."
+  },
+
+  "monitor_cpu": { "message": "CPU" },
+  "monitor_mem": { "message": "MEM" },
+  "monitor_batt": { "message": "BAT" },
+  "monitor_net": { "message": "NET" },
+
+  "card_cpu_title": { "message": "Beban CPU" },
+  "card_mem_title": { "message": "Memori" },
+  "card_temp_title": { "message": "Suhu CPU" },
+  "card_batt_title": { "message": "Baterai" },
+  "card_disp_title": { "message": "Layar" },
+  "card_net_title": { "message": "Jaringan" },
+  "card_chrome_title": { "message": "Chrome" },
+  "card_os_title": { "message": "OS" },
+  "card_storage_title": { "message": "Penyimpanan" },
+  "card_settings_title": { "message": "COGext - Pengaturan" },
+
+  "label_mem_total": { "message": "Total memori" },
+  "label_mem_used": { "message": "Memori terpakai" },
+  "label_batt_time_general": {
+    "message": "Waktu sebelum daya penuh/habis:"
+  },
+  "label_ip": { "message": "IP:" },
+  "label_platform": { "message": "Platform:" },
+  "label_free": { "message": "tersedia" },
+  "label_version": { "message": "Versi:" },
+
+  "overlay_cpu_title": { "message": "Detail Beban CPU" },
+  "overlay_temp_title": { "message": "Detail Suhu" },
+  "overlay_disp_title": { "message": "Detail Layar" },
+  "overlay_chrome_title": { "message": "Detail Chrome" },
+  "overlay_storage_title": { "message": "Detail Penyimpanan" },
+
+  "detail_cpu_avg": { "message": "Beban rata-rata" },
+  "detail_cpu_core": { "message": "Beban per inti" },
+  "detail_cpu_arch": { "message": "Arsitektur CPU" },
+  "detail_cpu_model": { "message": "Model CPU" },
+  "detail_cpu_features": { "message": "Fitur CPU" },
+
+  "detail_temp_avg": { "message": "Suhu rata-rata" },
+  "detail_temp_sensor": { "message": "Suhu per sensor" },
+
+  "detail_disp_prim": { "message": "Layar Utama" },
+  "detail_disp_other": { "message": "Layar Sekunder" },
+  "detail_gpu": { "message": "GPU:" },
+
+  "detail_chrome_langs": { "message": "Bahasa:" },
+  "detail_chrome_exts": { "message": "Ekstensi Aktif" },
+
+  "detail_storage_discs": { "message": "Disk:" },
+
+  "settings_theme": { "message": "Tema: Terang/Gelap" },
+  "settings_unit": { "message": "Unit Suhu: °C/°F" },
+  "settings_footer": {
+    "message": "2026 - GPL-3.0 - François Bacconnet <a href='https://ext.tchoa.com'>situs web saya</a>"
+  },
+
+  "status_charging": { "message": "Mengisi daya" },
+  "status_on_battery": { "message": "Menggunakan baterai" },
+  "status_full_charge_in": { "message": "Penuh dalam:" },
+  "status_time_left": { "message": "Sisa waktu baterai:" },
+  "status_powered": { "message": "Tersambung daya" },
+
+  "status_online": { "message": "Online" },
+  "status_offline": { "message": "Offline" },
+  "status_on": { "message": "Aktif" },
+  "status_off": { "message": "Nonaktif" },
+  "status_hidden": { "message": "Tersembunyi/Lokal" },
+
+  "disp_internal": { "message": "Layar Internal" },
+  "disp_internal_short": { "message": "Internal" },
+  "disp_unknown": { "message": "Tidak diketahui" },
+  "disp_none": { "message": "Tidak ada" }
+}

@@ -1,0 +1,79 @@
+{
+  "appName": { "message": "COGext: Monitor di Sistema" },
+  "appDesc": {
+    "message": "Una dashboard moderna per monitorare CPU, RAM, batteria e rete. Leggera, rispettosa della privacy, con modalità chiara e scura."
+  },
+
+  "monitor_cpu": { "message": "CPU" },
+  "monitor_mem": { "message": "RAM" },
+  "monitor_batt": { "message": "BATT" },
+  "monitor_net": { "message": "RETE" },
+
+  "card_cpu_title": { "message": "Carico CPU" },
+  "card_mem_title": { "message": "Memoria" },
+  "card_temp_title": { "message": "Temperatura CPU" },
+  "card_batt_title": { "message": "Batteria" },
+  "card_disp_title": { "message": "Schermo" },
+  "card_net_title": { "message": "Rete" },
+  "card_chrome_title": { "message": "Chrome" },
+  "card_os_title": { "message": "OS" },
+  "card_storage_title": { "message": "Archiviazione" },
+  "card_settings_title": { "message": "COGext - Impostazioni" },
+
+  "label_mem_total": { "message": "Memoria totale" },
+  "label_mem_used": { "message": "Memoria usata" },
+  "label_batt_time_general": {
+    "message": "Tempo alla carica/scarica completa:"
+  },
+  "label_ip": { "message": "IP:" },
+  "label_platform": { "message": "Piattaforma:" },
+  "label_free": { "message": "libera" },
+  "label_version": { "message": "Versione:" },
+
+  "overlay_cpu_title": { "message": "Dettagli Carico CPU" },
+  "overlay_temp_title": { "message": "Dettagli Temperatura" },
+  "overlay_disp_title": { "message": "Dettagli Schermo" },
+  "overlay_chrome_title": { "message": "Dettagli Chrome" },
+  "overlay_storage_title": { "message": "Dettagli Archiviazione" },
+
+  "detail_cpu_avg": { "message": "Carico medio" },
+  "detail_cpu_core": { "message": "Carico per core" },
+  "detail_cpu_arch": { "message": "Architettura CPU" },
+  "detail_cpu_model": { "message": "Modello CPU" },
+  "detail_cpu_features": { "message": "Caratteristiche CPU" },
+
+  "detail_temp_avg": { "message": "Temperatura media" },
+  "detail_temp_sensor": { "message": "Temperatura per sensore" },
+
+  "detail_disp_prim": { "message": "Schermo principale" },
+  "detail_disp_other": { "message": "Schermi secondari" },
+  "detail_gpu": { "message": "Scheda video (GPU):" },
+
+  "detail_chrome_langs": { "message": "Lingue:" },
+  "detail_chrome_exts": { "message": "Estensioni attive" },
+
+  "detail_storage_discs": { "message": "Dischi:" },
+
+  "settings_theme": { "message": "Tema: Chiaro/Scuro" },
+  "settings_unit": { "message": "Unità temperatura: °C/°F" },
+  "settings_footer": {
+    "message": "2026 - GPL-3.0 - François Bacconnet <a href='https://ext.tchoa.com'>il mio sito</a>"
+  },
+
+  "status_charging": { "message": "In carica" },
+  "status_on_battery": { "message": "A batteria" },
+  "status_full_charge_in": { "message": "Carica completa in:" },
+  "status_time_left": { "message": "Autonomia residua:" },
+  "status_powered": { "message": "Alimentato" },
+
+  "status_online": { "message": "Online" },
+  "status_offline": { "message": "Offline" },
+  "status_on": { "message": "Attivo" },
+  "status_off": { "message": "Disattivo" },
+  "status_hidden": { "message": "Nascosto/Locale" },
+
+  "disp_internal": { "message": "Schermo interno" },
+  "disp_internal_short": { "message": "Interno" },
+  "disp_unknown": { "message": "Sconosciuto" },
+  "disp_none": { "message": "Nessuno" }
+}

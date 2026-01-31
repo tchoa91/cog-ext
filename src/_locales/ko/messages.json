@@ -1,0 +1,79 @@
+{
+  "appName": { "message": "COGext : 시스템 모니터" },
+  "appDesc": {
+    "message": "CPU, RAM, 배터리 및 네트워크를 모니터링하는 현대적인 대시보드입니다. 가볍고 개인정보 보호 친화적이며 다크 및 라이트 모드를 지원합니다."
+  },
+
+  "monitor_cpu": { "message": "CPU" },
+  "monitor_mem": { "message": "메모리" },
+  "monitor_batt": { "message": "배터리" },
+  "monitor_net": { "message": "네트워크" },
+
+  "card_cpu_title": { "message": "CPU 부하" },
+  "card_mem_title": { "message": "메모리" },
+  "card_temp_title": { "message": "CPU 온도" },
+  "card_batt_title": { "message": "배터리" },
+  "card_disp_title": { "message": "디스플레이" },
+  "card_net_title": { "message": "네트워크" },
+  "card_chrome_title": { "message": "Chrome" },
+  "card_os_title": { "message": "OS" },
+  "card_storage_title": { "message": "스토리지" },
+  "card_settings_title": { "message": "COGext - 설정" },
+
+  "label_mem_total": { "message": "전체 메모리" },
+  "label_mem_used": { "message": "사용 중인 메모리" },
+  "label_batt_time_general": {
+    "message": "완전 충전/방전까지 남은 시간:"
+  },
+  "label_ip": { "message": "IP 주소:" },
+  "label_platform": { "message": "플랫폼:" },
+  "label_free": { "message": "여유 공간" },
+  "label_version": { "message": "버전:" },
+
+  "overlay_cpu_title": { "message": "CPU 부하 상세 정보" },
+  "overlay_temp_title": { "message": "온도 상세 정보" },
+  "overlay_disp_title": { "message": "디스플레이 상세 정보" },
+  "overlay_chrome_title": { "message": "Chrome 상세 정보" },
+  "overlay_storage_title": { "message": "스토리지 상세 정보" },
+
+  "detail_cpu_avg": { "message": "평균 부하" },
+  "detail_cpu_core": { "message": "코어별 부하" },
+  "detail_cpu_arch": { "message": "CPU 아키텍처" },
+  "detail_cpu_model": { "message": "CPU 모델" },
+  "detail_cpu_features": { "message": "CPU 기능" },
+
+  "detail_temp_avg": { "message": "평균 온도" },
+  "detail_temp_sensor": { "message": "센서별 온도" },
+
+  "detail_disp_prim": { "message": "기본 디스플레이" },
+  "detail_disp_other": { "message": "보조 디스플레이" },
+  "detail_gpu": { "message": "그래픽 카드 (GPU):" },
+
+  "detail_chrome_langs": { "message": "언어:" },
+  "detail_chrome_exts": { "message": "활성화된 확장 프로그램" },
+
+  "detail_storage_discs": { "message": "디스크:" },
+
+  "settings_theme": { "message": "테마: 라이트/다크" },
+  "settings_unit": { "message": "온도 단위: °C/°F" },
+  "settings_footer": {
+    "message": "2026 - GPL-3.0 - François Bacconnet <a href='https://ext.tchoa.com'>내 웹사이트</a>"
+  },
+
+  "status_charging": { "message": "충전 중" },
+  "status_on_battery": { "message": "배터리 사용 중" },
+  "status_full_charge_in": { "message": "완전 충전까지:" },
+  "status_time_left": { "message": "배터리 남은 시간:" },
+  "status_powered": { "message": "전원 연결됨" },
+
+  "status_online": { "message": "온라인" },
+  "status_offline": { "message": "오프라인" },
+  "status_on": { "message": "켜짐" },
+  "status_off": { "message": "꺼짐" },
+  "status_hidden": { "message": "숨김/로컬" },
+
+  "disp_internal": { "message": "내장 모니터" },
+  "disp_internal_short": { "message": "내장" },
+  "disp_unknown": { "message": "알 수 없음" },
+  "disp_none": { "message": "없음" }
+}

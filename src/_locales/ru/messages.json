@@ -1,0 +1,79 @@
+{
+  "appName": { "message": "COGext: Мониторинг системы" },
+  "appDesc": {
+    "message": "Современная панель мониторинга CPU, ОЗУ, батареи и сети. Легкая, конфиденциальная, с темным и светлым режимами."
+  },
+
+  "monitor_cpu": { "message": "ЦП" },
+  "monitor_mem": { "message": "ПАМЯТЬ" },
+  "monitor_batt": { "message": "БАТ" },
+  "monitor_net": { "message": "СЕТЬ" },
+
+  "card_cpu_title": { "message": "Загрузка ЦП" },
+  "card_mem_title": { "message": "Память" },
+  "card_temp_title": { "message": "Температура ЦП" },
+  "card_batt_title": { "message": "Батарея" },
+  "card_disp_title": { "message": "Дисплей" },
+  "card_net_title": { "message": "Сеть" },
+  "card_chrome_title": { "message": "Chrome" },
+  "card_os_title": { "message": "ОС" },
+  "card_storage_title": { "message": "Хранилище" },
+  "card_settings_title": { "message": "COGext — Настройки" },
+
+  "label_mem_total": { "message": "Всего памяти" },
+  "label_mem_used": { "message": "Использовано" },
+  "label_batt_time_general": {
+    "message": "До полной зарядки/разрядки:"
+  },
+  "label_ip": { "message": "IP:" },
+  "label_platform": { "message": "Платформа:" },
+  "label_free": { "message": "свободно" },
+  "label_version": { "message": "Версия:" },
+
+  "overlay_cpu_title": { "message": "Детали загрузки ЦП" },
+  "overlay_temp_title": { "message": "Детали температуры" },
+  "overlay_disp_title": { "message": "Детали дисплея" },
+  "overlay_chrome_title": { "message": "Детали Chrome" },
+  "overlay_storage_title": { "message": "Детали хранилища" },
+
+  "detail_cpu_avg": { "message": "Средняя загрузка" },
+  "detail_cpu_core": { "message": "Загрузка по ядрам" },
+  "detail_cpu_arch": { "message": "Архитектура ЦП" },
+  "detail_cpu_model": { "message": "Модель ЦП" },
+  "detail_cpu_features": { "message": "Функции ЦП" },
+
+  "detail_temp_avg": { "message": "Средняя температура" },
+  "detail_temp_sensor": { "message": "Температура по датчикам" },
+
+  "detail_disp_prim": { "message": "Основной дисплей" },
+  "detail_disp_other": { "message": "Дополнительные дисплеи" },
+  "detail_gpu": { "message": "Видеокарта (GPU):" },
+
+  "detail_chrome_langs": { "message": "Языки:" },
+  "detail_chrome_exts": { "message": "Активные расширения" },
+
+  "detail_storage_discs": { "message": "Диски:" },
+
+  "settings_theme": { "message": "Тема: Светлая/Темная" },
+  "settings_unit": { "message": "Единица темп.: °C/°F" },
+  "settings_footer": {
+    "message": "2026 - GPL-3.0 - François Bacconnet <a href='https://ext.tchoa.com'>мой сайт</a>"
+  },
+
+  "status_charging": { "message": "Зарядка" },
+  "status_on_battery": { "message": "От батареи" },
+  "status_full_charge_in": { "message": "Полный заряд через:" },
+  "status_time_left": { "message": "Осталось времени:" },
+  "status_powered": { "message": "Питание от сети" },
+
+  "status_online": { "message": "В сети" },
+  "status_offline": { "message": "Вне сети" },
+  "status_on": { "message": "Вкл" },
+  "status_off": { "message": "Выкл" },
+  "status_hidden": { "message": "Скрыто/Локально" },
+
+  "disp_internal": { "message": "Встроенный монитор" },
+  "disp_internal_short": { "message": "Внутр." },
+  "disp_unknown": { "message": "Неизвестно" },
+  "disp_none": { "message": "Нет" }
+}

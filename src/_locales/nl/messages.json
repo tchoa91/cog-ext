@@ -1,0 +1,79 @@
+{
+  "appName": { "message": "COGext: Systeemmonitor" },
+  "appDesc": {
+    "message": "Een modern dashboard voor het monitoren van CPU, RAM, accu en netwerk. Lichtgewicht, privacyvriendelijk, met donkere en lichte modus."
+  },
+
+  "monitor_cpu": { "message": "CPU" },
+  "monitor_mem": { "message": "MEM" },
+  "monitor_batt": { "message": "ACCU" },
+  "monitor_net": { "message": "NET" },
+
+  "card_cpu_title": { "message": "CPU-belasting" },
+  "card_mem_title": { "message": "Geheugen" },
+  "card_temp_title": { "message": "CPU-temperatuur" },
+  "card_batt_title": { "message": "Accu" },
+  "card_disp_title": { "message": "Scherm" },
+  "card_net_title": { "message": "Netwerk" },
+  "card_chrome_title": { "message": "Chrome" },
+  "card_os_title": { "message": "OS" },
+  "card_storage_title": { "message": "Opslag" },
+  "card_settings_title": { "message": "COGext - Instellingen" },
+
+  "label_mem_total": { "message": "Totaal geheugen" },
+  "label_mem_used": { "message": "Gebruikt geheugen" },
+  "label_batt_time_general": {
+    "message": "Tijd tot volledig opgeladen/leeg:"
+  },
+  "label_ip": { "message": "IP:" },
+  "label_platform": { "message": "Platform:" },
+  "label_free": { "message": "vrij" },
+  "label_version": { "message": "Versie:" },
+
+  "overlay_cpu_title": { "message": "Details CPU-belasting" },
+  "overlay_temp_title": { "message": "Temperatuurdetails" },
+  "overlay_disp_title": { "message": "Schermdetails" },
+  "overlay_chrome_title": { "message": "Chrome-details" },
+  "overlay_storage_title": { "message": "Opslagdetails" },
+
+  "detail_cpu_avg": { "message": "Gemiddelde belasting" },
+  "detail_cpu_core": { "message": "Belasting per kern" },
+  "detail_cpu_arch": { "message": "CPU-architectuur" },
+  "detail_cpu_model": { "message": "CPU-model" },
+  "detail_cpu_features": { "message": "CPU-functies" },
+
+  "detail_temp_avg": { "message": "Gemiddelde temperatuur" },
+  "detail_temp_sensor": { "message": "Temperatuur per sensor" },
+
+  "detail_disp_prim": { "message": "Hoofdscherm" },
+  "detail_disp_other": { "message": "Extra schermen" },
+  "detail_gpu": { "message": "Videokaart (GPU):" },
+
+  "detail_chrome_langs": { "message": "Talen:" },
+  "detail_chrome_exts": { "message": "Actieve extensies" },
+
+  "detail_storage_discs": { "message": "Schijven:" },
+
+  "settings_theme": { "message": "Thema: Licht/Donker" },
+  "settings_unit": { "message": "Temperatuureenheid: °C/°F" },
+  "settings_footer": {
+    "message": "2026 - GPL-3.0 - François Bacconnet <a href='https://ext.tchoa.com'>mijn website</a>"
+  },
+
+  "status_charging": { "message": "Opladen" },
+  "status_on_battery": { "message": "Op accu" },
+  "status_full_charge_in": { "message": "Volledig geladen in:" },
+  "status_time_left": { "message": "Resterende accutijd:" },
+  "status_powered": { "message": "Netstroom" },
+
+  "status_online": { "message": "Online" },
+  "status_offline": { "message": "Offline" },
+  "status_on": { "message": "Aan" },
+  "status_off": { "message": "Uit" },
+  "status_hidden": { "message": "Verborgen/Lokaal" },
+
+  "disp_internal": { "message": "Intern scherm" },
+  "disp_internal_short": { "message": "Intern" },
+  "disp_unknown": { "message": "Onbekend" },
+  "disp_none": { "message": "Geen" }
+}

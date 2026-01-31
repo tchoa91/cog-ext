@@ -129,6 +129,7 @@ body {
   background-color: var(--monitor-bg); /* Fond sombre/clair selon thème */
   border-radius: var(--radius-lg);
   border: var(--border-subtle);
+  contain: content;
 
   /* Interaction */
   transition:
@@ -205,10 +206,13 @@ body {
 .monitor-bar-fill {
   height: 100%;
   background-color: var(--accent);
-  width: 0%;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left;
+  will-change: transform;
   border-radius: 5px;
   transition:
-    width 0.2s linear,
+    transform 0.2s linear,
     background-color 0.2s ease;
 }
 .monitor-dot {
@@ -266,6 +270,7 @@ body {
   border-radius: var(--radius-lg);
   border: var(--border-subtle);
   position: relative;
+  contain: content;
   padding: 0 10px;
   /* MODIFICATION FLEXBOX */
   display: flex;
@@ -546,8 +551,12 @@ body {
   left: 0;
   right: 0;
   background: var(--accent);
+  height: 100%;
+  transform: scaleY(0);
+  transform-origin: bottom;
+  will-change: transform;
   transition:
-    height 0.2s linear,
+    transform 0.2s linear,
     background-color 0.2s ease;
 }
 

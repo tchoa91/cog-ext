@@ -103,7 +103,7 @@ export function buildInterface(config, callbacks) {
           </div>
           ${
             item.type === "bar"
-              ? `<div class="monitor-bar-track"><div class="monitor-bar-fill" style="width: 0%"></div></div>`
+              ? `<div class="monitor-bar-track"><div class="monitor-bar-fill"></div></div>`
               : ""
           }
           ${item.type === "dot" ? `<div class="monitor-dot"></div>` : ""}
@@ -164,7 +164,7 @@ function renderCardContent(contentItems) {
         case "cardBar":
           return `
             <div class="card-bar-row" data-el-id="${item.id}">
-                <div class="monitor-bar-track"><div class="monitor-bar-fill" style="width: 0%"></div></div>
+                <div class="monitor-bar-track"><div class="monitor-bar-fill"></div></div>
                 <div class="card-bar-text">--</div>
             </div>`;
         case "value":
@@ -210,7 +210,7 @@ export function updateInterface(payload) {
         const key = `mon-${mon.id}-pct`;
         if (renderCache[key] !== mon.percent) {
           const barEl = el.querySelector(".monitor-bar-fill");
-          if (barEl) barEl.style.width = `${mon.percent}%`;
+          if (barEl) barEl.style.transform = `scaleX(${mon.percent / 100})`;
           renderCache[key] = mon.percent;
         }
       }
@@ -306,7 +306,7 @@ export function updateInterface(payload) {
               renderCache[keyVal] !== item.value
             ) {
               const bar = targetEl.querySelector(".monitor-bar-fill");
-              if (bar) bar.style.width = `${item.value}%`;
+              if (bar) bar.style.transform = `scaleX(${item.value / 100})`;
               renderCache[keyVal] = item.value;
             }
             // Mise à jour du texte à côté de la barre
@@ -353,6 +353,11 @@ export function updateInterface(payload) {
 
     // 1. Construction de la structure (Uniquement si l'ID de l'overlay change)
     if (renderCache["activeOverlay"] !== ov.id) {
+      // Invalidation du cache Overlay pour forcer la mise à jour du nouveau DOM
+      Object.keys(renderCache).forEach((k) => {
+        if (k.startsWith("ov-")) delete renderCache[k];
+      });
+
       overlayBody.innerHTML = ov.content
         .map((item) => {
           // Type: Barre horizontale (ex: Charge Moyenne)
@@ -364,7 +369,7 @@ export function updateInterface(payload) {
                     <span class="overlay-val" data-oid="${item.id}-txt">--</span>
                 </div>
                 <div class="monitor-bar-track">
-                    <div class="monitor-bar-fill" data-oid="${item.id}-bar" style="width: 0%"></div>
+                    <div class="monitor-bar-fill" data-oid="${item.id}-bar"></div>
                 </div>
             </div>`;
           }
@@ -467,24 +472,36 @@ export function updateInterface(payload) {
     ov.content.forEach((item) => {
       // Mise à jour Texte (commun à tous)
       if (item.display !== undefined) {
-        const txtEl = overlayBody.querySelector(`[data-oid="${item.id}-txt"]`);
-        if (txtEl) txtEl.textContent = item.display;
+        const key = `ov-${item.id}-txt`;
+        if (renderCache[key] !== item.display) {
+          const txtEl = overlayBody.querySelector(
+            `[data-oid="${item.id}-txt"]`,
+          );
+          if (txtEl) txtEl.textContent = item.display;
+          renderCache[key] = item.display;
+        }
       }
 
       // Mise à jour Barre (olBar)
       if (item.type === "olBar" && item.value !== undefined) {
-        const barEl = overlayBody.querySelector(`[data-oid="${item.id}-bar"]`);
-        if (barEl) {
-          barEl.style.width = `${item.value}%`;
-          const sectionEl = barEl.closest(".overlay-section");
-
-          if (sectionEl) {
-            if (item.state) {
-              sectionEl.setAttribute("data-state", item.state);
-            } else {
-              sectionEl.removeAttribute("data-state");
+        const key = `ov-${item.id}-bar`;
+        const currentVal = `${item.value}|${item.state || ""}`;
+        if (renderCache[key] !== currentVal) {
+          const barEl = overlayBody.querySelector(
+            `[data-oid="${item.id}-bar"]`,
+          );
+          if (barEl) {
+            barEl.style.transform = `scaleX(${item.value / 100})`;
+            const sectionEl = barEl.closest(".overlay-section");
+            if (sectionEl) {
+              if (item.state) {
+                sectionEl.setAttribute("data-state", item.state);
+              } else {
+                sectionEl.removeAttribute("data-state");
+              }
             }
           }
+          renderCache[key] = currentVal;
         }
       }
 
@@ -493,11 +510,15 @@ export function updateInterface(payload) {
         const listEl = overlayBody.querySelector(
           `[data-oid="${item.id}-list"]`,
         );
-        if (listEl) {
+        // On utilise une clé simple basée sur la longueur et le premier élément pour éviter de tout stringify
+        const key = `ov-${item.id}-list`;
+        const currentSig = item.value.length + (item.value[0] || "");
+        if (listEl && renderCache[key] !== currentSig) {
           // On recrée les <li> à chaque fois (léger pour du texte simple)
           listEl.innerHTML = item.value
             .map((line) => `<li>${line}</li>`)
             .join("");
+          renderCache[key] = currentSig;
         }
       }
 
@@ -513,7 +534,7 @@ export function updateInterface(payload) {
               .map(
                 () =>
                   `<div class="core-track">
-                      <div class="core-fill" style="height: 0%"></div>
+                      <div class="core-fill"></div>
                    </div>`,
               )
               .join("");
@@ -524,11 +545,17 @@ export function updateInterface(payload) {
             const pct = typeof data === "object" ? data.pct : data;
             const state = typeof data === "object" ? data.state : undefined;
 
-            const fill = child.querySelector(".core-fill");
-            if (fill) {
-              fill.style.height = `${pct}%`;
-              if (state) fill.setAttribute("data-state", state);
-              else fill.removeAttribute("data-state");
+            const key = `ov-${item.id}-core-${i}`;
+            const currentVal = `${pct}|${state || ""}`;
+
+            if (renderCache[key] !== currentVal) {
+              const fill = child.querySelector(".core-fill");
+              if (fill) {
+                fill.style.transform = `scaleY(${pct / 100})`;
+                if (state) fill.setAttribute("data-state", state);
+                else fill.removeAttribute("data-state");
+              }
+              renderCache[key] = currentVal;
             }
           });
         }
@@ -540,8 +567,13 @@ export function updateInterface(payload) {
           `[data-oid="${item.id}-grid"]`,
         );
         const symbol = item.unitSymbol || "°C";
+
+        const key = `ov-${item.id}-temps`;
+        // On vérifie si les valeurs ont changé (join est rapide sur <20 items)
+        const currentVal = item.value.join(",");
+
         // On vérifie si on doit redessiner (changement de nombre de zones ou premier rendu)
-        if (gridEl) {
+        if (gridEl && renderCache[key] !== currentVal) {
           // Astuce perf : On recrée le HTML car le nombre de zones est petit (<20)
           // et l'opération est légère.
           gridEl.innerHTML = item.value
@@ -554,6 +586,7 @@ export function updateInterface(payload) {
              `,
             )
             .join("");
+          renderCache[key] = currentVal;
         }
       }
 
@@ -562,7 +595,11 @@ export function updateInterface(payload) {
         const listEl = overlayBody.querySelector(
           `[data-oid="${item.id}-list"]`,
         );
-        if (listEl) {
+        const key = `ov-${item.id}-disks`;
+        // Signature simple : nombre de disques + espace libre du premier
+        const currentSig = item.value.length + (item.value[0]?.info || "");
+
+        if (listEl && renderCache[key] !== currentSig) {
           // On génère la liste. Format identique à la carte mais en liste <li>
           listEl.innerHTML = item.value
             .map(
@@ -574,6 +611,7 @@ export function updateInterface(payload) {
             `,
             )
             .join("");
+          renderCache[key] = currentSig;
         }
       }
 

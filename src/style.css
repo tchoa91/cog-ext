@@ -18,59 +18,77 @@
   font-style: normal;
 }
 
-/* --- 1. VARIABLES & THÈMES --- */
+/* --- 1. VARIABLES & SYSTÈME DE COULEURS --- */
 :root {
+  /* --- PARAMÈTRES DE BASE (La "Palette Unique") --- */
+
+  --brand-h: 195; /* Teinte : 200 = Bleu, 120 = Vert, 0 = Rouge, etc. */
+  --brand-s: 15%; /* Saturation : Un gris coloré très sobre */
+
+  /* --- DÉRIVATIONS FONCTIONNELLES --- */
+  /* Nous utilisons HSL pour calculer les variantes dynamiquement */
+  --brand-base: var(--brand-h), var(--brand-s);
+
+  /* THÈME SOMBRE (Default) */
+  --bg-color: hsl(var(--brand-base), 11%);
+  --monitor-bg: hsl(var(--brand-base), 14%);
+
+  /* Gradients par calcul de luminosité */
+  --card-bg-top: hsl(var(--brand-base), 18%);
+  --card-bg-bot: hsl(var(--brand-base), 15%);
+  --card-bg: linear-gradient(
+    to bottom right,
+    var(--card-bg-top),
+    var(--card-bg-bot)
+  );
+
+  /* Hovers par transparence (color-mix est parfait ici) */
+  --card-hover: color-mix(in srgb, var(--card-bg-top), white 5%);
+  --monitor-hover: var(--card-hover);
+
+  /* Accents & Textes */
+  /* L'accent est la même teinte, mais beaucoup plus vive (saturation 70%) */
+  --accent: hsl(120, 60%, 50%);
+  --text-main: hsl(var(--brand-h), 10%, 93%);
+  --text-muted: hsl(var(--brand-h), 10%, 65%);
+
+  /* Déclinaisons par transparence (Alpha) */
+  --titles: hsla(var(--brand-base), 80%, 0.2);
+  --border-subtle: 1px solid hsla(var(--brand-base), 100%, 0.08);
+  --bar-bg: hsla(var(--brand-base), 100%, 0.1);
+
+  /* Alertes (On garde les teintes sémantiques mais on peut les "lier" un peu) */
+  --warning: hsl(35, 90%, 50%);
+  --alert: hsl(0, 80%, 60%);
+
+  /* Autres variables structurelles */
   --topbar-height: 90px;
   --grid-gap: 15px;
-
-  /* Design System */
   --radius-lg: 12px;
   --font-main: "Inter", system-ui, sans-serif;
-
-  /* THÈME SOMBRE */
-  --bg-color: #151f23;
-
-  /* Hiérarchie des fonds : Fond < Monitor < Carte < Hover */
-  --monitor-bg: #182428;
-  --card-bg: linear-gradient(to bottom right, #213137, #1b292e);
-  --card-hover: linear-gradient(to bottom right, #2a4047, #23353b);
-  --monitor-hover: var(--card-hover);
-
-  /* Overlay */
-  --modal-bg: var(--card-hover);
+  --shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
   --overlay-backdrop: var(--bg-color);
-
-  /* Textes & Accents */
-  --text-main: #eceff1;
-  --text-muted: #90a4ae;
-  --titles: #90a4ae52;
-  --accent: #66bb6a;
-  --warning: #fb8c00; /* Orange 400 */
-  --alert: #ef5350; /* Red 400 */
-  /* --border-subtle: none; */
-  --border-subtle: 1px solid #59859321;
-  --shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-  --bar-bg: #111;
+  --modal-bg: hsl(var(--brand-base), 20%);
 }
 
-/* THÈME CLAIR (S'active via JS plus tard) */
+/* THÈME CLAIR (Adaptation automatique de la base) */
 [data-theme="light"] {
-  --bg-color: #f0f4f5;
-  --card-bg: #e6eaeb;
+  --bg-color: hsl(var(--brand-base), 95%);
+  --monitor-bg: hsla(var(--brand-base), 20%, 0.05);
+  --card-bg-top: hsl(var(--brand-base), 90%);
+  --card-bg-bot: hsl(var(--brand-base), 88%);
+  --card-bg: hsl(var(--brand-base), 89%);
   --card-hover: #ffffff;
-  --modal-bg: var(--card-hover);
+
+  --text-main: hsl(var(--brand-h), 20%, 15%);
+  --text-muted: hsl(var(--brand-h), 15%, 45%);
+  --accent: hsl(120, 60%, 40%);
+  --border-subtle: 1px solid hsla(var(--brand-base), 20%, 0.1);
+  --bar-bg: hsla(var(--brand-base), 20%, 0.1);
   --overlay-backdrop: var(--bg-color);
-  --text-main: #263238;
-  --text-muted: #546e7a;
-  --titles: #90a4ae70;
-  --accent: #5bb45f;
-  --warning: #f57c00;
-  --alert: #ef5350;
-  --monitor-bg: rgba(0, 0, 0, 0.05);
-  --monitor-hover: var(--card-hover);
-  --border-subtle: 1px solid #121b1e13;
-  --shadow: 2px 2px 4px rgba(0, 0, 0, 0.06);
-  --bar-bg: #7a7b7a;
+  --modal-bg: #ffffff;
+  --monitor-hover: #ffffff;
+  --titles: hsla(var(--brand-base), 20%, 0.25);
 }
 
 * {
@@ -295,7 +313,7 @@ body {
   font-weight: 300;
   z-index: 2;
   width: 100%; /* Prend toute la largeur */
-  line-height: 0.7em;
+  line-height: 0.8em;
   margin: 5px 0 0 0; /* Espace sous le titre */
   color: var(--titles); /* Utilisation de VOTRE variable */
 }

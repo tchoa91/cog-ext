@@ -26,6 +26,7 @@
     "message": "Tijd tot volledig opgeladen/leeg:"
   },
   "label_ip": { "message": "IP:" },
+  "label_latency": { "message": "Latentie" },
   "label_platform": { "message": "Platform:" },
   "label_free": { "message": "vrij" },
   "label_version": { "message": "Versie:" },

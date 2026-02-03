@@ -26,6 +26,7 @@
     "message": "距充满/耗尽剩余时间："
   },
   "label_ip": { "message": "IP 地址：" },
+  "label_latency": { "message": "延迟" },
   "label_platform": { "message": "平台：" },
   "label_free": { "message": "可用" },
   "label_version": { "message": "版本：" },

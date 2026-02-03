@@ -26,6 +26,7 @@
     "message": "Zeit bis voll geladen/entladen:"
   },
   "label_ip": { "message": "IP:" },
+  "label_latency": { "message": "Latenz" },
   "label_platform": { "message": "Plattform:" },
   "label_free": { "message": "frei" },
   "label_version": { "message": "Version:" },

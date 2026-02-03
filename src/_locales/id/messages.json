@@ -26,6 +26,7 @@
     "message": "Waktu sebelum daya penuh/habis:"
   },
   "label_ip": { "message": "IP:" },
+  "label_latency": { "message": "Latensi" },
   "label_platform": { "message": "Platform:" },
   "label_free": { "message": "tersedia" },
   "label_version": { "message": "Versi:" },

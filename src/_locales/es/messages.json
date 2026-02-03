@@ -26,6 +26,7 @@
     "message": "Tiempo para carga/descarga completa:"
   },
   "label_ip": { "message": "IP:" },
+  "label_latency": { "message": "Latencia" },
   "label_platform": { "message": "Plataforma:" },
   "label_free": { "message": "libre" },
   "label_version": { "message": "Versión:" },

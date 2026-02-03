@@ -79,16 +79,24 @@ export class DataStore {
 
     // --- PHASE 2 : EXECUTION (Parallèle) ---
     // On attend tout le monde. Les promesses initialisées à 'null' se résolvent instantanément.
-    const [cpu, mem, batt, net, sysStatic, storage, display] =
-      await Promise.all([
-        pCpuStats,
-        pMem,
-        pBatt,
-        pNet,
-        pSysStatic,
-        pStorage,
-        pDisplay,
-      ]);
+    const results = await Promise.allSettled([
+      pCpuStats,
+      pMem,
+      pBatt,
+      pNet,
+      pSysStatic,
+      pStorage,
+      pDisplay,
+    ]);
+
+    // Extraction sécurisée : Si une promesse échoue, on récupère null (et on log l'erreur discrètement)
+    const [cpu, mem, batt, net, sysStatic, storage, display] = results.map(
+      (res) => {
+        if (res.status === "fulfilled") return res.value;
+        console.warn("DataStore: Module failure", res.reason);
+        return null;
+      },
+    );
 
     // --- PHASE 3 : ASSEMBLAGE PAR MODULE (Sorties Brutes) ---
     const output = {};
@@ -265,7 +273,12 @@ export class DataStore {
 
     // Initialisation du cache si vide
     if (!this.cache.network.data) {
-      this.cache.network.data = { online: false, type: "unknown", ip: null };
+      this.cache.network.data = {
+        online: false,
+        type: "unknown",
+        ip: null,
+        latency: null,
+      };
     }
     const netCache = this.cache.network;
 
@@ -276,16 +289,31 @@ export class DataStore {
         ? navigator.connection.effectiveType
         : "unknown";
       netCache.ts = now;
-      // Si hors ligne, on reset l'IP
-      if (!netCache.data.online) netCache.data.ip = null;
+      // Si hors ligne, on reset l'IP et la latence
+      if (!netCache.data.online) {
+        netCache.data.ip = null;
+        netCache.data.latency = null;
+      }
     }
 
     // 2. Mise à jour IP (Seulement si en ligne et TTL expiré)
     if (netCache.data.online && now - netCache.ipTs > TTL.SLOW) {
       try {
-        const response = await fetch("https://api.ipify.org?format=json");
+        // Timeout de 500ms : Compromis entre vitesse d'affichage et fiabilité réseau.
+        // 200ms est souvent trop court (DNS + Handshake SSL prennent du temps).
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 500);
+
+        const start = performance.now();
+        const response = await fetch("https://api.ipify.org?format=json", {
+          signal: controller.signal,
+        });
+        const rtt = Math.round(performance.now() - start);
+        clearTimeout(timeoutId); // On annule le timeout si la réponse arrive à temps
+
         const data = await response.json();
         netCache.data.ip = data.ip;
+        netCache.data.latency = rtt;
         netCache.ipTs = now;
       } catch (e) {
         // Si le fetch échoue (ex: bloqueur de pub), on garde l'info "Online" mais sans IP

@@ -74,6 +74,7 @@ export const UI_CONFIG = {
       content: [
         { id: "netStatus", type: "value" },
         { id: "netIp", type: "kv", title: t("label_ip") },
+        { id: "netLatency", type: "kv", title: t("label_latency") },
       ],
     },
     {

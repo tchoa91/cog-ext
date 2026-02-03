@@ -24,6 +24,7 @@
   "label_mem_used": { "message": "Mémoire utilisée" },
   "label_batt_time_general": { "message": "Temps avant charge/décharge :" },
   "label_ip": { "message": "IP :" },
+  "label_latency": { "message": "Latence" },
   "label_platform": { "message": "Plateforme :" },
   "label_free": { "message": "libre" },
   "label_version": { "message": "Version :" },

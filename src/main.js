@@ -56,7 +56,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const stored = await chrome.storage.local.get(["theme", "unit"]);
     // Fusionner avec les défauts au cas où une clé manque
     prefs = { ...defaultPrefs, ...stored };
-    //console.log("💾 Config chargée :", prefs);
   } catch (e) {
     console.warn("Erreur lecture storage, utilisation défauts", e);
   }
@@ -115,7 +114,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       // 3. Sauvegarder
       chrome.storage.local.set({ theme: newTheme });
-      //console.log("💾 Thème sauvegardé :", newTheme);
     },
 
     onUnitToggle: () => {
@@ -124,7 +122,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       // 2. Sauvegarder
       chrome.storage.local.set({ unit: appUnit });
-      //console.log("💾 Unité sauvegardée :", appUnit);
 
       // 3. Feedback : Le prochain tick (gameLoop) mettra à jour tous les textes
     },
@@ -319,6 +316,10 @@ function resolveWidgetData(itemId, data, updateText, isMonitor = false) {
     }
     if (itemId === "netIp")
       res.display = txt(data.network.ip || t("status_hidden"));
+    if (itemId === "netLatency")
+      res.display = txt(
+        data.network.latency ? `${data.network.latency} ms` : "--",
+      );
   }
 
   // --- 6. DISPLAY ---
@@ -528,17 +529,6 @@ async function gameLoop(timestamp) {
       updateText,
       activeOverlayId,
     );
-
-    // [DEBUG] Traces complètes (1Hz)
-    /* if (updateText) {
-      console.groupCollapsed(
-        `🔍 Debug Loop [Tick ${tickCount}] 🎯 Scope : ${scope}`,
-      );
-      //console.log("🎯 Scope :", scope);
-      console.log("📥 SysData (Source) :", sysData);
-      console.log("📤 RenderState (Output) :", renderState);
-      console.groupEnd();
-    } */
 
     // D. RENDU
     updateInterface(renderState);

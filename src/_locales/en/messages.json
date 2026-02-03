@@ -26,6 +26,7 @@
     "message": "Time before full charge/discharge :"
   },
   "label_ip": { "message": "IP :" },
+  "label_latency": { "message": "Latency" },
   "label_platform": { "message": "Platform :" },
   "label_free": { "message": "free" },
   "label_version": { "message": "Version :" },

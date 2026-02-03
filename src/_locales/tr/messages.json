@@ -26,6 +26,7 @@
     "message": "Tam dolum/boşalım için kalan süre:"
   },
   "label_ip": { "message": "IP:" },
+  "label_latency": { "message": "Gecikme" },
   "label_platform": { "message": "Platform:" },
   "label_free": { "message": "boş" },
   "label_version": { "message": "Sürüm:" },

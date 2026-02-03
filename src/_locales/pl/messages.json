@@ -26,6 +26,7 @@
     "message": "Czas do pełnego naładowania/rozładowania:"
   },
   "label_ip": { "message": "IP:" },
+  "label_latency": { "message": "Opóźnienie" },
   "label_platform": { "message": "Platforma:" },
   "label_free": { "message": "wolne" },
   "label_version": { "message": "Wersja:" },

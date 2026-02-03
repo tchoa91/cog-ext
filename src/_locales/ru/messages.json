@@ -26,6 +26,7 @@
     "message": "До полной зарядки/разрядки:"
   },
   "label_ip": { "message": "IP:" },
+  "label_latency": { "message": "Задержка" },
   "label_platform": { "message": "Платформа:" },
   "label_free": { "message": "свободно" },
   "label_version": { "message": "Версия:" },

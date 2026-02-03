@@ -5,7 +5,7 @@
  * @author      François Bacconnet <https://github.com/tchoa91>
  * @copyright   2026 François Bacconnet
  * @license     GPL-3.0
- * @version     2.0
+ * @version     2.1
  * @homepage    https://ext.tchoa.com
  * @see         https://github.com/tchoa91/cog-ext
  */
@@ -514,10 +514,17 @@ export function updateInterface(payload) {
         const key = `ov-${item.id}-list`;
         const currentSig = item.value.length + (item.value[0] || "");
         if (listEl && renderCache[key] !== currentSig) {
-          // On recrée les <li> à chaque fois (léger pour du texte simple)
-          listEl.innerHTML = item.value
-            .map((line) => `<li>${line}</li>`)
-            .join("");
+          // CORRECTION SECURITE : Utilisation de textContent pour éviter l'injection HTML
+          listEl.textContent = "";
+          const fragment = document.createDocumentFragment(); // Optimisation : 1 seul reflow
+
+          item.value.forEach((line) => {
+            const li = document.createElement("li");
+            li.textContent = line;
+            fragment.appendChild(li);
+          });
+
+          listEl.appendChild(fragment);
           renderCache[key] = currentSig;
         }
       }

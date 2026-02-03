@@ -26,6 +26,7 @@
     "message": "완전 충전/방전까지 남은 시간:"
   },
   "label_ip": { "message": "IP 주소:" },
+  "label_latency": { "message": "지연 시간" },
   "label_platform": { "message": "플랫폼:" },
   "label_free": { "message": "여유 공간" },
   "label_version": { "message": "버전:" },

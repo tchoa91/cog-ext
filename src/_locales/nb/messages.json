@@ -26,6 +26,7 @@
     "message": "Tid til fullt ladet/utladet:"
   },
   "label_ip": { "message": "IP:" },
+  "label_latency": { "message": "Latens" },
   "label_platform": { "message": "Plattform:" },
   "label_free": { "message": "ledig" },
   "label_version": { "message": "Versjon:" },

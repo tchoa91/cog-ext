@@ -26,6 +26,7 @@
     "message": "フル充電/放電までの時間："
   },
   "label_ip": { "message": "IPアドレス：" },
+  "label_latency": { "message": "レイテンシ" },
   "label_platform": { "message": "プラットフォーム：" },
   "label_free": { "message": "空き" },
   "label_version": { "message": "バージョン：" },

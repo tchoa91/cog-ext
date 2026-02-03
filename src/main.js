@@ -199,7 +199,8 @@ function resolveWidgetData(itemId, data, updateText, isMonitor = false) {
     if (
       itemId === "cpu" ||
       itemId === "loadBar" ||
-      itemId === "cpuLoadAverage"
+      itemId === "cpuLoadAverage" ||
+      itemId === "cpuSparkline"
     ) {
       res.value = data.cpuUsage.usagePct;
       res.display = txt(`${data.cpuUsage.usagePct}%`);

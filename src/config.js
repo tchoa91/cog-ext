@@ -1,6 +1,6 @@
 /**
  * @file        config.js
- * @description Configuration statique de l'interface et des seuils.
+ * @description Configuration statique de l'interface, des couleurs et des seuils.
  */
 
 const t = chrome.i18n.getMessage;
@@ -32,7 +32,10 @@ export const UI_CONFIG = {
       title: t("card_cpu_title"),
       hasOvelay: true,
       isDynamic: true,
-      content: [{ id: "loadBar", type: "cardBar" }],
+      content: [
+        { id: "loadBar", type: "cardBar" },
+        { id: "cpuSparkline", type: "sparkline" },
+      ],
     },
     {
       id: "memory",

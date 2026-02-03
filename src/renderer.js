@@ -180,6 +180,8 @@ function renderCardContent(contentItems) {
                 <span class="disk-name" data-el-id="${item.id}-name">--</span>
                 <span class="disk-info" data-el-id="${item.id}-info">--</span>
             </div>`;
+        case "sparkline":
+          return `<canvas class="sparkline-canvas" data-el-id="${item.id}" width="180" height="40"></canvas>`;
         default:
           return "";
       }
@@ -289,6 +291,12 @@ export function updateInterface(payload) {
           const keyVal = `item-${item.id}-val`; // Pour la valeur (texte ou width)
           const keyDisp = `item-${item.id}-disp`; // Pour le texte affiché
           const keyLbl = `item-${item.id}-lbl`; // Pour le label dynamique
+
+          // Cas S : Sparkline (Canvas)
+          if (item.type === "sparkline" && item.value !== undefined) {
+            updateSparkline(targetEl, item.id, item.value);
+            return;
+          }
 
           // Cas A : Barre + Texte combinés (card-bar-row)
           if (targetEl.classList.contains("card-bar-row")) {
@@ -445,6 +453,7 @@ export function updateInterface(payload) {
                     <button class="color-swatch" 
                             data-hue="${opt.val}"
                             aria-label="${opt.label}"
+                            title="${opt.label} : ${opt.val}"
                             style="background-color: hsl(${opt.val}, 60%, 50%);"></button>
                   `,
                     )
@@ -687,6 +696,47 @@ export function updateInterface(payload) {
       // Fin du 2. Mise à jour
     });
   }
+}
+
+/**
+ * Dessine une sparkline (graphique de ligne simple) sur un canvas.
+ * Gère un historique de 50 valeurs.
+ */
+function updateSparkline(canvas, id, value) {
+  // 1. Gestion de l'historique dans le cache
+  const cacheKey = `spark-${id}`;
+  if (!renderCache[cacheKey]) {
+    // Initialisation avec des zéros pour éviter un graph vide au début
+    renderCache[cacheKey] = new Array(50).fill(0);
+  }
+  const history = renderCache[cacheKey];
+
+  // Rotation FIFO
+  history.push(value);
+  history.shift();
+
+  // 2. Dessin
+  const ctx = canvas.getContext("2d");
+  const w = canvas.width;
+  const h = canvas.height;
+
+  // Nettoyage (Fond transparent)
+  ctx.clearRect(0, 0, w, h);
+
+  // Récupération de la couleur du thème (muted_text)
+  const style = getComputedStyle(document.body);
+  ctx.strokeStyle = style.getPropertyValue("--text-muted") || "#888";
+  ctx.lineWidth = 2;
+  ctx.lineJoin = "round";
+
+  ctx.beginPath();
+  const step = w / (history.length - 1);
+  history.forEach((val, i) => {
+    const y = h - (val / 100) * h; // 100% en haut (y=0), 0% en bas (y=h)
+    if (i === 0) ctx.moveTo(i * step, y);
+    else ctx.lineTo(i * step, y);
+  });
+  ctx.stroke();
 }
 
 // === 5. GESTION OVERLAY (OUVERTURE/FERMETURE) ===

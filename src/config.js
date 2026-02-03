@@ -5,6 +5,14 @@
 
 const t = chrome.i18n.getMessage;
 
+export const MOOD_COLORS = [
+  { val: 195, label: "Electric Cyan" },
+  { val: 215, label: "Space Cadet" },
+  { val: 275, label: "Cyber Orchid" },
+  { val: 45, label: "Desert Amber" },
+  { val: 340, label: "Midnight Rose" },
+];
+
 export const UI_CONFIG = {
   monitors: [
     {
@@ -177,6 +185,12 @@ export const UI_CONFIG = {
       title: t("card_settings_title"),
       content: [
         { id: "appVersion", type: "kv", title: t("label_version") },
+        {
+          id: "moodSelector",
+          type: "colorPicker",
+          title: t("settings_mood"),
+          options: MOOD_COLORS,
+        },
         { id: "toggleTheme", type: "switch", title: t("settings_theme") },
         { id: "toggleUnit", type: "switch", title: t("settings_unit") },
         {

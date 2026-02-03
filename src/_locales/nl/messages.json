@@ -55,6 +55,7 @@
 
   "detail_storage_discs": { "message": "Schijven:" },
 
+  "settings_mood": { "message": "Sfeerkleur" },
   "settings_theme": { "message": "Thema: Licht/Donker" },
   "settings_unit": { "message": "Temperatuureenheid: °C/°F" },
   "settings_footer": {

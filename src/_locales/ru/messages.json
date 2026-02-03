@@ -55,6 +55,7 @@
 
   "detail_storage_discs": { "message": "Диски:" },
 
+  "settings_mood": { "message": "Цвет атмосферы" },
   "settings_theme": { "message": "Тема: Светлая/Темная" },
   "settings_unit": { "message": "Единица темп.: °C/°F" },
   "settings_footer": {

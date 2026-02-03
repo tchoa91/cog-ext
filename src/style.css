@@ -780,6 +780,48 @@ input:checked + .slider:before {
   outline-offset: 2px;
 }
 
+/* --- OVERLAY : COLOR PICKER --- */
+
+.overlay-color-row {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.overlay-color-grid {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+  justify-content: flex-end; /* Alignement à droite comme les switchs */
+}
+
+.color-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition:
+    transform 0.2s,
+    border-color 0.2s;
+  /* L'accessibilité clavier */
+  outline: none;
+}
+
+.color-swatch:hover {
+  transform: scale(1.1);
+}
+
+.color-swatch:focus-visible {
+  outline: 2px solid var(--text-main);
+  outline-offset: 2px;
+}
+
+.color-swatch.selected {
+  border-color: var(--accent); /* Vert d'accentuation */
+  transform: scale(1.1);
+}
+
 /* --- OVERLAY : HTML GENERIC (Footer, Infos...) --- */
 .overlay-html {
   margin-top: 20px;

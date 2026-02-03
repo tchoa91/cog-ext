@@ -42,6 +42,7 @@ const TEXT_UPDATE_RATIO = 5;
 
 let activeOverlayId = null;
 let appUnit = "C";
+let appHue = 195; // Valeur par défaut (Electric Cyan)
 
 // --- 3. INITIALISATION ---
 document.addEventListener("DOMContentLoaded", async () => {
@@ -49,11 +50,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // ÉTAPE 1 : Chargement des Préférences (Bloquant pour éviter le flash)
   // On définit des défauts clairs ici.
-  const defaultPrefs = { theme: "dark", unit: "C" };
+  const defaultPrefs = { theme: "dark", unit: "C", hue: 195 };
   let prefs = defaultPrefs;
 
   try {
-    const stored = await chrome.storage.local.get(["theme", "unit"]);
+    const stored = await chrome.storage.local.get(["theme", "unit", "hue"]);
     // Fusionner avec les défauts au cas où une clé manque
     prefs = { ...defaultPrefs, ...stored };
   } catch (e) {
@@ -65,6 +66,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.body.setAttribute("data-theme", prefs.theme);
   // B. Unité (Variable JS pour calculs)
   appUnit = prefs.unit;
+  // C. Hue (Variable CSS)
+  appHue = prefs.hue;
+  document.documentElement.style.setProperty("--brand-h", appHue);
 
   // ÉTAPE 3 : Définition des Actions (Callbacks)
   const callbacks = {
@@ -124,6 +128,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       chrome.storage.local.set({ unit: appUnit });
 
       // 3. Feedback : Le prochain tick (gameLoop) mettra à jour tous les textes
+    },
+
+    onColorChange: (newHue) => {
+      appHue = newHue;
+      document.documentElement.style.setProperty("--brand-h", appHue);
+      chrome.storage.local.set({ hue: appHue });
+      // Le renderer mettra à jour la classe .selected au prochain tick via resolveWidgetData
     },
 
     // Ouvre un nouvel onglet Chrome
@@ -401,6 +412,7 @@ function resolveWidgetData(itemId, data, updateText, isMonitor = false) {
   if (itemId === "toggleTheme")
     res.value = document.body.getAttribute("data-theme") !== "light";
   if (itemId === "toggleUnit") res.value = appUnit === "F";
+  if (itemId === "moodSelector") res.value = appHue;
 
   return res;
 }

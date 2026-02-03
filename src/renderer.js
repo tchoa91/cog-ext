@@ -433,6 +433,26 @@ export function updateInterface(payload) {
             </div>`;
           }
 
+          // Type: Color Picker (Mood)
+          if (item.type === "colorPicker") {
+            return `
+            <div class="overlay-color-row">
+                <div class="overlay-label">${item.title || ""}</div>
+                <div class="overlay-color-grid">
+                  ${(item.options || [])
+                    .map(
+                      (opt) => `
+                    <button class="color-swatch" 
+                            data-hue="${opt.val}"
+                            aria-label="${opt.label}"
+                            style="background-color: hsl(${opt.val}, 60%, 50%);"></button>
+                  `,
+                    )
+                    .join("")}
+                </div>
+            </div>`;
+          }
+
           // Type HTML (Texte libre / Footer)
           if (item.type === "html") {
             return `<div class="overlay-html">${item.value || ""}</div>`;
@@ -463,6 +483,24 @@ export function updateInterface(payload) {
             e.preventDefault();
             // On simule un clic : cela bascule la case et déclenche l'événement 'change' ci-dessus
             cb.click();
+          }
+        });
+      });
+
+      // --- Événements Color Picker ---
+      const swatches = overlayBody.querySelectorAll(".color-swatch");
+      swatches.forEach((swatch) => {
+        const action = () => {
+          if (!appCallbacks) return;
+          const hue = parseInt(swatch.dataset.hue, 10);
+          appCallbacks.onColorChange(hue);
+        };
+
+        swatch.addEventListener("click", action);
+        swatch.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            action();
           }
         });
       });
@@ -627,6 +665,22 @@ export function updateInterface(payload) {
         const cb = overlayBody.querySelector(`#${item.id}`);
         if (cb && cb.checked !== item.value) {
           cb.checked = item.value;
+        }
+      }
+
+      // Mise à jour Color Picker (Selection active)
+      if (item.type === "colorPicker" && item.value !== undefined) {
+        const currentHue = item.value;
+        // On utilise une clé simple pour éviter de scanner le DOM à chaque frame
+        const key = `ov-${item.id}-hue`;
+        if (renderCache[key] !== currentHue) {
+          const swatches = overlayBody.querySelectorAll(".color-swatch");
+          swatches.forEach((s) => {
+            const sHue = parseInt(s.dataset.hue, 10);
+            if (sHue === currentHue) s.classList.add("selected");
+            else s.classList.remove("selected");
+          });
+          renderCache[key] = currentHue;
         }
       }
 

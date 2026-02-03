@@ -55,6 +55,7 @@
 
   "detail_storage_discs": { "message": "Diskar:" },
 
+  "settings_mood": { "message": "Stämningsfärg" },
   "settings_theme": { "message": "Tema: Ljust/Mörkt" },
   "settings_unit": { "message": "Temperaturenhet: °C/°F" },
   "settings_footer": {

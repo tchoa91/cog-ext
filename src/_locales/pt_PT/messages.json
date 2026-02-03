@@ -57,6 +57,7 @@
 
   "settings_theme": { "message": "Tema: Claro/Escuro" },
   "settings_unit": { "message": "Unidade de temp: °C/°F" },
+  "settings_mood": { "message": "Cor do ambiente" },
   "settings_footer": {
     "message": "2026 - GPL-3.0 - François Bacconnet <a href='https://ext.tchoa.com'>o meu site</a>"
   },

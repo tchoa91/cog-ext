@@ -55,6 +55,7 @@
 
   "detail_storage_discs": { "message": "Dischi:" },
 
+  "settings_mood": { "message": "Colore ambiente" },
   "settings_theme": { "message": "Tema: Chiaro/Scuro" },
   "settings_unit": { "message": "Unità temperatura: °C/°F" },
   "settings_footer": {

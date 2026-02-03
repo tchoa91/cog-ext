@@ -55,6 +55,7 @@
 
   "detail_storage_discs": { "message": "Diskler:" },
 
+  "settings_mood": { "message": "Ortam Rengi" },
   "settings_theme": { "message": "Tema: Açık/Koyu" },
   "settings_unit": { "message": "Sıcaklık Birimi: °C/°F" },
   "settings_footer": {

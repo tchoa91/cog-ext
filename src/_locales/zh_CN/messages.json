@@ -55,6 +55,7 @@
 
   "detail_storage_discs": { "message": "磁盘：" },
 
+  "settings_mood": { "message": "氛围颜色" },
   "settings_theme": { "message": "主题：浅色/深色" },
   "settings_unit": { "message": "温度单位：°C/°F" },
   "settings_footer": {

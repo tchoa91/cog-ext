@@ -55,6 +55,7 @@
 
   "detail_storage_discs": { "message": "Laufwerke:" },
 
+  "settings_mood": { "message": "Ambiente-Farbe" },
   "settings_theme": { "message": "Design: Hell/Dunkel" },
   "settings_unit": { "message": "Temperatureinheit: °C/°F" },
   "settings_footer": {

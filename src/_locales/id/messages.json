@@ -55,6 +55,7 @@
 
   "detail_storage_discs": { "message": "Disk:" },
 
+  "settings_mood": { "message": "Warna Suasana" },
   "settings_theme": { "message": "Tema: Terang/Gelap" },
   "settings_unit": { "message": "Unit Suhu: °C/°F" },
   "settings_footer": {

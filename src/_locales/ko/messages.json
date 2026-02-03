@@ -55,6 +55,7 @@
 
   "detail_storage_discs": { "message": "디스크:" },
 
+  "settings_mood": { "message": "분위기 색상" },
   "settings_theme": { "message": "테마: 라이트/다크" },
   "settings_unit": { "message": "온도 단위: °C/°F" },
   "settings_footer": {

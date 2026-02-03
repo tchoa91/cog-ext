@@ -82,7 +82,7 @@ export function toggleTheme() {
 }
 
 // === 3. CONSTRUCTION (BUILD) ===
-export function buildInterface(config, callbacks) {
+function buildInterface(config, callbacks) {
   // TopBar
   topBarEl.innerHTML = config.monitors
     .map(
@@ -694,7 +694,6 @@ export function setOverlayState(isOpen, payload = {}, event = null) {
   const content = overlayEl.querySelector(".overlay-content");
   const titleEl = overlayEl.querySelector("#overlay-title");
   const toggleBackgroundAccess = (disable) => {
-    //if (topBarEl) topBarEl.inert = disable;
     if (gridEl) gridEl.inert = disable;
   };
 
@@ -703,7 +702,6 @@ export function setOverlayState(isOpen, payload = {}, event = null) {
     overlayEl.classList.remove("active");
     setTimeout(() => {
       if (!overlayEl.classList.contains("active")) {
-        overlayEl.classList.add("hidden");
         const overlayBody = document.getElementById("overlay-body");
         if (overlayBody) overlayBody.innerHTML = "";
         // IMPORTANT : On force le renderer à reconstruire le DOM au prochain appel
@@ -731,7 +729,7 @@ export function setOverlayState(isOpen, payload = {}, event = null) {
   const title = payload.title || "";
 
   if (event && event.currentTarget) {
-    const topBarHeight = document.getElementById("topbar")?.offsetHeight || 0;
+    const topBarHeight = topBarEl?.offsetHeight || 0;
     const rect = event.currentTarget.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     let centerY = rect.top + rect.height / 2;
@@ -753,7 +751,6 @@ export function setOverlayState(isOpen, payload = {}, event = null) {
   } else {
     if (titleEl) titleEl.textContent = title;
     if (content) content.style.opacity = "1";
-    overlayEl.classList.remove("hidden");
     void overlayEl.offsetWidth; // Force reflow
     overlayEl.classList.add("active");
   }

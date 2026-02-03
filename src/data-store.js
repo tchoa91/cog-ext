@@ -19,7 +19,6 @@ export class DataStore {
   constructor() {
     this.cachedGpu = null;
     this.cachedStaticInfo = null;
-    this.cachedStorage = null;
 
     this.cache = {
       storage: { data: null, ts: 0 },
@@ -62,8 +61,8 @@ export class DataStore {
 
     // Cas A : Dashboard complet (Grille)
     if (scope === "cards") {
-      pStorage = this._fetchStorageSummary();
-      pDisplay = this._fetchDisplaySummary();
+      pStorage = this._fetchStorageDetails();
+      pDisplay = this._fetchDisplayDetails();
     }
 
     // Cas B : Focus Module spécifique (Overlay Dynamique) -> On charge les détails UNIQUEMENT pour ce module
@@ -324,10 +323,6 @@ export class DataStore {
     return { ...netCache.data };
   }
 
-  async _fetchStorageSummary() {
-    return await this._fetchStorageDetails();
-  }
-
   async _fetchStorageDetails() {
     const now = Date.now();
 
@@ -389,10 +384,6 @@ export class DataStore {
     });
   }
 
-  async _fetchDisplaySummary() {
-    return await this._fetchDisplayDetails();
-  }
-
   async _fetchDisplayDetails() {
     const now = Date.now();
 
@@ -449,7 +440,6 @@ export class DataStore {
 
       // 3. Extensions installées (pour l'overlay Chrome)
       // Nécessite la permission "management" dans manifest.json
-      let extCount = 0;
       let extList = "N/A";
 
       try {
@@ -469,8 +459,17 @@ export class DataStore {
         console.warn("DataStore: Permission 'management' manquante.");
       }
 
+      const osMap = {
+        mac: "macOS",
+        win: "Windows",
+        android: "Android",
+        cros: "ChromeOS",
+        linux: "Linux",
+        openbsd: "OpenBSD",
+      };
+
       const result = {
-        os: "ChromeOS",
+        os: osMap[platform.os] || platform.os,
         arch: platform.arch,
         chromeVer: /Chrome\/([0-9.]+)/.exec(navigator.userAgent)[1],
         chromeLanguages: langs.slice(0, 3).join(", "),

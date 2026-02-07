@@ -1,7 +1,7 @@
 {
   "appName": { "message": "COGext : Moniteur Système" },
   "appDesc": {
-    "message": "Un tableau de bord moderne pour surveiller CPU, RAM, Batterie et Réseau. Léger, respectueux de la vie privée, avec modes Sombre & Clair."
+    "message": "Votre système, tel que le voit Chrome, dans un tableau de bord moderne, léger et open-source."
   },
 
   "monitor_cpu": { "message": "CPU" },

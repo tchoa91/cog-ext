@@ -1,7 +1,7 @@
 {
   "appName": { "message": "COGext : 系统监控" },
   "appDesc": {
-    "message": "一款用于监控 CPU、内存、电池和网络的现代仪表板。轻量、隐私友好，支持深色和浅色模式。"
+    "message": "Chrome 视角下的系统信息——通过现代化、轻量化且开源的仪表板呈现"
   },
 
   "monitor_cpu": { "message": "处理器" },

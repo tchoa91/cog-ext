@@ -1,7 +1,7 @@
 {
   "appName": { "message": "COGext : System Monitor" },
   "appDesc": {
-    "message": "A modern dashboard to monitor CPU, RAM, Battery, and Network. Lightweight, privacy-friendly, with Dark & Light modes."
+    "message": "Your system, as Chrome sees it — presented in a modern, lightweight, and open-source dashboard."
   },
 
   "monitor_cpu": { "message": "CPU" },

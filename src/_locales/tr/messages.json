@@ -1,7 +1,7 @@
 {
   "appName": { "message": "COGext: Sistem İzleyici" },
   "appDesc": {
-    "message": "CPU, RAM, Pil ve Ağ durumunu izlemek için modern bir kontrol paneli. Hafif, gizlilik dostu, Koyu ve Açık mod desteğiyle."
+    "message": "Chrome'un gözünden sisteminiz — modern, hafif ve açık kaynaklı bir panelde sunulur."
   },
 
   "monitor_cpu": { "message": "CPU" },

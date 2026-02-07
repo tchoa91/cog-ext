@@ -1,7 +1,7 @@
 {
   "appName": { "message": "COGext: Systeemmonitor" },
   "appDesc": {
-    "message": "Een modern dashboard voor het monitoren van CPU, RAM, accu en netwerk. Lichtgewicht, privacyvriendelijk, met donkere en lichte modus."
+    "message": "Je systeem zoals Chrome het ziet — gepresenteerd in een modern, lichtgewicht en open-source dashboard."
   },
 
   "monitor_cpu": { "message": "CPU" },

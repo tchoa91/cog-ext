@@ -1,7 +1,7 @@
 {
   "appName": { "message": "COGext: Monitor Systemu" },
   "appDesc": {
-    "message": "Nowoczesny panel do monitorowania procesora, pamięci RAM, baterii i sieci. Lekki, dbający o prywatność, z trybem jasnym i ciemnym."
+    "message": "Twój system oczami Chrome — przedstawiony w nowoczesnym, lekkim i otwartoźródłowym panelu (dashboard)."
   },
 
   "monitor_cpu": { "message": "CPU" },

@@ -1,7 +1,7 @@
 {
   "appName": { "message": "COGext: Systemövervakare" },
   "appDesc": {
-    "message": "En modern kontrollpanel för att övervaka CPU, RAM, batteri och nätverk. Lättviktig, integritetsvänlig, med mörkt och ljust läge."
+    "message": "Ditt system som Chrome ser det — presenterat i en modern, lättviktig och open-source instrumentpanel."
   },
 
   "monitor_cpu": { "message": "CPU" },

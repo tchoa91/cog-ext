@@ -1,7 +1,7 @@
 {
   "appName": { "message": "COGext: Systemmonitor" },
   "appDesc": {
-    "message": "Ein modernes Dashboard zur Überwachung von CPU, RAM, Akku und Netzwerk. Leichtgewichtig, datenschutzfreundlich, mit Dunkel- und Hellmodus."
+    "message": "Ihr System aus der Sicht von Chrome - präsentiert in einem modernen, leichtgewichtigen Open-Source-Dashboard."
   },
 
   "monitor_cpu": { "message": "CPU" },

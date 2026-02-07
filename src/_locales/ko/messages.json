@@ -1,7 +1,7 @@
 {
   "appName": { "message": "COGext : 시스템 모니터" },
   "appDesc": {
-    "message": "CPU, RAM, 배터리 및 네트워크를 모니터링하는 현대적인 대시보드입니다. 가볍고 개인정보 보호 친화적이며 다크 및 라이트 모드를 지원합니다."
+    "message": "Chrome이 바라보는 당신의 시스템 — 현대적이고 가벼운 오픈 소스 대시보드로 제공됩니다."
   },
 
   "monitor_cpu": { "message": "CPU" },

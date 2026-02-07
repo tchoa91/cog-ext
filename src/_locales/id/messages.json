@@ -1,7 +1,7 @@
 {
   "appName": { "message": "COGext: Monitor Sistem" },
   "appDesc": {
-    "message": "Dashboard modern untuk memantau CPU, RAM, Baterai, dan Jaringan. Ringan, menjaga privasi, dengan mode Gelap & Terang."
+    "message": "Sistem Anda, sebagaimana dilihat oleh Chrome — disajikan dalam dashboard modern, ringan, dan open-source."
   },
 
   "monitor_cpu": { "message": "CPU" },

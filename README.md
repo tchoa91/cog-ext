@@ -4,16 +4,6 @@ COGext is a lightweight, high-performance system monitor extension for the Chrom
 
 <img width="128" height="128" alt="Logo COGext" src="./src/assets/icon128.png" />
 
-## 🧠 V2.0 Design Philosophy: From List to Dashboard
-
-The architecture of Version 2.0 was driven by a major shift in the UX paradigm: moving away from a simple list to a comprehensive **Dashboard**.
-
-- **Immediate Visibility:** The UI is strictly constrained to the viewport—no scrolling required. A **Grid Layout** is used to manage screen real-estate efficiently, giving you the big picture instantly.
-- **Interactive Layers:** To balance simplicity and detail, we use an **Overlay System**:
-  - _State 1 (Card):_ Displays aggregated, essential data (e.g., Total CPU Load).
-  - _State 2 (Overlay):_ Reveals granular data on demand (e.g., Per-core Load).
-- **Smart Performance:** This design dictated a strict decoupling between the **DataStore** and **Renderer**. Heavy granular data is fetched _only_ when an overlay is requested, keeping the main monitoring loop lightweight (5Hz) and responsive.
-
 ## ✨ Features
 
 ### 📦 The Cards
@@ -41,7 +31,24 @@ This extension is a wild hack from the ChromeApp "COG" coded by François Beaufo
 
 Help was provided by Jules & Gemini by Google.
 
+## 🧠 V2.0 Design Philosophy: From List to Dashboard
+
+The architecture of Version 2.0 was driven by a major shift in the UX paradigm: moving away from a simple list to a comprehensive **Dashboard**.
+
+- **Immediate Visibility:** The UI is strictly constrained to the viewport—no scrolling required. A **Grid Layout** is used to manage screen real-estate efficiently, giving you the big picture instantly.
+- **Interactive Layers:** To balance simplicity and detail, we use an **Overlay System**:
+  - _State 1 (Card):_ Displays aggregated, essential data (e.g., Total CPU Load).
+  - _State 2 (Overlay):_ Reveals granular data on demand (e.g., Per-core Load).
+- **Smart Performance:** This design dictated a strict decoupling between the **DataStore** and **Renderer**. Heavy granular data is fetched _only_ when an overlay is requested, keeping the main monitoring loop lightweight (5Hz) and responsive.
+
 ## 🛠 Changelog
+
+### V 2.1 - Refinement & Personalization
+
+- Code cleanup and optimizations.
+- Bug fixes.
+- Added "Moods" (color themes), Sparklines, and latency tracking.
+- Added support for 15 additional languages.
 
 ### V 2.0 - The "Dashboard" Update (2026-01-21)
 
@@ -82,11 +89,12 @@ Link : https://chromewebstore.google.com/detail/cogext-system-info-viewer/bkgdbd
 
 - `src/manifest.json`: Extension configuration and permissions.
 - `src/popup.html`: The main entry point and skeleton.
+- `src/config.js`: The configuration file for the layout, the colors and the thresholds.
 - `src/main.js`: Main controller (Game Loop, Event handling).
 - `src/data-store.js`: Data fetching layer (Chrome APIs abstraction).
 - `src/renderer.js`: UI Rendering engine (DOM manipulation & Caching).
 - `src/style.css`: All visual styles, variables, and animations.
-- `src/_locales/`: Internationalization files (en/fr).
+- `src/_locales/`: Internationalization files.
 - `src/assets/`: Icons and Fonts.
 
 ## 🔐 Permissions Used

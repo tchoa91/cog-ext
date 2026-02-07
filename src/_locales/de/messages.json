@@ -1,0 +1,81 @@
+{
+  "appName": { "message": "COGext: Systemmonitor" },
+  "appDesc": {
+    "message": "Ihr System aus der Sicht von Chrome - präsentiert in einem modernen, leichtgewichtigen Open-Source-Dashboard."
+  },
+
+  "monitor_cpu": { "message": "CPU" },
+  "monitor_mem": { "message": "RAM" },
+  "monitor_batt": { "message": "AKKU" },
+  "monitor_net": { "message": "NETZ" },
+
+  "card_cpu_title": { "message": "CPU-Auslastung" },
+  "card_mem_title": { "message": "Arbeitsspeicher" },
+  "card_temp_title": { "message": "CPU-Temperatur" },
+  "card_batt_title": { "message": "Akku" },
+  "card_disp_title": { "message": "Anzeige" },
+  "card_net_title": { "message": "Netzwerk" },
+  "card_chrome_title": { "message": "Chrome" },
+  "card_os_title": { "message": "Betriebssystem" },
+  "card_storage_title": { "message": "Speicher" },
+  "card_settings_title": { "message": "COGext - Einstellungen" },
+
+  "label_mem_total": { "message": "Gesamtspeicher" },
+  "label_mem_used": { "message": "Belegter Speicher" },
+  "label_batt_time_general": {
+    "message": "Zeit bis voll geladen/entladen:"
+  },
+  "label_ip": { "message": "IP:" },
+  "label_latency": { "message": "Latenz" },
+  "label_platform": { "message": "Plattform:" },
+  "label_free": { "message": "frei" },
+  "label_version": { "message": "Version:" },
+
+  "overlay_cpu_title": { "message": "CPU-Last Details" },
+  "overlay_temp_title": { "message": "Temperatur Details" },
+  "overlay_disp_title": { "message": "Anzeige Details" },
+  "overlay_chrome_title": { "message": "Chrome Details" },
+  "overlay_storage_title": { "message": "Speicher Details" },
+
+  "detail_cpu_avg": { "message": "Durchschnittliche Last" },
+  "detail_cpu_core": { "message": "Last pro Kern" },
+  "detail_cpu_arch": { "message": "CPU-Architektur" },
+  "detail_cpu_model": { "message": "CPU-Modell" },
+  "detail_cpu_features": { "message": "CPU-Funktionen" },
+
+  "detail_temp_avg": { "message": "Durchschnittstemperatur" },
+  "detail_temp_sensor": { "message": "Temperatur pro Sensor" },
+
+  "detail_disp_prim": { "message": "Hauptbildschirm" },
+  "detail_disp_other": { "message": "Weitere Bildschirme" },
+  "detail_gpu": { "message": "Grafikkarte (GPU):" },
+
+  "detail_chrome_langs": { "message": "Sprachen:" },
+  "detail_chrome_exts": { "message": "Aktive Erweiterungen" },
+
+  "detail_storage_discs": { "message": "Laufwerke:" },
+
+  "settings_mood": { "message": "Ambiente-Farbe" },
+  "settings_theme": { "message": "Design: Hell/Dunkel" },
+  "settings_unit": { "message": "Temperatureinheit: °C/°F" },
+  "settings_footer": {
+    "message": "2026 - GPL-3.0 - François Bacconnet <a href='https://ext.tchoa.com'>Meine Website</a>"
+  },
+
+  "status_charging": { "message": "Wird geladen" },
+  "status_on_battery": { "message": "Akkubetrieb" },
+  "status_full_charge_in": { "message": "Vollständig geladen in:" },
+  "status_time_left": { "message": "Verbleibende Akkulaufzeit:" },
+  "status_powered": { "message": "Netzbetrieb" },
+
+  "status_online": { "message": "Online" },
+  "status_offline": { "message": "Offline" },
+  "status_on": { "message": "An" },
+  "status_off": { "message": "Aus" },
+  "status_hidden": { "message": "Versteckt/Lokal" },
+
+  "disp_internal": { "message": "Interner Monitor" },
+  "disp_internal_short": { "message": "Intern" },
+  "disp_unknown": { "message": "Unbekannt" },
+  "disp_none": { "message": "Keine" }
+}

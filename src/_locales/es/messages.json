@@ -1,0 +1,81 @@
+{
+  "appName": { "message": "COGext: Monitor de Sistema" },
+  "appDesc": {
+    "message": "Tu sistema tal como lo ve Chrome: presentado en un panel de control moderno, ligero y de código abierto."
+  },
+
+  "monitor_cpu": { "message": "CPU" },
+  "monitor_mem": { "message": "MEM" },
+  "monitor_batt": { "message": "BAT" },
+  "monitor_net": { "message": "RED" },
+
+  "card_cpu_title": { "message": "Carga de CPU" },
+  "card_mem_title": { "message": "Memoria" },
+  "card_temp_title": { "message": "Temperatura CPU" },
+  "card_batt_title": { "message": "Batería" },
+  "card_disp_title": { "message": "Pantalla" },
+  "card_net_title": { "message": "Red" },
+  "card_chrome_title": { "message": "Chrome" },
+  "card_os_title": { "message": "SO" },
+  "card_storage_title": { "message": "Almacenamiento" },
+  "card_settings_title": { "message": "COGext - Configuración" },
+
+  "label_mem_total": { "message": "Memoria total" },
+  "label_mem_used": { "message": "Memoria usada" },
+  "label_batt_time_general": {
+    "message": "Tiempo para carga/descarga completa:"
+  },
+  "label_ip": { "message": "IP:" },
+  "label_latency": { "message": "Latencia" },
+  "label_platform": { "message": "Plataforma:" },
+  "label_free": { "message": "libre" },
+  "label_version": { "message": "Versión:" },
+
+  "overlay_cpu_title": { "message": "Detalles de carga de CPU" },
+  "overlay_temp_title": { "message": "Detalles de temperatura" },
+  "overlay_disp_title": { "message": "Detalles de pantalla" },
+  "overlay_chrome_title": { "message": "Detalles de Chrome" },
+  "overlay_storage_title": { "message": "Detalles de almacenamiento" },
+
+  "detail_cpu_avg": { "message": "Carga promedio" },
+  "detail_cpu_core": { "message": "Carga por núcleo" },
+  "detail_cpu_arch": { "message": "Arquitectura de CPU" },
+  "detail_cpu_model": { "message": "Modelo de CPU" },
+  "detail_cpu_features": { "message": "Características de CPU" },
+
+  "detail_temp_avg": { "message": "Temperatura promedio" },
+  "detail_temp_sensor": { "message": "Temperatura por sensor" },
+
+  "detail_disp_prim": { "message": "Pantalla principal" },
+  "detail_disp_other": { "message": "Pantallas secundarias" },
+  "detail_gpu": { "message": "Tarjeta gráfica (GPU):" },
+
+  "detail_chrome_langs": { "message": "Idiomas:" },
+  "detail_chrome_exts": { "message": "Extensiones activas" },
+
+  "detail_storage_discs": { "message": "Discos:" },
+
+  "settings_theme": { "message": "Tema: Claro/Oscuro" },
+  "settings_unit": { "message": "Unidad de temperatura: °C/°F" },
+  "settings_mood": { "message": "Color de ambiente" },
+  "settings_footer": {
+    "message": "2026 - GPL-3.0 - François Bacconnet <a href='https://ext.tchoa.com'>mi sitio web</a>"
+  },
+
+  "status_charging": { "message": "Cargando" },
+  "status_on_battery": { "message": "Con batería" },
+  "status_full_charge_in": { "message": "Carga completa en:" },
+  "status_time_left": { "message": "Tiempo de batería restante:" },
+  "status_powered": { "message": "Conectado" },
+
+  "status_online": { "message": "En línea" },
+  "status_offline": { "message": "Desconectado" },
+  "status_on": { "message": "Encendido" },
+  "status_off": { "message": "Apagado" },
+  "status_hidden": { "message": "Oculto/Local" },
+
+  "disp_internal": { "message": "Pantalla interna" },
+  "disp_internal_short": { "message": "Interna" },
+  "disp_unknown": { "message": "Desconocido" },
+  "disp_none": { "message": "Ninguna" }
+}

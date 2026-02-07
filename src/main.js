@@ -5,7 +5,7 @@
  * @author      François Bacconnet <https://github.com/tchoa91>
  * @copyright   2026 François Bacconnet
  * @license     GPL-3.0
- * @version     2.0
+ * @version     2.1
  * @homepage    https://ext.tchoa.com
  * @see         https://github.com/tchoa91/cog-ext
  */
@@ -18,193 +18,12 @@ import {
 } from "./renderer.js";
 
 import { DataStore } from "./data-store.js";
+import { UI_CONFIG, THRESHOLDS } from "./config.js";
 
 // --- Raccourci i18n ---
 const t = chrome.i18n.getMessage;
 
 // --- 1. CONFIGURATION (L'intention d'affichage) ---
-const UI_CONFIG = {
-  monitors: [
-    {
-      id: "cpu",
-      title: t("monitor_cpu"),
-      cardLink: "cpuUsage",
-      type: "bar",
-      hasOvelay: true,
-    },
-    { id: "mem", title: t("monitor_mem"), cardLink: "memory", type: "bar" },
-    { id: "batt", title: t("monitor_batt"), cardLink: "battery", type: "bar" },
-    { id: "net", title: t("monitor_net"), cardLink: "network", type: "dot" },
-  ],
-  cards: [
-    {
-      id: "cpuUsage",
-      title: t("card_cpu_title"),
-      hasOvelay: true,
-      isDynamic: true,
-      content: [{ id: "loadBar", type: "cardBar" }],
-    },
-    {
-      id: "memory",
-      title: t("card_mem_title"),
-      isDynamic: true,
-      content: [
-        { id: "memBar", type: "cardBar" },
-        { id: "memtotal", type: "kv", title: t("label_mem_total") },
-        { id: "memUsed", type: "kv", title: t("label_mem_used") },
-      ],
-    },
-    {
-      id: "cpuTemp",
-      title: t("card_temp_title"),
-      hasOvelay: true,
-      isDynamic: true,
-      content: [{ id: "tempBar", type: "cardBar" }],
-    },
-    {
-      id: "battery",
-      title: t("card_batt_title"),
-      isDynamic: true,
-      content: [
-        { id: "battBar", type: "cardBar" },
-        { id: "battStatus", type: "value" },
-        {
-          id: "battTime",
-          type: "kv",
-          title: t("label_batt_time_general"),
-        },
-      ],
-    },
-    {
-      id: "display",
-      title: t("card_disp_title"),
-      hasOvelay: true,
-      isDynamic: true,
-      content: [
-        { id: "displayMain", type: "value" },
-        { id: "displayDef", type: "value" },
-      ],
-    },
-    {
-      id: "network",
-      title: t("card_net_title"),
-      isDynamic: true,
-      content: [
-        { id: "netStatus", type: "value" },
-        { id: "netIp", type: "kv", title: t("label_ip") },
-      ],
-    },
-    {
-      id: "chrome",
-      title: t("card_chrome_title"),
-      hasOvelay: true,
-      content: [{ id: "chromeVersion", type: "value" }],
-    },
-    {
-      id: "os",
-      title: t("card_os_title"),
-      content: [
-        { id: "osName", type: "value" },
-        { id: "osPlatform", type: "kv", title: t("label_platform") },
-      ],
-    },
-    {
-      id: "storage",
-      title: t("card_storage_title"),
-      hasOvelay: true,
-      content: [{ id: "storageMain", type: "disk" }],
-    },
-    {
-      id: "settings",
-      title: t("card_settings_title"),
-      hasOvelay: true,
-      content: [{ id: "appVersion", type: "kv", title: t("label_version") }],
-    },
-  ],
-  overlays: [
-    {
-      id: "cpuUsage",
-      title: t("overlay_cpu_title"),
-      isDynamic: true,
-      content: [
-        { id: "cpuLoadAverage", type: "olBar", title: t("detail_cpu_avg") },
-        { id: "cpuLoadList", type: "olLoadList", title: t("detail_cpu_core") },
-        { id: "cpuArc", type: "kv", title: t("detail_cpu_arch") },
-        { id: "cpuName", type: "kv", title: t("detail_cpu_model") },
-        { id: "cpuFeatures", type: "kv", title: t("detail_cpu_features") },
-      ],
-    },
-    {
-      id: "cpuTemp",
-      title: t("overlay_temp_title"),
-      isDynamic: true,
-      content: [
-        {
-          id: "cpuTempAverage",
-          type: "olBar",
-          title: t("detail_temp_avg"),
-        },
-        {
-          id: "cpuTempList",
-          type: "olTempList",
-          title: t("detail_temp_sensor"),
-        },
-      ],
-    },
-    {
-      id: "display",
-      title: t("overlay_disp_title"),
-      isDynamic: true,
-      content: [
-        { id: "gpu", type: "kv", title: t("detail_gpu") },
-        { id: "primDisplay", type: "kv", title: t("detail_disp_prim") },
-        {
-          id: "otherDisplays",
-          type: "olTextList",
-          title: t("detail_disp_other"),
-        },
-      ],
-    },
-    {
-      id: "chrome",
-      title: t("overlay_chrome_title"),
-      content: [
-        { id: "chromeVersion", type: "kv", title: t("label_version") },
-        { id: "chromeLanguages", type: "kv", title: t("detail_chrome_langs") },
-        {
-          id: "chromeExtensions",
-          type: "olTextList",
-          title: t("detail_chrome_exts"),
-        },
-      ],
-    },
-    {
-      id: "storage",
-      title: t("overlay_storage_title"),
-      content: [
-        {
-          id: "storageList",
-          type: "disk",
-          title: t("detail_storage_discs"),
-        },
-      ],
-    },
-    {
-      id: "settings",
-      title: t("card_settings_title"),
-      content: [
-        { id: "appVersion", type: "kv", title: t("label_version") },
-        { id: "toggleTheme", type: "switch", title: t("settings_theme") },
-        { id: "toggleUnit", type: "switch", title: t("settings_unit") },
-        {
-          id: "settingsFooter",
-          type: "html",
-          value: t("settings_footer"),
-        },
-      ],
-    },
-  ],
-};
 
 // Instanciation du Data Store
 const store = new DataStore();
@@ -212,14 +31,6 @@ const store = new DataStore();
 // --- 2. STATE & TIMING ---
 
 // CONFIGURATION DES SEUILS (Warn = Orange, Alert = Rouge)
-const THRESHOLDS = {
-  cpu: { warn: 70, alert: 90 }, // % Usage
-  cpuCores: { warn: 60, alert: 85 },
-  temp: { warn: 80, alert: 95 }, // °C
-  memory: { warn: 81, alert: 96 }, // % Usage
-  battery: { warn: 30, alert: 15 }, // % Restant (Sens inversé)
-  storage: { warn: 90, alert: 95 }, // % Usage
-};
 
 let tickCount = 0;
 let lastTime = 0;
@@ -231,6 +42,7 @@ const TEXT_UPDATE_RATIO = 5;
 
 let activeOverlayId = null;
 let appUnit = "C";
+let appHue = 195; // Valeur par défaut (Electric Cyan)
 
 // --- 3. INITIALISATION ---
 document.addEventListener("DOMContentLoaded", async () => {
@@ -238,14 +50,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // ÉTAPE 1 : Chargement des Préférences (Bloquant pour éviter le flash)
   // On définit des défauts clairs ici.
-  const defaultPrefs = { theme: "dark", unit: "C" };
+  const defaultPrefs = { theme: "dark", unit: "C", hue: 195 };
   let prefs = defaultPrefs;
 
   try {
-    const stored = await chrome.storage.local.get(["theme", "unit"]);
+    const stored = await chrome.storage.local.get(["theme", "unit", "hue"]);
     // Fusionner avec les défauts au cas où une clé manque
     prefs = { ...defaultPrefs, ...stored };
-    //console.log("💾 Config chargée :", prefs);
   } catch (e) {
     console.warn("Erreur lecture storage, utilisation défauts", e);
   }
@@ -255,6 +66,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.body.setAttribute("data-theme", prefs.theme);
   // B. Unité (Variable JS pour calculs)
   appUnit = prefs.unit;
+  // C. Hue (Variable CSS)
+  appHue = prefs.hue;
+  document.documentElement.style.setProperty("--brand-h", appHue);
 
   // ÉTAPE 3 : Définition des Actions (Callbacks)
   const callbacks = {
@@ -304,7 +118,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       // 3. Sauvegarder
       chrome.storage.local.set({ theme: newTheme });
-      //console.log("💾 Thème sauvegardé :", newTheme);
     },
 
     onUnitToggle: () => {
@@ -313,9 +126,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       // 2. Sauvegarder
       chrome.storage.local.set({ unit: appUnit });
-      //console.log("💾 Unité sauvegardée :", appUnit);
 
       // 3. Feedback : Le prochain tick (gameLoop) mettra à jour tous les textes
+    },
+
+    onColorChange: (newHue) => {
+      appHue = newHue;
+      document.documentElement.style.setProperty("--brand-h", appHue);
+      chrome.storage.local.set({ hue: appHue });
+      // Le renderer mettra à jour la classe .selected au prochain tick via resolveWidgetData
     },
 
     // Ouvre un nouvel onglet Chrome
@@ -380,7 +199,8 @@ function resolveWidgetData(itemId, data, updateText, isMonitor = false) {
     if (
       itemId === "cpu" ||
       itemId === "loadBar" ||
-      itemId === "cpuLoadAverage"
+      itemId === "cpuLoadAverage" ||
+      itemId === "cpuSparkline"
     ) {
       res.value = data.cpuUsage.usagePct;
       res.display = txt(`${data.cpuUsage.usagePct}%`);
@@ -508,6 +328,10 @@ function resolveWidgetData(itemId, data, updateText, isMonitor = false) {
     }
     if (itemId === "netIp")
       res.display = txt(data.network.ip || t("status_hidden"));
+    if (itemId === "netLatency")
+      res.display = txt(
+        data.network.latency ? `${data.network.latency} ms` : "--",
+      );
   }
 
   // --- 6. DISPLAY ---
@@ -589,6 +413,7 @@ function resolveWidgetData(itemId, data, updateText, isMonitor = false) {
   if (itemId === "toggleTheme")
     res.value = document.body.getAttribute("data-theme") !== "light";
   if (itemId === "toggleUnit") res.value = appUnit === "F";
+  if (itemId === "moodSelector") res.value = appHue;
 
   return res;
 }
@@ -718,33 +543,11 @@ async function gameLoop(timestamp) {
       activeOverlayId,
     );
 
-    // [DEBUG] Traces complètes (1Hz)
-    /* if (updateText) {
-      console.groupCollapsed(
-        `🔍 Debug Loop [Tick ${tickCount}] 🎯 Scope : ${scope}`,
-      );
-      //console.log("🎯 Scope :", scope);
-      console.log("📥 SysData (Source) :", sysData);
-      console.log("📤 RenderState (Output) :", renderState);
-      console.groupEnd();
-    } */
-
     // D. RENDU
     updateInterface(renderState);
   }
 
   requestAnimationFrame(gameLoop);
-}
-
-// --- LOGIQUE MÉTIER  ---
-
-function handleOverlayOpen(cardId, event) {
-  setOverlayState(true, { title: title }, event);
-}
-
-function closeOverlay() {
-  activeOverlayId = null;
-  setOverlayState(false);
 }
 
 // --- UTILITAIRES ---
@@ -754,11 +557,8 @@ function closeOverlay() {
  * Permet de savoir si c'est "isDynamic" ou non.
  */
 function getOverlayConfig(cardId) {
-  // On regarde d'abord dans les overlays explicites
-  let config = UI_CONFIG.overlays.find((c) => c.id === cardId);
-  // Sinon dans les cartes (cas simple)
-  if (!config) {
-    config = UI_CONFIG.cards.find((c) => c.id === cardId);
-  }
-  return config;
+  return (
+    UI_CONFIG.overlays.find((c) => c.id === cardId) ||
+    UI_CONFIG.cards.find((c) => c.id === cardId)
+  );
 }

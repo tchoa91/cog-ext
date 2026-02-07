@@ -1,7 +1,7 @@
 {
   "appName": { "message": "COGext : System Monitor" },
   "appDesc": {
-    "message": "A modern dashboard to monitor CPU, RAM, Battery, and Network. Lightweight, privacy-friendly, with Dark & Light modes."
+    "message": "Your system, as Chrome sees it — presented in a modern, lightweight, and open-source dashboard."
   },
 
   "monitor_cpu": { "message": "CPU" },
@@ -26,6 +26,7 @@
     "message": "Time before full charge/discharge :"
   },
   "label_ip": { "message": "IP :" },
+  "label_latency": { "message": "Latency" },
   "label_platform": { "message": "Platform :" },
   "label_free": { "message": "free" },
   "label_version": { "message": "Version :" },
@@ -54,6 +55,7 @@
 
   "detail_storage_discs": { "message": "Discs:" },
 
+  "settings_mood": { "message": "Ambiance Color" },
   "settings_theme": { "message": "Theme: Light/Dark " },
   "settings_unit": { "message": "Temperature Unit: °C/°F" },
   "settings_footer": {

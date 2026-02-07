@@ -1,7 +1,7 @@
 {
   "appName": { "message": "COGext : Moniteur Système" },
   "appDesc": {
-    "message": "Un tableau de bord moderne pour surveiller CPU, RAM, Batterie et Réseau. Léger, respectueux de la vie privée, avec modes Sombre & Clair."
+    "message": "Votre système, tel que le voit Chrome, dans un tableau de bord moderne, léger et open-source."
   },
 
   "monitor_cpu": { "message": "CPU" },
@@ -24,6 +24,7 @@
   "label_mem_used": { "message": "Mémoire utilisée" },
   "label_batt_time_general": { "message": "Temps avant charge/décharge :" },
   "label_ip": { "message": "IP :" },
+  "label_latency": { "message": "Latence" },
   "label_platform": { "message": "Plateforme :" },
   "label_free": { "message": "libre" },
   "label_version": { "message": "Version :" },
@@ -54,6 +55,7 @@
 
   "settings_theme": { "message": "Thème (Clair/Sombre)" },
   "settings_unit": { "message": "Unité Température (°C/°F)" },
+  "settings_mood": { "message": "Ambiance" },
   "settings_footer": {
     "message": "2026 - GPL-3.0 - François Bacconnet - <a href='https://ext.tchoa.com'>Plus d'info</a>"
   },

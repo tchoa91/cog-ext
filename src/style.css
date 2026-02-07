@@ -1,4 +1,6 @@
-/* --- 0. TYPOGRAPHIE (Uniquement 400 et 600) --- */
+/* =========================================
+   1. TYPOGRAPHIE & RESET
+   ========================================= */
 @font-face {
   font-family: "Inter";
   src: url("assets/fonts/Inter-300.ttf") format("truetype");
@@ -16,61 +18,6 @@
   src: url("assets/fonts/Inter-700.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
-}
-
-/* --- 1. VARIABLES & THÈMES --- */
-:root {
-  --topbar-height: 90px;
-  --grid-gap: 15px;
-
-  /* Design System */
-  --radius-lg: 12px;
-  --font-main: "Inter", system-ui, sans-serif;
-
-  /* THÈME SOMBRE */
-  --bg-color: #151f23;
-
-  /* Hiérarchie des fonds : Fond < Monitor < Carte < Hover */
-  --monitor-bg: #182428;
-  --card-bg: linear-gradient(to bottom right, #213137, #1b292e);
-  --card-hover: linear-gradient(to bottom right, #2a4047, #23353b);
-  --monitor-hover: var(--card-hover);
-
-  /* Overlay */
-  --modal-bg: var(--card-hover);
-  --overlay-backdrop: var(--bg-color);
-
-  /* Textes & Accents */
-  --text-main: #eceff1;
-  --text-muted: #90a4ae;
-  --titles: #90a4ae52;
-  --accent: #66bb6a;
-  --warning: #fb8c00; /* Orange 400 */
-  --alert: #ef5350; /* Red 400 */
-  /* --border-subtle: none; */
-  --border-subtle: 1px solid #59859321;
-  --shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-  --bar-bg: #111;
-}
-
-/* THÈME CLAIR (S'active via JS plus tard) */
-[data-theme="light"] {
-  --bg-color: #f0f4f5;
-  --card-bg: #e6eaeb;
-  --card-hover: #ffffff;
-  --modal-bg: var(--card-hover);
-  --overlay-backdrop: var(--bg-color);
-  --text-main: #263238;
-  --text-muted: #546e7a;
-  --titles: #90a4ae70;
-  --accent: #5bb45f;
-  --warning: #f57c00;
-  --alert: #ef5350;
-  --monitor-bg: rgba(0, 0, 0, 0.05);
-  --monitor-hover: var(--card-hover);
-  --border-subtle: 1px solid #121b1e13;
-  --shadow: 2px 2px 4px rgba(0, 0, 0, 0.06);
-  --bar-bg: #7a7b7a;
 }
 
 * {
@@ -94,7 +41,86 @@ body {
   flex-direction: column;
 }
 
-/* --- ZONE A: TopBar --- */
+/* =========================================
+   2. VARIABLES (THEMING)
+   ========================================= */
+:root {
+  /* --- PARAMÈTRES DE BASE (La "Palette Unique") --- */
+
+  --brand-h: 195; /* Teinte : 200 = Bleu, 120 = Vert, 0 = Rouge, etc. */
+  --brand-s: 15%; /* Saturation : Un gris coloré très sobre */
+
+  /* --- DÉRIVATIONS FONCTIONNELLES --- */
+  /* Nous utilisons HSL pour calculer les variantes dynamiquement */
+  --brand-base: var(--brand-h), var(--brand-s);
+
+  /* THÈME SOMBRE (Default) */
+  --bg-color: hsl(var(--brand-base), 11%);
+  --monitor-bg: hsl(var(--brand-base), 14%);
+
+  /* Gradients par calcul de luminosité */
+  --card-bg-top: hsl(var(--brand-base), 18%);
+  --card-bg-bot: hsl(var(--brand-base), 15%);
+  --card-bg: linear-gradient(
+    to bottom right,
+    var(--card-bg-top),
+    var(--card-bg-bot)
+  );
+
+  /* Hovers par transparence (color-mix est parfait ici) */
+  --card-hover: color-mix(in srgb, var(--card-bg-top), white 5%);
+  --monitor-hover: var(--card-hover);
+
+  /* Accents & Textes */
+  /* L'accent est la même teinte, mais beaucoup plus vive (saturation 70%) */
+  --accent: hsl(120, 60%, 50%);
+  --text-main: hsl(var(--brand-h), 10%, 93%);
+  --text-muted: hsl(var(--brand-h), 10%, 65%);
+
+  /* Déclinaisons par transparence (Alpha) */
+  --titles: hsla(var(--brand-base), 80%, 0.2);
+  --border-subtle: 1px solid hsla(var(--brand-base), 100%, 0.08);
+  --bar-bg: hsla(var(--brand-base), 100%, 0.1);
+
+  /* Alertes (On garde les teintes sémantiques mais on peut les "lier" un peu) */
+  --warning: hsl(35, 90%, 50%);
+  --alert: hsl(0, 80%, 60%);
+
+  /* Autres variables structurelles */
+  --topbar-height: 90px;
+  --grid-gap: 15px;
+  --radius-lg: 12px;
+  --font-main: "Inter", system-ui, sans-serif;
+  --shadow: 2px 2px 4px rgba(0, 0, 0, 0.05);
+  --overlay-backdrop: var(--bg-color);
+  --modal-bg: hsl(var(--brand-base), 20%);
+}
+
+/* THÈME CLAIR (Adaptation automatique de la base) */
+[data-theme="light"] {
+  --bg-color: hsl(var(--brand-base), 95%);
+  --monitor-bg: hsla(var(--brand-base), 20%, 0.05);
+  --card-bg-top: hsl(var(--brand-base), 90%);
+  --card-bg-bot: hsl(var(--brand-base), 88%);
+  --card-bg: hsl(var(--brand-base), 89%);
+  --card-hover: #ffffff;
+
+  --text-main: hsl(var(--brand-h), 20%, 15%);
+  --text-muted: hsl(var(--brand-h), 15%, 45%);
+  --accent: hsl(120, 60%, 40%);
+  --border-subtle: 1px solid hsla(var(--brand-base), 20%, 0.1);
+  --bar-bg: hsla(var(--brand-base), 20%, 0.1);
+  --overlay-backdrop: var(--bg-color);
+  --modal-bg: #ffffff;
+  --monitor-hover: #ffffff;
+  --titles: hsla(var(--brand-base), 20%, 0.25);
+}
+
+/* =========================================
+   3. LAYOUT GLOBAL (Squelette)
+   ========================================= */
+
+/* --- ZONE A: TopBar (Haut) --- */
 #topbar {
   height: var(--topbar-height);
   flex-shrink: 0;
@@ -116,6 +142,63 @@ body {
     color 0.3s;
 }
 
+/* --- ZONE B: Grille (Centre) --- */
+#dashboard-grid {
+  flex-grow: 1;
+  overflow: hidden;
+  padding: var(--grid-gap);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(5, 1fr);
+  gap: var(--grid-gap);
+}
+
+/* --- ZONE C: Overlay (Conteneur Global) --- */
+#overlay {
+  position: absolute;
+  top: var(--topbar-height); /* Commence SOUS la barre */
+  left: 0;
+  width: 100%;
+  height: calc(100% - var(--topbar-height)); /* Remplit le reste */
+  background: var(--overlay-backdrop);
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px; /* Marge autour de la carte interne */
+
+  /* État initial (Fermé) */
+  opacity: 0;
+  transform: scale(0.7);
+  visibility: hidden;
+  pointer-events: none;
+
+  /* TRANSITION DE FERMETURE (Rapide et propre) */
+  /* On attend 0s pour l'opacité, mais on retarde la visibility pour laisser le fade-out finir */
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s cubic-bezier(0.4, 0, 1, 1),
+    visibility 0s linear 0.2s;
+}
+
+/* État actif (Ouvert) */
+#overlay.active {
+  opacity: 1;
+  transform: scale(1);
+  visibility: visible;
+  pointer-events: auto;
+
+  /* TRANSITION D'OUVERTURE (Hero Bounce) */
+  /* transform-origin est géré par le JS (renderer.js) au point de clic */
+  transition:
+    opacity 0.2s ease,
+    transform 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.15); /* Rebond élastique léger */
+}
+
+/* =========================================
+   4. COMPOSANT : MONITOR (TopBar Items)
+   ========================================= */
+
 .monitor-block {
   flex: 1;
   height: auto;
@@ -129,6 +212,7 @@ body {
   background-color: var(--monitor-bg); /* Fond sombre/clair selon thème */
   border-radius: var(--radius-lg);
   border: var(--border-subtle);
+  contain: content;
 
   /* Interaction */
   transition:
@@ -181,6 +265,7 @@ body {
   fill: currentColor;
 }
 
+/* --- Barres & Indicateurs --- */
 .monitor-bar-track {
   width: 100%;
   height: 10px;
@@ -188,27 +273,16 @@ body {
   border-radius: 5px;
   overflow: hidden;
 }
-.bar-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  gap: 10px; /* Espace entre barre et texte */
-}
-.bar-value {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--text-main);
-  min-width: 30px; /* Évite le saut si la valeur change de taille */
-  text-align: right;
-}
 .monitor-bar-fill {
   height: 100%;
   background-color: var(--accent);
-  width: 0%;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left;
+  will-change: transform;
   border-radius: 5px;
   transition:
-    width 0.2s linear,
+    transform 0.2s linear,
     background-color 0.2s ease;
 }
 .monitor-dot {
@@ -224,7 +298,7 @@ body {
   background-color: var(--accent);
 }
 
-/* 2. WARNING (Orange) */
+/* --- États (Warning / Alert) --- */
 /* S'applique au Remplissage des barres, aux Icônes et aux Points */
 [data-state="warning"] .monitor-bar-fill,
 [data-state="warning"] .monitor-status-icon,
@@ -234,8 +308,6 @@ body {
   fill: var(--warning);
   color: var(--warning); /* Pour les SVG utilisant currentColor */
 }
-
-/* 3. ALERT (Rouge) */
 [data-state="alert"] .monitor-bar-fill,
 [data-state="alert"] .monitor-status-icon,
 [data-state="alert"] .monitor-dot,
@@ -245,17 +317,9 @@ body {
   color: var(--alert);
 }
 
-/* --- ZONE B: Grille --- */
-
-#dashboard-grid {
-  flex-grow: 1;
-  overflow: hidden;
-  padding: var(--grid-gap);
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: repeat(5, 1fr);
-  gap: var(--grid-gap);
-}
+/* =========================================
+   5. COMPOSANT : CARD (Dashboard Items)
+   ========================================= */
 
 .card:last-child:nth-child(odd) {
   grid-column: span 2;
@@ -266,6 +330,7 @@ body {
   border-radius: var(--radius-lg);
   border: var(--border-subtle);
   position: relative;
+  contain: content;
   padding: 0 10px;
   /* MODIFICATION FLEXBOX */
   display: flex;
@@ -290,7 +355,7 @@ body {
   font-weight: 300;
   z-index: 2;
   width: 100%; /* Prend toute la largeur */
-  line-height: 0.7em;
+  line-height: 0.8em;
   margin: 5px 0 0 0; /* Espace sous le titre */
   color: var(--titles); /* Utilisation de VOTRE variable */
 }
@@ -328,7 +393,8 @@ body {
   fill: var(--text-main);
   transition: opacity 0.2s; /* Transition douce si on veut animer plus tard */
 }
-/* La grosse valeur (ex: 45%) */
+
+/* --- Types de contenu Card --- */
 .card-main-value {
   font-size: 1rem; /* Assez gros */
   font-weight: 500;
@@ -338,7 +404,6 @@ body {
   /* margin-left: auto; */
 }
 
-/* Les lignes Clé/Valeur (ex: IP : 192...) */
 .card-kv-row {
   display: flex;
   align-items: center;
@@ -351,12 +416,11 @@ body {
   /* margin-top: 4px; */ /* Un petit peu d'espace si nécessaire */
 }
 
-/* La valeur spécifique dans une ligne KV */
 .card-kv-row .kv-value {
   color: var(--text-main); /* VOTRE variable pour faire ressortir la data */
   font-weight: 500;
 }
-/* Nouveau composant : Ligne Barre + Texte */
+
 .card-bar-row {
   width: 100%;
   display: flex;
@@ -364,12 +428,10 @@ body {
   justify-content: space-between; /* Barre à gauche, Texte tout à droite */
   /* margin-bottom: 8px; */ /* Espacement sous la ligne */
 }
-/* Contrainte stricte sur la barre dans ce contexte */
 .card-bar-row .monitor-bar-track {
   width: 190px; /* Largeur demandée */
   flex: 0 0 190px; /* Empêche le rétrécissement ou l'agrandissement */
 }
-/* Le texte */
 .card-bar-text {
   font-weight: 700;
   color: var(--text-main);
@@ -378,49 +440,17 @@ body {
   line-height: 0.6em;
 }
 
-/* --- ZONE C: Overlay --- */
-#overlay {
-  position: absolute;
-  top: var(--topbar-height); /* Commence SOUS la barre */
-  left: 0;
-  width: 100%;
-  height: calc(100% - var(--topbar-height)); /* Remplit le reste */
-  background: var(--overlay-backdrop);
-  z-index: 100;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px; /* Marge autour de la carte interne */
-
-  /* État initial (Fermé) */
-  opacity: 0;
-  transform: scale(0.7);
-  visibility: hidden;
-  pointer-events: none;
-
-  /* TRANSITION DE FERMETURE (Rapide et propre) */
-  /* On attend 0s pour l'opacité, mais on retarde la visibility pour laisser le fade-out finir */
-  transition:
-    opacity 0.2s ease,
-    transform 0.2s cubic-bezier(0.4, 0, 1, 1),
-    visibility 0s linear 0.2s;
+.sparkline-canvas {
+  width: 190px;
+  height: 40px;
+  margin-top: 8px;
 }
 
-/* État actif (Ouvert) */
-#overlay.active {
-  opacity: 1;
-  transform: scale(1);
-  visibility: visible;
-  pointer-events: auto;
+/* =========================================
+   6. COMPOSANT : OVERLAY (Détails)
+   ========================================= */
 
-  /* TRANSITION D'OUVERTURE (Hero Bounce) */
-  /* transform-origin est géré par le JS (renderer.js) au point de clic */
-  transition:
-    opacity 0.2s ease,
-    transform 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.15); /* Rebond élastique léger */
-}
-
-/* 2. LE TITRE (L'illusion de continuité) */
+/* --- Animations & Titre --- */
 /* Assure-toi que #overlay-title a la même typo que .card h3 */
 #overlay-title {
   opacity: 0;
@@ -439,7 +469,7 @@ body {
     transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) 0.1s;
 }
 
-/* 3. LE CONTENU (Les détails complexes) */
+/* --- Contenu Interne --- */
 .overlay-content {
   opacity: 0;
   /* Fermeture : Disparition immédiate pour ne pas voir le contenu s'écraser */
@@ -452,7 +482,6 @@ body {
   transition: opacity 0.4s ease 0.25s;
 }
 
-/* Le conteneur interne (la "carte" de détail) */
 .overlay-content {
   /* Utilise la variable "Lumineuse/Modal" du thème */
   background: var(--modal-bg);
@@ -489,9 +518,7 @@ body {
   transform: scale(1.1);
 }
 
-/* --- OVERLAY COMPONENTS --- */
-
-/* Conteneurs génériques */
+/* --- Structure Interne --- */
 .overlay-section {
   margin-bottom: 20px;
 }
@@ -523,7 +550,7 @@ body {
   font-weight: 500;
 }
 
-/* CPU Cores Grid */
+/* --- Widget: CPU Cores Grid --- */
 .overlay-cores-grid {
   display: flex;
   gap: 4px;
@@ -546,13 +573,16 @@ body {
   left: 0;
   right: 0;
   background: var(--accent);
+  height: 100%;
+  transform: scaleY(0);
+  transform-origin: bottom;
+  will-change: transform;
   transition:
-    height 0.2s linear,
+    transform 0.2s linear,
     background-color 0.2s ease;
 }
 
-/* --- OVERLAY : TEMPERATURE GRID (olTempList) --- */
-
+/* --- Widget: Temperature Grid --- */
 .overlay-temp-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
@@ -578,7 +608,7 @@ body {
   font-weight: 600;
 }
 
-/* --- OVERLAY : TEXT LIST (olTextList) --- */
+/* --- Widget: Text List --- */
 .overlay-text-list {
   list-style: none;
   padding: 0;
@@ -599,43 +629,28 @@ body {
   border-bottom: none;
 }
 
-/* --- OVERLAY : DISCS LIST (olDiscsList) --- */
-
-.overlay-discs-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.disk-item {
-  background: var(--surface);
-  padding: 10px;
-  border-radius: 4px;
-  border: 1px solid var(--border-subtle);
-}
-
-.disk-header {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.9em;
-  margin-bottom: 6px;
-  align-items: baseline;
-}
-
-.disk-name {
-  font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 60%;
-}
-
-.disk-stats {
+/* --- Widget: HTML Generic --- */
+.overlay-html {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid var(--border-subtle);
+  /* text-align: center; */
+  font-size: 0.85rem;
   color: var(--text-muted);
-  font-size: 0.85em;
 }
 
-/* --- COMPOSANT : DISK (Card & Overlay) --- */
+.overlay-html a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+.overlay-html a:hover {
+  text-decoration: underline;
+}
+
+/* =========================================
+   7. MODULE PARTAGÉ : DISK (Card & Overlay)
+   ========================================= */
 
 /* Conteneur Ligne (Utilisé dans la Carte) */
 .card-disk-row {
@@ -684,7 +699,9 @@ body {
   font-variant-numeric: tabular-nums; /* Chiffres alignés */
 }
 
-/* --- OVERLAY : SWITCHES --- */
+/* =========================================
+   8. WIDGETS INTERACTIFS (Switchs, Colors)
+   ========================================= */
 
 .overlay-switch-row {
   display: flex;
@@ -753,21 +770,42 @@ input:checked + .slider:before {
   outline-offset: 2px;
 }
 
-/* --- OVERLAY : HTML GENERIC (Footer, Infos...) --- */
-.overlay-html {
-  margin-top: 20px;
-  padding-top: 15px;
-  border-top: 1px solid var(--border-subtle);
-  /* text-align: center; */
-  font-size: 0.85rem;
-  color: var(--text-muted);
+.overlay-color-row {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
-.overlay-html a {
-  color: var(--accent);
-  text-decoration: none;
-  font-weight: 600;
+.overlay-color-grid {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+  justify-content: flex-end; /* Alignement à droite comme les switchs */
 }
-.overlay-html a:hover {
-  text-decoration: underline;
+
+.color-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition:
+    transform 0.2s,
+    border-color 0.2s;
+  /* L'accessibilité clavier */
+  outline: none;
+}
+
+.color-swatch:hover {
+  transform: scale(1.1);
+}
+
+.color-swatch:focus-visible {
+  outline: 2px solid var(--text-main);
+  outline-offset: 2px;
+}
+
+.color-swatch.selected {
+  border-color: var(--accent); /* Vert d'accentuation */
+  transform: scale(1.1);
 }

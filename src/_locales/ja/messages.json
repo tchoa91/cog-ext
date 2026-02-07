@@ -1,0 +1,81 @@
+{
+  "appName": { "message": "COGext : システムモニター" },
+  "appDesc": {
+    "message": "Chromeから見たあなたのシステム — モダンで軽量、そしてオープンソースのダッシュボードで表示します。"
+  },
+
+  "monitor_cpu": { "message": "CPU" },
+  "monitor_mem": { "message": "メモリ" },
+  "monitor_batt": { "message": "電池" },
+  "monitor_net": { "message": "通信" },
+
+  "card_cpu_title": { "message": "CPU負荷" },
+  "card_mem_title": { "message": "メモリ" },
+  "card_temp_title": { "message": "CPU温度" },
+  "card_batt_title": { "message": "バッテリー" },
+  "card_disp_title": { "message": "ディスプレイ" },
+  "card_net_title": { "message": "ネットワーク" },
+  "card_chrome_title": { "message": "Chrome" },
+  "card_os_title": { "message": "OS" },
+  "card_storage_title": { "message": "ストレージ" },
+  "card_settings_title": { "message": "COGext - 設定" },
+
+  "label_mem_total": { "message": "合計メモリ" },
+  "label_mem_used": { "message": "使用メモリ" },
+  "label_batt_time_general": {
+    "message": "フル充電/放電までの時間："
+  },
+  "label_ip": { "message": "IPアドレス：" },
+  "label_latency": { "message": "レイテンシ" },
+  "label_platform": { "message": "プラットフォーム：" },
+  "label_free": { "message": "空き" },
+  "label_version": { "message": "バージョン：" },
+
+  "overlay_cpu_title": { "message": "CPU負荷の詳細" },
+  "overlay_temp_title": { "message": "温度の詳細" },
+  "overlay_disp_title": { "message": "ディスプレイの詳細" },
+  "overlay_chrome_title": { "message": "Chromeの詳細" },
+  "overlay_storage_title": { "message": "ストレージの詳細" },
+
+  "detail_cpu_avg": { "message": "平均負荷" },
+  "detail_cpu_core": { "message": "コアごとの負荷" },
+  "detail_cpu_arch": { "message": "CPUアーキテクチャ" },
+  "detail_cpu_model": { "message": "CPUモデル" },
+  "detail_cpu_features": { "message": "CPU機能" },
+
+  "detail_temp_avg": { "message": "平均温度" },
+  "detail_temp_sensor": { "message": "センサーごとの温度" },
+
+  "detail_disp_prim": { "message": "プライマリディスプレイ" },
+  "detail_disp_other": { "message": "セカンダリディスプレイ" },
+  "detail_gpu": { "message": "グラフィックボード (GPU)：" },
+
+  "detail_chrome_langs": { "message": "言語：" },
+  "detail_chrome_exts": { "message": "有効な拡張機能" },
+
+  "detail_storage_discs": { "message": "ディスク：" },
+
+  "settings_mood": { "message": "ムードカラー" },
+  "settings_theme": { "message": "テーマ：ライト/ダーク" },
+  "settings_unit": { "message": "温度単位：°C/°F" },
+  "settings_footer": {
+    "message": "2026 - GPL-3.0 - François Bacconnet <a href='https://ext.tchoa.com'>公式サイト</a>"
+  },
+
+  "status_charging": { "message": "充電中" },
+  "status_on_battery": { "message": "バッテリー駆動" },
+  "status_full_charge_in": { "message": "フル充電まで：" },
+  "status_time_left": { "message": "バッテリー残り時間：" },
+  "status_powered": { "message": "電源接続中" },
+
+  "status_online": { "message": "オンライン" },
+  "status_offline": { "message": "オフライン" },
+  "status_on": { "message": "オン" },
+  "status_off": { "message": "オフ" },
+  "status_hidden": { "message": "非表示/ローカル" },
+
+  "disp_internal": { "message": "内蔵モニター" },
+  "disp_internal_short": { "message": "内蔵" },
+  "disp_unknown": { "message": "不明" },
+  "disp_none": { "message": "なし" }
+}

@@ -5,7 +5,7 @@
  * @author      François Bacconnet <https://github.com/tchoa91>
  * @copyright   2026 François Bacconnet
  * @license     GPL-3.0
- * @version     2.0
+ * @version     2.1
  * @homepage    https://ext.tchoa.com
  * @see         https://github.com/tchoa91/cog-ext
  */
@@ -82,7 +82,7 @@ export function toggleTheme() {
 }
 
 // === 3. CONSTRUCTION (BUILD) ===
-export function buildInterface(config, callbacks) {
+function buildInterface(config, callbacks) {
   // TopBar
   topBarEl.innerHTML = config.monitors
     .map(
@@ -103,7 +103,7 @@ export function buildInterface(config, callbacks) {
           </div>
           ${
             item.type === "bar"
-              ? `<div class="monitor-bar-track"><div class="monitor-bar-fill" style="width: 0%"></div></div>`
+              ? `<div class="monitor-bar-track"><div class="monitor-bar-fill"></div></div>`
               : ""
           }
           ${item.type === "dot" ? `<div class="monitor-dot"></div>` : ""}
@@ -164,7 +164,7 @@ function renderCardContent(contentItems) {
         case "cardBar":
           return `
             <div class="card-bar-row" data-el-id="${item.id}">
-                <div class="monitor-bar-track"><div class="monitor-bar-fill" style="width: 0%"></div></div>
+                <div class="monitor-bar-track"><div class="monitor-bar-fill"></div></div>
                 <div class="card-bar-text">--</div>
             </div>`;
         case "value":
@@ -180,6 +180,8 @@ function renderCardContent(contentItems) {
                 <span class="disk-name" data-el-id="${item.id}-name">--</span>
                 <span class="disk-info" data-el-id="${item.id}-info">--</span>
             </div>`;
+        case "sparkline":
+          return `<canvas class="sparkline-canvas" data-el-id="${item.id}" width="180" height="40"></canvas>`;
         default:
           return "";
       }
@@ -210,7 +212,7 @@ export function updateInterface(payload) {
         const key = `mon-${mon.id}-pct`;
         if (renderCache[key] !== mon.percent) {
           const barEl = el.querySelector(".monitor-bar-fill");
-          if (barEl) barEl.style.width = `${mon.percent}%`;
+          if (barEl) barEl.style.transform = `scaleX(${mon.percent / 100})`;
           renderCache[key] = mon.percent;
         }
       }
@@ -290,6 +292,12 @@ export function updateInterface(payload) {
           const keyDisp = `item-${item.id}-disp`; // Pour le texte affiché
           const keyLbl = `item-${item.id}-lbl`; // Pour le label dynamique
 
+          // Cas S : Sparkline (Canvas)
+          if (item.type === "sparkline" && item.value !== undefined) {
+            updateSparkline(targetEl, item.id, item.value);
+            return;
+          }
+
           // Cas A : Barre + Texte combinés (card-bar-row)
           if (targetEl.classList.contains("card-bar-row")) {
             const keyState = `item-${item.id}-state`;
@@ -306,7 +314,7 @@ export function updateInterface(payload) {
               renderCache[keyVal] !== item.value
             ) {
               const bar = targetEl.querySelector(".monitor-bar-fill");
-              if (bar) bar.style.width = `${item.value}%`;
+              if (bar) bar.style.transform = `scaleX(${item.value / 100})`;
               renderCache[keyVal] = item.value;
             }
             // Mise à jour du texte à côté de la barre
@@ -353,6 +361,11 @@ export function updateInterface(payload) {
 
     // 1. Construction de la structure (Uniquement si l'ID de l'overlay change)
     if (renderCache["activeOverlay"] !== ov.id) {
+      // Invalidation du cache Overlay pour forcer la mise à jour du nouveau DOM
+      Object.keys(renderCache).forEach((k) => {
+        if (k.startsWith("ov-")) delete renderCache[k];
+      });
+
       overlayBody.innerHTML = ov.content
         .map((item) => {
           // Type: Barre horizontale (ex: Charge Moyenne)
@@ -364,7 +377,7 @@ export function updateInterface(payload) {
                     <span class="overlay-val" data-oid="${item.id}-txt">--</span>
                 </div>
                 <div class="monitor-bar-track">
-                    <div class="monitor-bar-fill" data-oid="${item.id}-bar" style="width: 0%"></div>
+                    <div class="monitor-bar-fill" data-oid="${item.id}-bar"></div>
                 </div>
             </div>`;
           }
@@ -428,6 +441,27 @@ export function updateInterface(payload) {
             </div>`;
           }
 
+          // Type: Color Picker (Mood)
+          if (item.type === "colorPicker") {
+            return `
+            <div class="overlay-color-row">
+                <div class="overlay-label">${item.title || ""}</div>
+                <div class="overlay-color-grid">
+                  ${(item.options || [])
+                    .map(
+                      (opt) => `
+                    <button class="color-swatch" 
+                            data-hue="${opt.val}"
+                            aria-label="${opt.label}"
+                            title="${opt.label} : ${opt.val}"
+                            style="background-color: hsl(${opt.val}, 60%, 50%);"></button>
+                  `,
+                    )
+                    .join("")}
+                </div>
+            </div>`;
+          }
+
           // Type HTML (Texte libre / Footer)
           if (item.type === "html") {
             return `<div class="overlay-html">${item.value || ""}</div>`;
@@ -461,30 +495,60 @@ export function updateInterface(payload) {
           }
         });
       });
+
+      // --- Événements Color Picker ---
+      const swatches = overlayBody.querySelectorAll(".color-swatch");
+      swatches.forEach((swatch) => {
+        const action = () => {
+          if (!appCallbacks) return;
+          const hue = parseInt(swatch.dataset.hue, 10);
+          appCallbacks.onColorChange(hue);
+        };
+
+        swatch.addEventListener("click", action);
+        swatch.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            action();
+          }
+        });
+      });
     }
 
     // 2. Mise à jour des données (À chaque tick)
     ov.content.forEach((item) => {
       // Mise à jour Texte (commun à tous)
       if (item.display !== undefined) {
-        const txtEl = overlayBody.querySelector(`[data-oid="${item.id}-txt"]`);
-        if (txtEl) txtEl.textContent = item.display;
+        const key = `ov-${item.id}-txt`;
+        if (renderCache[key] !== item.display) {
+          const txtEl = overlayBody.querySelector(
+            `[data-oid="${item.id}-txt"]`,
+          );
+          if (txtEl) txtEl.textContent = item.display;
+          renderCache[key] = item.display;
+        }
       }
 
       // Mise à jour Barre (olBar)
       if (item.type === "olBar" && item.value !== undefined) {
-        const barEl = overlayBody.querySelector(`[data-oid="${item.id}-bar"]`);
-        if (barEl) {
-          barEl.style.width = `${item.value}%`;
-          const sectionEl = barEl.closest(".overlay-section");
-
-          if (sectionEl) {
-            if (item.state) {
-              sectionEl.setAttribute("data-state", item.state);
-            } else {
-              sectionEl.removeAttribute("data-state");
+        const key = `ov-${item.id}-bar`;
+        const currentVal = `${item.value}|${item.state || ""}`;
+        if (renderCache[key] !== currentVal) {
+          const barEl = overlayBody.querySelector(
+            `[data-oid="${item.id}-bar"]`,
+          );
+          if (barEl) {
+            barEl.style.transform = `scaleX(${item.value / 100})`;
+            const sectionEl = barEl.closest(".overlay-section");
+            if (sectionEl) {
+              if (item.state) {
+                sectionEl.setAttribute("data-state", item.state);
+              } else {
+                sectionEl.removeAttribute("data-state");
+              }
             }
           }
+          renderCache[key] = currentVal;
         }
       }
 
@@ -493,11 +557,22 @@ export function updateInterface(payload) {
         const listEl = overlayBody.querySelector(
           `[data-oid="${item.id}-list"]`,
         );
-        if (listEl) {
-          // On recrée les <li> à chaque fois (léger pour du texte simple)
-          listEl.innerHTML = item.value
-            .map((line) => `<li>${line}</li>`)
-            .join("");
+        // On utilise une clé simple basée sur la longueur et le premier élément pour éviter de tout stringify
+        const key = `ov-${item.id}-list`;
+        const currentSig = item.value.length + (item.value[0] || "");
+        if (listEl && renderCache[key] !== currentSig) {
+          // CORRECTION SECURITE : Utilisation de textContent pour éviter l'injection HTML
+          listEl.textContent = "";
+          const fragment = document.createDocumentFragment(); // Optimisation : 1 seul reflow
+
+          item.value.forEach((line) => {
+            const li = document.createElement("li");
+            li.textContent = line;
+            fragment.appendChild(li);
+          });
+
+          listEl.appendChild(fragment);
+          renderCache[key] = currentSig;
         }
       }
 
@@ -513,7 +588,7 @@ export function updateInterface(payload) {
               .map(
                 () =>
                   `<div class="core-track">
-                      <div class="core-fill" style="height: 0%"></div>
+                      <div class="core-fill"></div>
                    </div>`,
               )
               .join("");
@@ -524,11 +599,17 @@ export function updateInterface(payload) {
             const pct = typeof data === "object" ? data.pct : data;
             const state = typeof data === "object" ? data.state : undefined;
 
-            const fill = child.querySelector(".core-fill");
-            if (fill) {
-              fill.style.height = `${pct}%`;
-              if (state) fill.setAttribute("data-state", state);
-              else fill.removeAttribute("data-state");
+            const key = `ov-${item.id}-core-${i}`;
+            const currentVal = `${pct}|${state || ""}`;
+
+            if (renderCache[key] !== currentVal) {
+              const fill = child.querySelector(".core-fill");
+              if (fill) {
+                fill.style.transform = `scaleY(${pct / 100})`;
+                if (state) fill.setAttribute("data-state", state);
+                else fill.removeAttribute("data-state");
+              }
+              renderCache[key] = currentVal;
             }
           });
         }
@@ -540,8 +621,13 @@ export function updateInterface(payload) {
           `[data-oid="${item.id}-grid"]`,
         );
         const symbol = item.unitSymbol || "°C";
+
+        const key = `ov-${item.id}-temps`;
+        // On vérifie si les valeurs ont changé (join est rapide sur <20 items)
+        const currentVal = item.value.join(",");
+
         // On vérifie si on doit redessiner (changement de nombre de zones ou premier rendu)
-        if (gridEl) {
+        if (gridEl && renderCache[key] !== currentVal) {
           // Astuce perf : On recrée le HTML car le nombre de zones est petit (<20)
           // et l'opération est légère.
           gridEl.innerHTML = item.value
@@ -554,6 +640,7 @@ export function updateInterface(payload) {
              `,
             )
             .join("");
+          renderCache[key] = currentVal;
         }
       }
 
@@ -562,7 +649,11 @@ export function updateInterface(payload) {
         const listEl = overlayBody.querySelector(
           `[data-oid="${item.id}-list"]`,
         );
-        if (listEl) {
+        const key = `ov-${item.id}-disks`;
+        // Signature simple : nombre de disques + espace libre du premier
+        const currentSig = item.value.length + (item.value[0]?.info || "");
+
+        if (listEl && renderCache[key] !== currentSig) {
           // On génère la liste. Format identique à la carte mais en liste <li>
           listEl.innerHTML = item.value
             .map(
@@ -574,6 +665,7 @@ export function updateInterface(payload) {
             `,
             )
             .join("");
+          renderCache[key] = currentSig;
         }
       }
 
@@ -585,9 +677,66 @@ export function updateInterface(payload) {
         }
       }
 
+      // Mise à jour Color Picker (Selection active)
+      if (item.type === "colorPicker" && item.value !== undefined) {
+        const currentHue = item.value;
+        // On utilise une clé simple pour éviter de scanner le DOM à chaque frame
+        const key = `ov-${item.id}-hue`;
+        if (renderCache[key] !== currentHue) {
+          const swatches = overlayBody.querySelectorAll(".color-swatch");
+          swatches.forEach((s) => {
+            const sHue = parseInt(s.dataset.hue, 10);
+            if (sHue === currentHue) s.classList.add("selected");
+            else s.classList.remove("selected");
+          });
+          renderCache[key] = currentHue;
+        }
+      }
+
       // Fin du 2. Mise à jour
     });
   }
+}
+
+/**
+ * Dessine une sparkline (graphique de ligne simple) sur un canvas.
+ * Gère un historique de 50 valeurs.
+ */
+function updateSparkline(canvas, id, value) {
+  // 1. Gestion de l'historique dans le cache
+  const cacheKey = `spark-${id}`;
+  if (!renderCache[cacheKey]) {
+    // Initialisation avec des zéros pour éviter un graph vide au début
+    renderCache[cacheKey] = new Array(50).fill(0);
+  }
+  const history = renderCache[cacheKey];
+
+  // Rotation FIFO
+  history.push(value);
+  history.shift();
+
+  // 2. Dessin
+  const ctx = canvas.getContext("2d");
+  const w = canvas.width;
+  const h = canvas.height;
+
+  // Nettoyage (Fond transparent)
+  ctx.clearRect(0, 0, w, h);
+
+  // Récupération de la couleur du thème (muted_text)
+  const style = getComputedStyle(document.body);
+  ctx.strokeStyle = style.getPropertyValue("--text-muted") || "#888";
+  ctx.lineWidth = 2;
+  ctx.lineJoin = "round";
+
+  ctx.beginPath();
+  const step = w / (history.length - 1);
+  history.forEach((val, i) => {
+    const y = h - (val / 100) * h; // 100% en haut (y=0), 0% en bas (y=h)
+    if (i === 0) ctx.moveTo(i * step, y);
+    else ctx.lineTo(i * step, y);
+  });
+  ctx.stroke();
 }
 
 // === 5. GESTION OVERLAY (OUVERTURE/FERMETURE) ===
@@ -595,7 +744,6 @@ export function setOverlayState(isOpen, payload = {}, event = null) {
   const content = overlayEl.querySelector(".overlay-content");
   const titleEl = overlayEl.querySelector("#overlay-title");
   const toggleBackgroundAccess = (disable) => {
-    //if (topBarEl) topBarEl.inert = disable;
     if (gridEl) gridEl.inert = disable;
   };
 
@@ -604,7 +752,6 @@ export function setOverlayState(isOpen, payload = {}, event = null) {
     overlayEl.classList.remove("active");
     setTimeout(() => {
       if (!overlayEl.classList.contains("active")) {
-        overlayEl.classList.add("hidden");
         const overlayBody = document.getElementById("overlay-body");
         if (overlayBody) overlayBody.innerHTML = "";
         // IMPORTANT : On force le renderer à reconstruire le DOM au prochain appel
@@ -632,7 +779,7 @@ export function setOverlayState(isOpen, payload = {}, event = null) {
   const title = payload.title || "";
 
   if (event && event.currentTarget) {
-    const topBarHeight = document.getElementById("topbar")?.offsetHeight || 0;
+    const topBarHeight = topBarEl?.offsetHeight || 0;
     const rect = event.currentTarget.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     let centerY = rect.top + rect.height / 2;
@@ -654,7 +801,6 @@ export function setOverlayState(isOpen, payload = {}, event = null) {
   } else {
     if (titleEl) titleEl.textContent = title;
     if (content) content.style.opacity = "1";
-    overlayEl.classList.remove("hidden");
     void overlayEl.offsetWidth; // Force reflow
     overlayEl.classList.add("active");
   }

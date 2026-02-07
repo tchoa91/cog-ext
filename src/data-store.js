@@ -5,17 +5,26 @@
  * @author      François Bacconnet <https://github.com/tchoa91>
  * @copyright   2026 François Bacconnet
  * @license     GPL-3.0
- * @version     2.0
+ * @version     2.1
  * @homepage    https://ext.tchoa.com
  * @see         https://github.com/tchoa91/cog-ext
  */
 
+const TTL = {
+  FAST: 5000, // 5 secondes (Storage, Display, Network Basic)
+  SLOW: 30000, // 30 secondes (IP)
+};
+
 export class DataStore {
   constructor() {
-    this.version = "5.1 - Pure Raw Data";
     this.cachedGpu = null;
     this.cachedStaticInfo = null;
-    this.cachedStorage = null;
+
+    this.cache = {
+      storage: { data: null, ts: 0 },
+      display: { data: null, ts: 0 },
+      network: { data: null, ts: 0, ipTs: 0 },
+    };
   }
 
   /**
@@ -52,8 +61,8 @@ export class DataStore {
 
     // Cas A : Dashboard complet (Grille)
     if (scope === "cards") {
-      pStorage = this._fetchStorageSummary();
-      pDisplay = this._fetchDisplaySummary();
+      pStorage = this._fetchStorageDetails();
+      pDisplay = this._fetchDisplayDetails();
     }
 
     // Cas B : Focus Module spécifique (Overlay Dynamique) -> On charge les détails UNIQUEMENT pour ce module
@@ -69,16 +78,24 @@ export class DataStore {
 
     // --- PHASE 2 : EXECUTION (Parallèle) ---
     // On attend tout le monde. Les promesses initialisées à 'null' se résolvent instantanément.
-    const [cpu, mem, batt, net, sysStatic, storage, display] =
-      await Promise.all([
-        pCpuStats,
-        pMem,
-        pBatt,
-        pNet,
-        pSysStatic,
-        pStorage,
-        pDisplay,
-      ]);
+    const results = await Promise.allSettled([
+      pCpuStats,
+      pMem,
+      pBatt,
+      pNet,
+      pSysStatic,
+      pStorage,
+      pDisplay,
+    ]);
+
+    // Extraction sécurisée : Si une promesse échoue, on récupère null (et on log l'erreur discrètement)
+    const [cpu, mem, batt, net, sysStatic, storage, display] = results.map(
+      (res) => {
+        if (res.status === "fulfilled") return res.value;
+        console.warn("DataStore: Module failure", res.reason);
+        return null;
+      },
+    );
 
     // --- PHASE 3 : ASSEMBLAGE PAR MODULE (Sorties Brutes) ---
     const output = {};
@@ -251,36 +268,67 @@ export class DataStore {
   }
 
   async _fetchNetwork() {
-    // Socle minimal
-    const netInfo = {
-      online: navigator.onLine,
-      type: navigator.connection
-        ? navigator.connection.effectiveType
-        : "unknown",
-      ip: null,
-    };
+    const now = Date.now();
 
-    // Si on est en ligne, on tente de récupérer l'IP Publique
-    if (netInfo.online) {
+    // Initialisation du cache si vide
+    if (!this.cache.network.data) {
+      this.cache.network.data = {
+        online: false,
+        type: "unknown",
+        ip: null,
+        latency: null,
+      };
+    }
+    const netCache = this.cache.network;
+
+    // 1. Mise à jour Basic (Online/Type)
+    if (now - netCache.ts > TTL.FAST) {
+      netCache.data.online = navigator.onLine;
+      netCache.data.type = navigator.connection
+        ? navigator.connection.effectiveType
+        : "unknown";
+      netCache.ts = now;
+      // Si hors ligne, on reset l'IP et la latence
+      if (!netCache.data.online) {
+        netCache.data.ip = null;
+        netCache.data.latency = null;
+      }
+    }
+
+    // 2. Mise à jour IP (Seulement si en ligne et TTL expiré)
+    if (netCache.data.online && now - netCache.ipTs > TTL.SLOW) {
       try {
-        const response = await fetch("https://api.ipify.org?format=json");
+        // Timeout de 500ms : Compromis entre vitesse d'affichage et fiabilité réseau.
+        // 200ms est souvent trop court (DNS + Handshake SSL prennent du temps).
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 500);
+
+        const start = performance.now();
+        const response = await fetch("https://api.ipify.org?format=json", {
+          signal: controller.signal,
+        });
+        const rtt = Math.round(performance.now() - start);
+        clearTimeout(timeoutId); // On annule le timeout si la réponse arrive à temps
+
         const data = await response.json();
-        netInfo.ip = data.ip;
+        netCache.data.ip = data.ip;
+        netCache.data.latency = rtt;
+        netCache.ipTs = now;
       } catch (e) {
         // Si le fetch échoue (ex: bloqueur de pub), on garde l'info "Online" mais sans IP
         // On ne retourne pas null ici car "Online" est une info utile en soi.
       }
     }
-    return netInfo;
-  }
 
-  async _fetchStorageSummary() {
-    return await this._fetchStorageDetails();
+    return { ...netCache.data };
   }
 
   async _fetchStorageDetails() {
-    // 1. Si on a déjà les données en cache, on les renvoie direct (Statique)
-    if (this.cachedStorage) return this.cachedStorage;
+    const now = Date.now();
+
+    if (this.cache.storage.data && now - this.cache.storage.ts < TTL.FAST) {
+      return this.cache.storage.data;
+    }
 
     return new Promise((resolve) => {
       chrome.system.storage.getInfo(async (units) => {
@@ -329,18 +377,20 @@ export class DataStore {
         const partitions = await Promise.all(partitionsPromises);
 
         // On stocke le résultat brute (c'est le main.js qui filtrera le 1er disque)
-        this.cachedStorage = partitions;
+        this.cache.storage = { data: partitions, ts: Date.now() };
 
         resolve(partitions);
       });
     });
   }
 
-  async _fetchDisplaySummary() {
-    return await this._fetchDisplayDetails();
-  }
-
   async _fetchDisplayDetails() {
+    const now = Date.now();
+
+    if (this.cache.display.data && now - this.cache.display.ts < TTL.FAST) {
+      return this.cache.display.data;
+    }
+
     return new Promise((resolve) => {
       chrome.system.display.getInfo((displays) => {
         if (!displays || displays.length === 0) {
@@ -361,12 +411,14 @@ export class DataStore {
         // 2. On isole le primaire pour un accès rapide (facultatif mais pratique)
         const primary = screenList.find((s) => s.primary) || screenList[0];
 
-        resolve({
+        const result = {
           width: primary.w,
           height: primary.h,
           gpu: this._resolveGpuName(),
           screens: screenList, // La liste contient maintenant les noms et types
-        });
+        };
+        this.cache.display = { data: result, ts: Date.now() };
+        resolve(result);
       });
     });
   }
@@ -388,7 +440,6 @@ export class DataStore {
 
       // 3. Extensions installées (pour l'overlay Chrome)
       // Nécessite la permission "management" dans manifest.json
-      let extCount = 0;
       let extList = "N/A";
 
       try {
@@ -408,8 +459,17 @@ export class DataStore {
         console.warn("DataStore: Permission 'management' manquante.");
       }
 
+      const osMap = {
+        mac: "macOS",
+        win: "Windows",
+        android: "Android",
+        cros: "ChromeOS",
+        linux: "Linux",
+        openbsd: "OpenBSD",
+      };
+
       const result = {
-        os: "ChromeOS",
+        os: osMap[platform.os] || platform.os,
         arch: platform.arch,
         chromeVer: /Chrome\/([0-9.]+)/.exec(navigator.userAgent)[1],
         chromeLanguages: langs.slice(0, 3).join(", "),

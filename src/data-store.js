@@ -341,7 +341,7 @@ export class DataStore {
     const partitionsPromises = units.map(async (unit) => {
       const safeCapacity = unit.capacity || 0;
       const cleanName =
-        (unit.name || unit.id || "Drive").replace(/[^a-z0-9]/gi, " ").trim() ||
+        (unit.name || unit.id || "Drive").replace(/[^a-z0-9]+/gi, " ").trim() ||
         "Drive";
 
       const baseInfo = {

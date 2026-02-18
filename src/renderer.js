@@ -584,14 +584,17 @@ export function updateInterface(payload) {
         if (gridEl) {
           // Si le nombre de cœurs diffère (init), on recrée les barres
           if (gridEl.children.length !== item.value.length) {
-            gridEl.innerHTML = item.value
-              .map(
-                () =>
-                  `<div class="core-track">
-                      <div class="core-fill"></div>
-                   </div>`,
-              )
-              .join("");
+            gridEl.textContent = "";
+            const fragment = document.createDocumentFragment();
+            item.value.forEach(() => {
+              const track = document.createElement("div");
+              track.className = "core-track";
+              const fill = document.createElement("div");
+              fill.className = "core-fill";
+              track.appendChild(fill);
+              fragment.appendChild(track);
+            });
+            gridEl.appendChild(fragment);
           }
           // Mise à jour des hauteurs
           Array.from(gridEl.children).forEach((child, i) => {
@@ -630,16 +633,24 @@ export function updateInterface(payload) {
         if (gridEl && renderCache[key] !== currentVal) {
           // Astuce perf : On recrée le HTML car le nombre de zones est petit (<20)
           // et l'opération est légère.
-          gridEl.innerHTML = item.value
-            .map(
-              (temp, i) => `
-                <div class="temp-item">
-                    <div class="temp-label">Zone ${i}</div>
-                    <div class="temp-val">${temp}${symbol}</div>
-                </div>
-             `,
-            )
-            .join("");
+          gridEl.textContent = "";
+          const fragment = document.createDocumentFragment();
+          item.value.forEach((temp, i) => {
+            const itemEl = document.createElement("div");
+            itemEl.className = "temp-item";
+
+            const labelEl = document.createElement("div");
+            labelEl.className = "temp-label";
+            labelEl.textContent = `Zone ${i}`;
+            const valEl = document.createElement("div");
+            valEl.className = "temp-val";
+            valEl.textContent = `${temp}${symbol}`;
+
+            itemEl.appendChild(labelEl);
+            itemEl.appendChild(valEl);
+            fragment.appendChild(itemEl);
+          });
+          gridEl.appendChild(fragment);
           renderCache[key] = currentVal;
         }
       }
@@ -655,16 +666,25 @@ export function updateInterface(payload) {
 
         if (listEl && renderCache[key] !== currentSig) {
           // On génère la liste. Format identique à la carte mais en liste <li>
-          listEl.innerHTML = item.value
-            .map(
-              (disk) => `
-                <li class="overlay-disk-item">
-                    <span class="disk-name">${disk.name}</span>
-                    <span class="disk-info">${disk.info}</span>
-                </li>
-            `,
-            )
-            .join("");
+          listEl.textContent = "";
+          const fragment = document.createDocumentFragment();
+          item.value.forEach((disk) => {
+            const li = document.createElement("li");
+            li.className = "overlay-disk-item";
+
+            const nameSpan = document.createElement("span");
+            nameSpan.className = "disk-name";
+            nameSpan.textContent = disk.name;
+
+            const infoSpan = document.createElement("span");
+            infoSpan.className = "disk-info";
+            infoSpan.textContent = disk.info;
+
+            li.appendChild(nameSpan);
+            li.appendChild(infoSpan);
+            fragment.appendChild(li);
+          });
+          listEl.appendChild(fragment);
           renderCache[key] = currentSig;
         }
       }

@@ -77,5 +77,6 @@
   "disp_internal": { "message": "Interner Monitor" },
   "disp_internal_short": { "message": "Intern" },
   "disp_unknown": { "message": "Unbekannt" },
-  "disp_none": { "message": "Keine" }
+  "disp_none": { "message": "Keine" },
+  "action_close": { "message": "Fenster schließen" }
 }

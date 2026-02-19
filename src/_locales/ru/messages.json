@@ -77,5 +77,6 @@
   "disp_internal": { "message": "Встроенный монитор" },
   "disp_internal_short": { "message": "Внутр." },
   "disp_unknown": { "message": "Неизвестно" },
-  "disp_none": { "message": "Нет" }
+  "disp_none": { "message": "Нет" },
+  "action_close": { "message": "Закрыть окно" }
 }

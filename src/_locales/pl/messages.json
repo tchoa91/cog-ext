@@ -77,5 +77,6 @@
   "disp_internal": { "message": "Monitor wewnętrzny" },
   "disp_internal_short": { "message": "Wewn." },
   "disp_unknown": { "message": "Nieznany" },
-  "disp_none": { "message": "Brak" }
+  "disp_none": { "message": "Brak" },
+  "action_close": { "message": "Zamknij okno" }
 }

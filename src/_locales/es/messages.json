@@ -77,5 +77,6 @@
   "disp_internal": { "message": "Pantalla interna" },
   "disp_internal_short": { "message": "Interna" },
   "disp_unknown": { "message": "Desconocido" },
-  "disp_none": { "message": "Ninguna" }
+  "disp_none": { "message": "Ninguna" },
+  "action_close": { "message": "Cerrar ventana" }
 }

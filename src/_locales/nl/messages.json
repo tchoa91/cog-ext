@@ -77,5 +77,6 @@
   "disp_internal": { "message": "Intern scherm" },
   "disp_internal_short": { "message": "Intern" },
   "disp_unknown": { "message": "Onbekend" },
-  "disp_none": { "message": "Geen" }
+  "disp_none": { "message": "Geen" },
+  "action_close": { "message": "Venster sluiten" }
 }

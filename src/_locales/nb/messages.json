@@ -77,5 +77,6 @@
   "disp_internal": { "message": "Intern skjerm" },
   "disp_internal_short": { "message": "Intern" },
   "disp_unknown": { "message": "Ukjent" },
-  "disp_none": { "message": "Ingen" }
+  "disp_none": { "message": "Ingen" },
+  "action_close": { "message": "Lukk vindu" }
 }

@@ -77,5 +77,6 @@
   "disp_internal": { "message": "내장 모니터" },
   "disp_internal_short": { "message": "내장" },
   "disp_unknown": { "message": "알 수 없음" },
-  "disp_none": { "message": "없음" }
+  "disp_none": { "message": "없음" },
+  "action_close": { "message": "창 닫기" }
 }

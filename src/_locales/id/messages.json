@@ -77,5 +77,6 @@
   "disp_internal": { "message": "Layar Internal" },
   "disp_internal_short": { "message": "Internal" },
   "disp_unknown": { "message": "Tidak diketahui" },
-  "disp_none": { "message": "Tidak ada" }
+  "disp_none": { "message": "Tidak ada" },
+  "action_close": { "message": "Tutup jendela" }
 }

@@ -77,5 +77,6 @@
   "disp_internal": { "message": "Dahili Monitör" },
   "disp_internal_short": { "message": "Dahili" },
   "disp_unknown": { "message": "Bilinmiyor" },
-  "disp_none": { "message": "Yok" }
+  "disp_none": { "message": "Yok" },
+  "action_close": { "message": "Pencereyi kapat" }
 }

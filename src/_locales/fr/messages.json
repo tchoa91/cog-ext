@@ -75,5 +75,6 @@
   "disp_internal": { "message": "Écran Interne" },
   "disp_internal_short": { "message": "Interne" },
   "disp_unknown": { "message": "Inconnu" },
-  "disp_none": { "message": "Aucun" }
+  "disp_none": { "message": "Aucun" },
+  "action_close": { "message": "Fermer la fenêtre" }
 }

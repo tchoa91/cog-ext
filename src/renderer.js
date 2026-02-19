@@ -40,6 +40,23 @@ export function initRenderer(config, callbacks) {
     return;
   }
 
+  // Accessibilité : On retire le rôle sémantique (souvent <main>) de la grille
+  // pour supprimer les annonces "Principal" / "Fin de principal" entre les cartes.
+  gridEl.setAttribute("role", "none");
+
+  // Configuration ARIA pour l'Overlay (Dialog Modal)
+  overlayEl.setAttribute("role", "dialog");
+  overlayEl.setAttribute("aria-modal", "true");
+  overlayEl.setAttribute("aria-labelledby", "overlay-title");
+  overlayEl.setAttribute("tabindex", "-1");
+  overlayEl.style.outline = "none";
+
+  // Accessibilité : Label localisé pour le bouton fermer
+  closeBtnEl.setAttribute(
+    "aria-label",
+    chrome.i18n.getMessage("action_close") || "Close",
+  );
+
   buildInterface(config, callbacks);
   setupGlobalEvents(callbacks);
 }
@@ -91,22 +108,23 @@ function buildInterface(config, callbacks) {
             id="monitor-${item.id}" 
             data-link="${item.cardLink}"
             tabindex="${item.hasOvelay ? "0" : "-1"}" 
-            role="${item.hasOvelay ? "button" : "none"}"
-            aria-label="Open ${item.title} details"
+            ${item.hasOvelay ? 'role="button"' : ""}
+            aria-labelledby="mon-lbl-${item.id} mon-pause-${item.id} mon-val-${item.id}"
             ${!item.hasOvelay ? 'style="cursor: default;"' : ""}>
-          <div class="monitor-header">
-            <span class="monitor-label">${item.title}</span>
+          <div class="monitor-header" aria-hidden="true">
+            <span class="monitor-label" id="mon-lbl-${item.id}">${item.title}</span>
             <div>
                 <span class="monitor-status-icon"></span>
-                <span class="monitor-val-text">--</span>
+                <span class="monitor-val-text" id="mon-val-${item.id}">--</span>
             </div>
           </div>
+          <span id="mon-pause-${item.id}" hidden>,</span>
           ${
             item.type === "bar"
-              ? `<div class="monitor-bar-track"><div class="monitor-bar-fill"></div></div>`
+              ? `<div class="monitor-bar-track" aria-hidden="true"><div class="monitor-bar-fill"></div></div>`
               : ""
           }
-          ${item.type === "dot" ? `<div class="monitor-dot"></div>` : ""}
+          ${item.type === "dot" ? `<div class="monitor-dot" aria-hidden="true"></div>` : ""}
       </div>`,
     )
     .join("");
@@ -131,14 +149,15 @@ function buildInterface(config, callbacks) {
             id="card-${card.id}"
             data-id="${card.id}"
             tabindex="${card.hasOvelay ? "0" : "-1"}"
-            role="${card.hasOvelay ? "button" : "none"}"
-            aria-label="Open ${card.title} details"
+            ${card.hasOvelay ? 'role="button"' : ""}
+            aria-labelledby="card-title-${card.id} card-pause-${card.id} card-body-${card.id}"
             style="display: none;"> 
-            <h3>${card.title}</h3>
-            <div class="card-body">${renderCardContent(card.content)}</div>
+            <h3 id="card-title-${card.id}" aria-hidden="true">${card.title}</h3>
+            <span id="card-pause-${card.id}" style="position:absolute; opacity:0; pointer-events:none;" aria-hidden="true">.</span>
+            <div class="card-body" id="card-body-${card.id}" aria-hidden="true">${renderCardContent(card.content)}</div>
             ${
               card.hasOvelay
-                ? `<div class="card-watermark">${SVGS.chevron}</div>`
+                ? `<div class="card-watermark" aria-hidden="true">${SVGS.chevron}</div>`
                 : ""
             }
         </div>`,
@@ -202,7 +221,13 @@ export function updateInterface(payload) {
         const key = `mon-${mon.id}-lbl`;
         if (renderCache[key] !== mon.label) {
           const textEl = el.querySelector(".monitor-val-text");
-          if (textEl) textEl.textContent = mon.label;
+          if (textEl) {
+            textEl.textContent = mon.label;
+            // Hack phonétique : "Onne" force la prononciation anglaise avec une voix française
+            // car aria-labelledby ignore l'attribut lang="en".
+            if (mon.label === "ON") textEl.setAttribute("aria-label", "Onne");
+            else textEl.removeAttribute("aria-label");
+          }
           renderCache[key] = mon.label;
         }
       }
@@ -387,8 +412,7 @@ export function updateInterface(payload) {
             return `
             <div class="overlay-section">
                 <div style="margin-bottom:8px;" class="overlay-label">${item.title || ""}</div>
-                <div class="overlay-cores-grid" data-oid="${item.id}-grid">
-                     </div>
+                <div class="overlay-cores-grid" data-oid="${item.id}-grid" tabindex="0" role="img"></div>
             </div>`;
           }
 
@@ -406,8 +430,7 @@ export function updateInterface(payload) {
             return `
             <div class="overlay-section">
                 <div style="margin-bottom:8px;" class="overlay-label">${item.title || ""}</div>
-                <div class="overlay-temp-grid" data-oid="${item.id}-grid">
-                     </div>
+                <div class="overlay-temp-grid" data-oid="${item.id}-grid" tabindex="0" role="img"></div>
             </div>`;
           }
 
@@ -582,13 +605,30 @@ export function updateInterface(payload) {
           `[data-oid="${item.id}-grid"]`,
         );
         if (gridEl) {
+          // Accessibilité : On construit une phrase globale pour tout le groupe
+          const ariaLabel = item.value
+            .map((data) => {
+              const pct = typeof data === "object" ? data.pct : data;
+              return `${pct}%`;
+            })
+            .join(", ");
+
+          const keyLabel = `ov-${item.id}-aria`;
+          if (renderCache[keyLabel] !== ariaLabel) {
+            gridEl.setAttribute("aria-label", ariaLabel);
+            renderCache[keyLabel] = ariaLabel;
+          }
+
           // Si le nombre de cœurs diffère (init), on recrée les barres
           if (gridEl.children.length !== item.value.length) {
             gridEl.textContent = "";
             const fragment = document.createDocumentFragment();
-            item.value.forEach(() => {
+            item.value.forEach((_, i) => {
               const track = document.createElement("div");
               track.className = "core-track";
+              // Accessibilité : On cache les enfants, c'est le conteneur qui parle
+              track.setAttribute("aria-hidden", "true");
+
               const fill = document.createElement("div");
               fill.className = "core-fill";
               track.appendChild(fill);
@@ -625,6 +665,16 @@ export function updateInterface(payload) {
         );
         const symbol = item.unitSymbol || "°C";
 
+        // Accessibilité : Phrase globale pour les températures
+        const ariaLabel = item.value
+          .map((temp) => `${temp}${symbol}`)
+          .join(", ");
+        const keyLabel = `ov-${item.id}-aria`;
+        if (renderCache[keyLabel] !== ariaLabel) {
+          gridEl.setAttribute("aria-label", ariaLabel);
+          renderCache[keyLabel] = ariaLabel;
+        }
+
         const key = `ov-${item.id}-temps`;
         // On vérifie si les valeurs ont changé (join est rapide sur <20 items)
         const currentVal = item.value.join(",");
@@ -638,13 +688,17 @@ export function updateInterface(payload) {
           item.value.forEach((temp, i) => {
             const itemEl = document.createElement("div");
             itemEl.className = "temp-item";
+            // Accessibilité : On cache les enfants
+            itemEl.setAttribute("aria-hidden", "true");
 
             const labelEl = document.createElement("div");
             labelEl.className = "temp-label";
             labelEl.textContent = `Zone ${i}`;
+            labelEl.setAttribute("aria-hidden", "true");
             const valEl = document.createElement("div");
             valEl.className = "temp-val";
             valEl.textContent = `${temp}${symbol}`;
+            valEl.setAttribute("aria-hidden", "true");
 
             itemEl.appendChild(labelEl);
             itemEl.appendChild(valEl);
@@ -791,10 +845,6 @@ export function setOverlayState(isOpen, payload = {}, event = null) {
     lastFocusedElement = event.currentTarget;
   }
   toggleBackgroundAccess(true); // 1. On désactive le fond
-  // On place le focus sur le bouton de fermeture par sécurité
-  setTimeout(() => {
-    if (closeBtnEl) closeBtnEl.focus();
-  }, 100);
 
   const title = payload.title || "";
 
@@ -823,5 +873,9 @@ export function setOverlayState(isOpen, payload = {}, event = null) {
     if (content) content.style.opacity = "1";
     void overlayEl.offsetWidth; // Force reflow
     overlayEl.classList.add("active");
+    // On focus le conteneur (Dialog) pour déclencher l'annonce du Titre + Rôle
+    setTimeout(() => {
+      overlayEl.focus();
+    }, 50);
   }
 }

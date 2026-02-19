@@ -77,5 +77,6 @@
   "disp_internal": { "message": "内置显示器" },
   "disp_internal_short": { "message": "内置" },
   "disp_unknown": { "message": "未知" },
-  "disp_none": { "message": "无" }
+  "disp_none": { "message": "无" },
+  "action_close": { "message": "关闭窗口" }
 }

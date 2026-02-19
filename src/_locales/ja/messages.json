@@ -77,5 +77,6 @@
   "disp_internal": { "message": "内蔵モニター" },
   "disp_internal_short": { "message": "内蔵" },
   "disp_unknown": { "message": "不明" },
-  "disp_none": { "message": "なし" }
+  "disp_none": { "message": "なし" },
+  "action_close": { "message": "ウィンドウを閉じる" }
 }

@@ -40,6 +40,16 @@ export function initRenderer(config, callbacks) {
     return;
   }
 
+  // --- PONCTUATION GLOBALE (ARIA) ---
+  // On crée des éléments invisibles référençables par ID pour aria-labelledby
+  const ariaPunct = document.createElement("div");
+  ariaPunct.style.cssText =
+    "position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap;";
+  ariaPunct.innerHTML =
+    '<span id="p-comma">, </span><span id="p-stop">. </span>';
+  document.body.appendChild(ariaPunct);
+  // ----------------------------------
+
   // Accessibilité : On retire le rôle sémantique (souvent <main>) de la grille
   // pour supprimer les annonces "Principal" / "Fin de principal" entre les cartes.
   gridEl.setAttribute("role", "none");
@@ -109,7 +119,7 @@ function buildInterface(config, callbacks) {
             data-link="${item.cardLink}"
             tabindex="${item.hasOvelay ? "0" : "-1"}" 
             ${item.hasOvelay ? 'role="button"' : ""}
-            aria-labelledby="mon-lbl-${item.id} mon-pause-${item.id} mon-val-${item.id}"
+            aria-labelledby="mon-lbl-${item.id} p-comma mon-val-${item.id} p-stop"
             ${!item.hasOvelay ? 'style="cursor: default;"' : ""}>
           <div class="monitor-header" aria-hidden="true">
             <span class="monitor-label" id="mon-lbl-${item.id}">${item.title}</span>
@@ -118,7 +128,6 @@ function buildInterface(config, callbacks) {
                 <span class="monitor-val-text" id="mon-val-${item.id}">--</span>
             </div>
           </div>
-          <span id="mon-pause-${item.id}" hidden>,</span>
           ${
             item.type === "bar"
               ? `<div class="monitor-bar-track" aria-hidden="true"><div class="monitor-bar-fill"></div></div>`
@@ -131,7 +140,7 @@ function buildInterface(config, callbacks) {
 
   // Écouteurs pour la TopBar
   topBarEl.querySelectorAll(".monitor-block.interactive").forEach((el) => {
-    el.addEventListener("click", () => callbacks.onOpen(el.dataset.link));
+    el.addEventListener("click", (e) => callbacks.onOpen(el.dataset.link, e));
     // 2. ACCESSIBILITÉ : Clavier (Entrée ou Espace)
     el.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") {
@@ -150,10 +159,9 @@ function buildInterface(config, callbacks) {
             data-id="${card.id}"
             tabindex="${card.hasOvelay ? "0" : "-1"}"
             ${card.hasOvelay ? 'role="button"' : ""}
-            aria-labelledby="card-title-${card.id} card-pause-${card.id} card-body-${card.id}"
+            aria-labelledby="card-title-${card.id} p-comma card-body-${card.id}"
             style="display: none;"> 
             <h3 id="card-title-${card.id}" aria-hidden="true">${card.title}</h3>
-            <span id="card-pause-${card.id}" style="position:absolute; opacity:0; pointer-events:none;" aria-hidden="true">.</span>
             <div class="card-body" id="card-body-${card.id}" aria-hidden="true">${renderCardContent(card.content)}</div>
             ${
               card.hasOvelay
@@ -184,20 +192,21 @@ function renderCardContent(contentItems) {
           return `
             <div class="card-bar-row" data-el-id="${item.id}">
                 <div class="monitor-bar-track"><div class="monitor-bar-fill"></div></div>
-                <div class="card-bar-text">--</div>
+                <div class="card-bar-text" aria-label="--. ">--</div>
             </div>`;
         case "value":
-          return `<div class="card-main-value" data-el-id="${item.id}">--</div>`;
+          return `<div class="card-main-value" data-el-id="${item.id}" aria-label="--. ">--</div>`;
         case "kv":
+          const lbl = item.title || "";
           return `<div class="card-kv-row">
-                    <span class="kv-label">${item.title || ""}</span>
-                    <span class="kv-value" data-el-id="${item.id}">--</span>
+                    <span class="kv-label" ${lbl ? `aria-label="${lbl}, "` : ""}>${lbl}</span>
+                    <span class="kv-value" data-el-id="${item.id}" aria-label="--. ">--</span>
                   </div>`;
         case "disk":
           return `
             <div class="card-disk-row">
-                <span class="disk-name" data-el-id="${item.id}-name">--</span>
-                <span class="disk-info" data-el-id="${item.id}-info">--</span>
+                <span class="disk-name" data-el-id="${item.id}-name" aria-label="--, ">--</span>
+                <span class="disk-info" data-el-id="${item.id}-info" aria-label="--. ">--</span>
             </div>`;
         case "sparkline":
           return `<canvas class="sparkline-canvas" data-el-id="${item.id}" width="180" height="40"></canvas>`;
@@ -297,11 +306,19 @@ export function updateInterface(payload) {
             // Update Nom (Gros)
             if (nameEl && renderCache[`${item.id}-n`] !== item.value.name) {
               nameEl.textContent = item.value.name;
+              nameEl.setAttribute(
+                "aria-label",
+                item.value.name ? item.value.name + ", " : "",
+              );
               renderCache[`${item.id}-n`] = item.value.name;
             }
             // Update Info (Petit)
             if (infoEl && renderCache[`${item.id}-i`] !== item.value.info) {
               infoEl.textContent = item.value.info;
+              infoEl.setAttribute(
+                "aria-label",
+                item.value.info ? item.value.info + ". " : "",
+              );
               renderCache[`${item.id}-i`] = item.value.info;
             }
             return; // On a traité le disque, on passe à l'item suivant
@@ -345,7 +362,10 @@ export function updateInterface(payload) {
             // Mise à jour du texte à côté de la barre
             if (item.display && renderCache[keyDisp] !== item.display) {
               const txt = targetEl.querySelector(".card-bar-text");
-              if (txt) txt.textContent = item.display;
+              if (txt) {
+                txt.textContent = item.display;
+                txt.setAttribute("aria-label", item.display + ". ");
+              }
               renderCache[keyDisp] = item.display;
             }
           }
@@ -357,6 +377,10 @@ export function updateInterface(payload) {
               renderCache[keyDisp] !== item.display
             ) {
               targetEl.textContent = item.display;
+              targetEl.setAttribute(
+                "aria-label",
+                item.display ? item.display + ". " : "",
+              );
               renderCache[keyDisp] = item.display;
             }
 
@@ -366,9 +390,15 @@ export function updateInterface(payload) {
               renderCache[keyLbl] !== item.label
             ) {
               if (targetEl.classList.contains("kv-value")) {
-                const labelEl = targetEl.previousElementSibling;
-                if (labelEl && labelEl.classList.contains("kv-label")) {
+                // On cherche le label dans le parent car previousElementSibling peut être la ponctuation
+                const labelEl =
+                  targetEl.parentElement.querySelector(".kv-label");
+                if (labelEl) {
                   labelEl.textContent = item.label;
+                  labelEl.setAttribute(
+                    "aria-label",
+                    item.label ? item.label + ", " : "",
+                  );
                   renderCache[keyLbl] = item.label;
                 }
               }
@@ -412,7 +442,7 @@ export function updateInterface(payload) {
             return `
             <div class="overlay-section">
                 <div style="margin-bottom:8px;" class="overlay-label">${item.title || ""}</div>
-                <div class="overlay-cores-grid" data-oid="${item.id}-grid" tabindex="0" role="img"></div>
+                <div class="overlay-cores-grid" data-oid="${item.id}-grid" role="img"></div>
             </div>`;
           }
 
@@ -430,7 +460,7 @@ export function updateInterface(payload) {
             return `
             <div class="overlay-section">
                 <div style="margin-bottom:8px;" class="overlay-label">${item.title || ""}</div>
-                <div class="overlay-temp-grid" data-oid="${item.id}-grid" tabindex="0" role="img"></div>
+                <div class="overlay-temp-grid" data-oid="${item.id}-grid" role="img"></div>
             </div>`;
           }
 
@@ -834,7 +864,11 @@ export function setOverlayState(isOpen, payload = {}, event = null) {
       }
     }, 300);
     if (lastFocusedElement) {
-      lastFocusedElement.focus();
+      const target = lastFocusedElement;
+      // On attend que le navigateur ait bien retiré l'attribut 'inert' (Next Frame)
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => target.focus());
+      });
       lastFocusedElement = null;
     }
     return;
@@ -874,8 +908,9 @@ export function setOverlayState(isOpen, payload = {}, event = null) {
     void overlayEl.offsetWidth; // Force reflow
     overlayEl.classList.add("active");
     // On focus le conteneur (Dialog) pour déclencher l'annonce du Titre + Rôle
-    setTimeout(() => {
-      overlayEl.focus();
-    }, 50);
+    // Double RAF pour s'assurer que la visibilité est appliquée dans l'arbre accessibilité
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => overlayEl.focus());
+    });
   }
 }

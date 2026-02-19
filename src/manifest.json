@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "default_locale": "en",
   "name": "__MSG_appName__",
-  "version": "2.1",
+  "version": "2.2",
   "description": "__MSG_appDesc__",
   "author": "François Bacconnet",
   "permissions": [
@@ -27,5 +27,8 @@
     "48": "assets/icon48.png",
     "128": "assets/icon128.png"
   },
-  "host_permissions": ["https://api.ipify.org/*"]
+  "host_permissions": [
+    "https://api.ipify.org/*",
+    "https://clients3.google.com/*"
+  ]
 }

@@ -276,15 +276,30 @@ export class DataStore {
     }
     const netCache = this.cache.network;
 
-    // 1. Mise à jour Basic (Online/Type)
+    // 1. Mise à jour Fréquente (Status + Latence) : TTL.FAST (5s)
     if (now - netCache.ts > TTL.FAST) {
       netCache.data.online = navigator.onLine;
       netCache.data.type = navigator.connection
         ? navigator.connection.effectiveType
         : "unknown";
-      netCache.ts = now;
-      // Si hors ligne, on reset l'IP et la latence
-      if (!netCache.data.online) {
+
+      netCache.ts = now; // On met à jour le timestamp immédiatement
+
+      if (netCache.data.online) {
+        // Mesure Latence : On ping un serveur Anycast (Google) pour simuler un vrai Ping.
+        // "generate_204" renvoie une réponse vide instantanée depuis le CDN le plus proche.
+        try {
+          const start = performance.now();
+          await fetch("https://clients3.google.com/generate_204", {
+            method: "HEAD",
+            mode: "no-cors", // Mode opaque (plus rapide, évite le parsing)
+            cache: "no-store",
+          });
+          netCache.data.latency = Math.round(performance.now() - start);
+        } catch (e) {
+          // En cas d'échec (firewall, etc.), on garde l'ancienne valeur
+        }
+      } else {
         netCache.data.ip = null;
         netCache.data.latency = null;
       }
@@ -293,22 +308,21 @@ export class DataStore {
     // 2. Mise à jour IP (Seulement si en ligne et TTL expiré)
     if (netCache.data.online && now - netCache.ipTs > TTL.SLOW) {
       try {
-        // Timeout de 500ms : Compromis entre vitesse d'affichage et fiabilité réseau.
-        // 200ms est souvent trop court (DNS + Handshake SSL prennent du temps).
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 500);
+        const timeoutId = setTimeout(() => controller.abort(), 2000);
 
-        const start = performance.now();
-        const response = await fetch("https://api.ipify.org?format=json", {
+        // On ne mesure plus la latence ici, juste l'IP
+        const response = await fetch("https://api.ipify.org", {
           signal: controller.signal,
+          cache: "no-store",
         });
-        const rtt = Math.round(performance.now() - start);
-        clearTimeout(timeoutId); // On annule le timeout si la réponse arrive à temps
+        clearTimeout(timeoutId);
 
-        const data = await response.json();
-        netCache.data.ip = data.ip;
-        netCache.data.latency = rtt;
-        netCache.ipTs = now;
+        if (response.ok) {
+          const ip = await response.text();
+          netCache.data.ip = ip;
+          netCache.ipTs = now;
+        }
       } catch (e) {
         // Si le fetch échoue (ex: bloqueur de pub), on garde l'info "Online" mais sans IP
         // On ne retourne pas null ici car "Online" est une info utile en soi.

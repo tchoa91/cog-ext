@@ -188,7 +188,7 @@ function resolveWidgetData(itemId, data, updateText, isMonitor = false) {
   };
 
   const fmtTemp = (val) => {
-    if (val == null) return "--";
+    if (val == null) return "N/A";
     return appUnit === "F"
       ? Math.round((val * 9) / 5 + 32) + "°F"
       : Math.round(val) + "°C";
@@ -289,7 +289,7 @@ function resolveWidgetData(itemId, data, updateText, isMonitor = false) {
 
     // Logique Temps Restant
     if (itemId === "battTime") {
-      let timeText = "--";
+      let timeText = "N/A";
       let labelText = t("status_time_left");
       const seconds = data.battery.charging
         ? data.battery.chargingTime
@@ -326,11 +326,10 @@ function resolveWidgetData(itemId, data, updateText, isMonitor = false) {
       );
       res.state = data.network.online ? "normal" : "alert";
     }
-    if (itemId === "netIp")
-      res.display = txt(data.network.ip || t("status_hidden"));
+    if (itemId === "netIp") res.display = txt(data.network.ip || "N/A");
     if (itemId === "netLatency")
       res.display = txt(
-        data.network.latency ? `${data.network.latency} ms` : "--",
+        data.network.latency ? `${data.network.latency} ms` : "N/A",
       );
   }
 
@@ -378,7 +377,7 @@ function resolveWidgetData(itemId, data, updateText, isMonitor = false) {
   if (data.storage) {
     // Fonction utilitaire locale pour le formatage "disk"
     const formatDiskData = (disk) => {
-      if (!disk) return { name: "N/A", info: "--" };
+      if (!disk) return { name: "N/A", info: "N/A" };
 
       const total = (disk.capacity / 1e9).toFixed(0) + " Go";
       let infoText = total;

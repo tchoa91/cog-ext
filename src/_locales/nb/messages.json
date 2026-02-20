@@ -20,13 +20,13 @@
   "card_storage_title": { "message": "Lagring" },
   "card_settings_title": { "message": "COGext - Innstillinger" },
 
-  "label_mem_total": { "message": "Totalt minne" },
-  "label_mem_used": { "message": "Brukt minne" },
+  "label_mem_total": { "message": "Totalt minne:" },
+  "label_mem_used": { "message": "Brukt minne:" },
   "label_batt_time_general": {
     "message": "Tid til fullt ladet/utladet:"
   },
   "label_ip": { "message": "IP:" },
-  "label_latency": { "message": "Latens" },
+  "label_latency": { "message": "Latens:" },
   "label_platform": { "message": "Plattform:" },
   "label_free": { "message": "ledig" },
   "label_version": { "message": "Versjon:" },
@@ -37,27 +37,27 @@
   "overlay_chrome_title": { "message": "Chrome-detaljer" },
   "overlay_storage_title": { "message": "Lagringsdetaljer" },
 
-  "detail_cpu_avg": { "message": "Gjennomsnittlig belastning" },
-  "detail_cpu_core": { "message": "Belastning per kjerne" },
-  "detail_cpu_arch": { "message": "CPU-arkitektur" },
-  "detail_cpu_model": { "message": "CPU-modell" },
-  "detail_cpu_features": { "message": "CPU-funksjoner" },
+  "detail_cpu_avg": { "message": "Gjennomsnittlig belastning:" },
+  "detail_cpu_core": { "message": "Belastning per kjerne:" },
+  "detail_cpu_arch": { "message": "CPU-arkitektur:" },
+  "detail_cpu_model": { "message": "CPU-modell:" },
+  "detail_cpu_features": { "message": "CPU-funksjoner:" },
 
-  "detail_temp_avg": { "message": "Gjennomsnittstemperatur" },
-  "detail_temp_sensor": { "message": "Temperatur per sensor" },
+  "detail_temp_avg": { "message": "Gjennomsnittstemperatur:" },
+  "detail_temp_sensor": { "message": "Temperatur per sensor:" },
 
-  "detail_disp_prim": { "message": "Hovedskjerm" },
-  "detail_disp_other": { "message": "Ekstra skjermer" },
+  "detail_disp_prim": { "message": "Hovedskjerm:" },
+  "detail_disp_other": { "message": "Ekstra skjermer:" },
   "detail_gpu": { "message": "Grafikkort (GPU):" },
 
   "detail_chrome_langs": { "message": "Språk:" },
-  "detail_chrome_exts": { "message": "Aktive utvidelser" },
+  "detail_chrome_exts": { "message": "Aktive utvidelser:" },
 
   "detail_storage_discs": { "message": "Disker:" },
 
-  "settings_mood": { "message": "Stemningsfarge" },
-  "settings_theme": { "message": "Tema: Lyst/Mørkt" },
-  "settings_unit": { "message": "Temperaturenhet: °C/°F" },
+  "settings_mood": { "message": "Stemningsfarge:" },
+  "settings_theme": { "message": "Tema (Lyst/Mørkt):" },
+  "settings_unit": { "message": "Temperaturenhet (°C/°F):" },
   "settings_footer": {
     "message": "2026 - GPL-3.0 - François Bacconnet <a href='https://ext.tchoa.com'>min nettside</a>"
   },
@@ -78,5 +78,6 @@
   "disp_internal_short": { "message": "Intern" },
   "disp_unknown": { "message": "Ukjent" },
   "disp_none": { "message": "Ingen" },
-  "action_close": { "message": "Lukk vindu" }
+  "action_close": { "message": "Lukk vindu" },
+  "val_na": { "message": "Ikke tilgjengelig" }
 }

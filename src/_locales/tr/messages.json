@@ -20,13 +20,13 @@
   "card_storage_title": { "message": "Depolama" },
   "card_settings_title": { "message": "COGext - Ayarlar" },
 
-  "label_mem_total": { "message": "Toplam bellek" },
-  "label_mem_used": { "message": "Kullanılan bellek" },
+  "label_mem_total": { "message": "Toplam bellek:" },
+  "label_mem_used": { "message": "Kullanılan bellek:" },
   "label_batt_time_general": {
     "message": "Tam dolum/boşalım için kalan süre:"
   },
   "label_ip": { "message": "IP:" },
-  "label_latency": { "message": "Gecikme" },
+  "label_latency": { "message": "Gecikme:" },
   "label_platform": { "message": "Platform:" },
   "label_free": { "message": "boş" },
   "label_version": { "message": "Sürüm:" },
@@ -37,27 +37,27 @@
   "overlay_chrome_title": { "message": "Chrome Detayları" },
   "overlay_storage_title": { "message": "Depolama Detayları" },
 
-  "detail_cpu_avg": { "message": "Ortalama yük" },
-  "detail_cpu_core": { "message": "Çekirdek başına yük" },
-  "detail_cpu_arch": { "message": "CPU Mimarisi" },
-  "detail_cpu_model": { "message": "CPU Modeli" },
-  "detail_cpu_features": { "message": "CPU Özellikleri" },
+  "detail_cpu_avg": { "message": "Ortalama yük:" },
+  "detail_cpu_core": { "message": "Çekirdek başına yük:" },
+  "detail_cpu_arch": { "message": "CPU Mimarisi:" },
+  "detail_cpu_model": { "message": "CPU Modeli:" },
+  "detail_cpu_features": { "message": "CPU Özellikleri:" },
 
-  "detail_temp_avg": { "message": "Ortalama sıcaklık" },
-  "detail_temp_sensor": { "message": "Sensör başına sıcaklık" },
+  "detail_temp_avg": { "message": "Ortalama sıcaklık:" },
+  "detail_temp_sensor": { "message": "Sensör başına sıcaklık:" },
 
-  "detail_disp_prim": { "message": "Ana Ekran" },
-  "detail_disp_other": { "message": "İkincil Ekranlar" },
+  "detail_disp_prim": { "message": "Ana Ekran:" },
+  "detail_disp_other": { "message": "İkincil Ekranlar:" },
   "detail_gpu": { "message": "Grafik Kartı (GPU):" },
 
   "detail_chrome_langs": { "message": "Diller:" },
-  "detail_chrome_exts": { "message": "Aktif Uzantılar" },
+  "detail_chrome_exts": { "message": "Aktif Uzantılar:" },
 
   "detail_storage_discs": { "message": "Diskler:" },
 
-  "settings_mood": { "message": "Ortam Rengi" },
-  "settings_theme": { "message": "Tema: Açık/Koyu" },
-  "settings_unit": { "message": "Sıcaklık Birimi: °C/°F" },
+  "settings_mood": { "message": "Ortam Rengi:" },
+  "settings_theme": { "message": "Tema (Açık/Koyu):" },
+  "settings_unit": { "message": "Sıcaklık Birimi (°C/°F):" },
   "settings_footer": {
     "message": "2026 - GPL-3.0 - François Bacconnet <a href='https://ext.tchoa.com'>web sitem</a>"
   },
@@ -78,5 +78,6 @@
   "disp_internal_short": { "message": "Dahili" },
   "disp_unknown": { "message": "Bilinmiyor" },
   "disp_none": { "message": "Yok" },
-  "action_close": { "message": "Pencereyi kapat" }
+  "action_close": { "message": "Pencereyi kapat" },
+  "val_na": { "message": "Mevcut değil" }
 }

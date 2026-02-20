@@ -20,13 +20,13 @@
   "card_storage_title": { "message": "Хранилище" },
   "card_settings_title": { "message": "COGext — Настройки" },
 
-  "label_mem_total": { "message": "Всего памяти" },
-  "label_mem_used": { "message": "Использовано" },
+  "label_mem_total": { "message": "Всего памяти:" },
+  "label_mem_used": { "message": "Использовано:" },
   "label_batt_time_general": {
     "message": "До полной зарядки/разрядки:"
   },
   "label_ip": { "message": "IP:" },
-  "label_latency": { "message": "Задержка" },
+  "label_latency": { "message": "Задержка:" },
   "label_platform": { "message": "Платформа:" },
   "label_free": { "message": "свободно" },
   "label_version": { "message": "Версия:" },
@@ -37,27 +37,27 @@
   "overlay_chrome_title": { "message": "Детали Chrome" },
   "overlay_storage_title": { "message": "Детали хранилища" },
 
-  "detail_cpu_avg": { "message": "Средняя загрузка" },
-  "detail_cpu_core": { "message": "Загрузка по ядрам" },
-  "detail_cpu_arch": { "message": "Архитектура ЦП" },
-  "detail_cpu_model": { "message": "Модель ЦП" },
-  "detail_cpu_features": { "message": "Функции ЦП" },
+  "detail_cpu_avg": { "message": "Средняя загрузка:" },
+  "detail_cpu_core": { "message": "Загрузка по ядрам:" },
+  "detail_cpu_arch": { "message": "Архитектура ЦП:" },
+  "detail_cpu_model": { "message": "Модель ЦП:" },
+  "detail_cpu_features": { "message": "Функции ЦП:" },
 
-  "detail_temp_avg": { "message": "Средняя температура" },
-  "detail_temp_sensor": { "message": "Температура по датчикам" },
+  "detail_temp_avg": { "message": "Средняя температура:" },
+  "detail_temp_sensor": { "message": "Температура по датчикам:" },
 
-  "detail_disp_prim": { "message": "Основной дисплей" },
-  "detail_disp_other": { "message": "Дополнительные дисплеи" },
+  "detail_disp_prim": { "message": "Основной дисплей:" },
+  "detail_disp_other": { "message": "Дополнительные дисплеи:" },
   "detail_gpu": { "message": "Видеокарта (GPU):" },
 
   "detail_chrome_langs": { "message": "Языки:" },
-  "detail_chrome_exts": { "message": "Активные расширения" },
+  "detail_chrome_exts": { "message": "Активные расширения:" },
 
   "detail_storage_discs": { "message": "Диски:" },
 
-  "settings_mood": { "message": "Цвет атмосферы" },
-  "settings_theme": { "message": "Тема: Светлая/Темная" },
-  "settings_unit": { "message": "Единица темп.: °C/°F" },
+  "settings_mood": { "message": "Цвет атмосферы:" },
+  "settings_theme": { "message": "Тема (Светлая/Темная):" },
+  "settings_unit": { "message": "Единица темп. (°C/°F):" },
   "settings_footer": {
     "message": "2026 - GPL-3.0 - François Bacconnet <a href='https://ext.tchoa.com'>мой сайт</a>"
   },
@@ -78,5 +78,6 @@
   "disp_internal_short": { "message": "Внутр." },
   "disp_unknown": { "message": "Неизвестно" },
   "disp_none": { "message": "Нет" },
-  "action_close": { "message": "Закрыть окно" }
+  "action_close": { "message": "Закрыть окно" },
+  "val_na": { "message": "Недоступно" }
 }

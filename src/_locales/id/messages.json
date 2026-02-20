@@ -20,13 +20,13 @@
   "card_storage_title": { "message": "Penyimpanan" },
   "card_settings_title": { "message": "COGext - Pengaturan" },
 
-  "label_mem_total": { "message": "Total memori" },
-  "label_mem_used": { "message": "Memori terpakai" },
+  "label_mem_total": { "message": "Total memori:" },
+  "label_mem_used": { "message": "Memori terpakai:" },
   "label_batt_time_general": {
     "message": "Waktu sebelum daya penuh/habis:"
   },
   "label_ip": { "message": "IP:" },
-  "label_latency": { "message": "Latensi" },
+  "label_latency": { "message": "Latensi:" },
   "label_platform": { "message": "Platform:" },
   "label_free": { "message": "tersedia" },
   "label_version": { "message": "Versi:" },
@@ -37,27 +37,27 @@
   "overlay_chrome_title": { "message": "Detail Chrome" },
   "overlay_storage_title": { "message": "Detail Penyimpanan" },
 
-  "detail_cpu_avg": { "message": "Beban rata-rata" },
-  "detail_cpu_core": { "message": "Beban per inti" },
-  "detail_cpu_arch": { "message": "Arsitektur CPU" },
-  "detail_cpu_model": { "message": "Model CPU" },
-  "detail_cpu_features": { "message": "Fitur CPU" },
+  "detail_cpu_avg": { "message": "Beban rata-rata:" },
+  "detail_cpu_core": { "message": "Beban per inti:" },
+  "detail_cpu_arch": { "message": "Arsitektur CPU:" },
+  "detail_cpu_model": { "message": "Model CPU:" },
+  "detail_cpu_features": { "message": "Fitur CPU:" },
 
-  "detail_temp_avg": { "message": "Suhu rata-rata" },
-  "detail_temp_sensor": { "message": "Suhu per sensor" },
+  "detail_temp_avg": { "message": "Suhu rata-rata:" },
+  "detail_temp_sensor": { "message": "Suhu per sensor:" },
 
-  "detail_disp_prim": { "message": "Layar Utama" },
-  "detail_disp_other": { "message": "Layar Sekunder" },
+  "detail_disp_prim": { "message": "Layar Utama:" },
+  "detail_disp_other": { "message": "Layar Sekunder:" },
   "detail_gpu": { "message": "GPU:" },
 
   "detail_chrome_langs": { "message": "Bahasa:" },
-  "detail_chrome_exts": { "message": "Ekstensi Aktif" },
+  "detail_chrome_exts": { "message": "Ekstensi Aktif:" },
 
   "detail_storage_discs": { "message": "Disk:" },
 
-  "settings_mood": { "message": "Warna Suasana" },
-  "settings_theme": { "message": "Tema: Terang/Gelap" },
-  "settings_unit": { "message": "Unit Suhu: °C/°F" },
+  "settings_mood": { "message": "Warna Suasana:" },
+  "settings_theme": { "message": "Tema (Terang/Gelap):" },
+  "settings_unit": { "message": "Unit Suhu (°C/°F):" },
   "settings_footer": {
     "message": "2026 - GPL-3.0 - François Bacconnet <a href='https://ext.tchoa.com'>situs web saya</a>"
   },
@@ -78,5 +78,6 @@
   "disp_internal_short": { "message": "Internal" },
   "disp_unknown": { "message": "Tidak diketahui" },
   "disp_none": { "message": "Tidak ada" },
-  "action_close": { "message": "Tutup jendela" }
+  "action_close": { "message": "Tutup jendela" },
+  "val_na": { "message": "Tidak tersedia" }
 }

@@ -20,13 +20,13 @@
   "card_storage_title": { "message": "ストレージ" },
   "card_settings_title": { "message": "COGext - 設定" },
 
-  "label_mem_total": { "message": "合計メモリ" },
-  "label_mem_used": { "message": "使用メモリ" },
+  "label_mem_total": { "message": "合計メモリ：" },
+  "label_mem_used": { "message": "使用メモリ：" },
   "label_batt_time_general": {
     "message": "フル充電/放電までの時間："
   },
   "label_ip": { "message": "IPアドレス：" },
-  "label_latency": { "message": "レイテンシ" },
+  "label_latency": { "message": "レイテンシ：" },
   "label_platform": { "message": "プラットフォーム：" },
   "label_free": { "message": "空き" },
   "label_version": { "message": "バージョン：" },
@@ -37,27 +37,27 @@
   "overlay_chrome_title": { "message": "Chromeの詳細" },
   "overlay_storage_title": { "message": "ストレージの詳細" },
 
-  "detail_cpu_avg": { "message": "平均負荷" },
-  "detail_cpu_core": { "message": "コアごとの負荷" },
-  "detail_cpu_arch": { "message": "CPUアーキテクチャ" },
-  "detail_cpu_model": { "message": "CPUモデル" },
-  "detail_cpu_features": { "message": "CPU機能" },
+  "detail_cpu_avg": { "message": "平均負荷：" },
+  "detail_cpu_core": { "message": "コアごとの負荷：" },
+  "detail_cpu_arch": { "message": "CPUアーキテクチャ：" },
+  "detail_cpu_model": { "message": "CPUモデル：" },
+  "detail_cpu_features": { "message": "CPU機能：" },
 
-  "detail_temp_avg": { "message": "平均温度" },
-  "detail_temp_sensor": { "message": "センサーごとの温度" },
+  "detail_temp_avg": { "message": "平均温度：" },
+  "detail_temp_sensor": { "message": "センサーごとの温度：" },
 
-  "detail_disp_prim": { "message": "プライマリディスプレイ" },
-  "detail_disp_other": { "message": "セカンダリディスプレイ" },
+  "detail_disp_prim": { "message": "プライマリディスプレイ：" },
+  "detail_disp_other": { "message": "セカンダリディスプレイ：" },
   "detail_gpu": { "message": "グラフィックボード (GPU)：" },
 
   "detail_chrome_langs": { "message": "言語：" },
-  "detail_chrome_exts": { "message": "有効な拡張機能" },
+  "detail_chrome_exts": { "message": "有効な拡張機能：" },
 
   "detail_storage_discs": { "message": "ディスク：" },
 
-  "settings_mood": { "message": "ムードカラー" },
-  "settings_theme": { "message": "テーマ：ライト/ダーク" },
-  "settings_unit": { "message": "温度単位：°C/°F" },
+  "settings_mood": { "message": "ムードカラー：" },
+  "settings_theme": { "message": "テーマ (ライト/ダーク)：" },
+  "settings_unit": { "message": "温度単位 (°C/°F)：" },
   "settings_footer": {
     "message": "2026 - GPL-3.0 - François Bacconnet <a href='https://ext.tchoa.com'>公式サイト</a>"
   },
@@ -78,5 +78,6 @@
   "disp_internal_short": { "message": "内蔵" },
   "disp_unknown": { "message": "不明" },
   "disp_none": { "message": "なし" },
-  "action_close": { "message": "ウィンドウを閉じる" }
+  "action_close": { "message": "ウィンドウを閉じる" },
+  "val_na": { "message": "利用不可" }
 }

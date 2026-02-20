@@ -20,13 +20,13 @@
   "card_storage_title": { "message": "Speicher" },
   "card_settings_title": { "message": "COGext - Einstellungen" },
 
-  "label_mem_total": { "message": "Gesamtspeicher" },
-  "label_mem_used": { "message": "Belegter Speicher" },
+  "label_mem_total": { "message": "Gesamtspeicher:" },
+  "label_mem_used": { "message": "Belegter Speicher:" },
   "label_batt_time_general": {
     "message": "Zeit bis voll geladen/entladen:"
   },
   "label_ip": { "message": "IP:" },
-  "label_latency": { "message": "Latenz" },
+  "label_latency": { "message": "Latenz:" },
   "label_platform": { "message": "Plattform:" },
   "label_free": { "message": "frei" },
   "label_version": { "message": "Version:" },
@@ -37,27 +37,27 @@
   "overlay_chrome_title": { "message": "Chrome Details" },
   "overlay_storage_title": { "message": "Speicher Details" },
 
-  "detail_cpu_avg": { "message": "Durchschnittliche Last" },
-  "detail_cpu_core": { "message": "Last pro Kern" },
-  "detail_cpu_arch": { "message": "CPU-Architektur" },
-  "detail_cpu_model": { "message": "CPU-Modell" },
-  "detail_cpu_features": { "message": "CPU-Funktionen" },
+  "detail_cpu_avg": { "message": "Durchschnittliche Last:" },
+  "detail_cpu_core": { "message": "Last pro Kern:" },
+  "detail_cpu_arch": { "message": "CPU-Architektur:" },
+  "detail_cpu_model": { "message": "CPU-Modell:" },
+  "detail_cpu_features": { "message": "CPU-Funktionen:" },
 
-  "detail_temp_avg": { "message": "Durchschnittstemperatur" },
-  "detail_temp_sensor": { "message": "Temperatur pro Sensor" },
+  "detail_temp_avg": { "message": "Durchschnittstemperatur:" },
+  "detail_temp_sensor": { "message": "Temperatur pro Sensor:" },
 
-  "detail_disp_prim": { "message": "Hauptbildschirm" },
-  "detail_disp_other": { "message": "Weitere Bildschirme" },
+  "detail_disp_prim": { "message": "Hauptbildschirm:" },
+  "detail_disp_other": { "message": "Weitere Bildschirme:" },
   "detail_gpu": { "message": "Grafikkarte (GPU):" },
 
   "detail_chrome_langs": { "message": "Sprachen:" },
-  "detail_chrome_exts": { "message": "Aktive Erweiterungen" },
+  "detail_chrome_exts": { "message": "Aktive Erweiterungen:" },
 
   "detail_storage_discs": { "message": "Laufwerke:" },
 
-  "settings_mood": { "message": "Ambiente-Farbe" },
-  "settings_theme": { "message": "Design: Hell/Dunkel" },
-  "settings_unit": { "message": "Temperatureinheit: °C/°F" },
+  "settings_mood": { "message": "Ambiente-Farbe:" },
+  "settings_theme": { "message": "Design (Hell/Dunkel):" },
+  "settings_unit": { "message": "Temperatureinheit (°C/°F):" },
   "settings_footer": {
     "message": "2026 - GPL-3.0 - François Bacconnet <a href='https://ext.tchoa.com'>Meine Website</a>"
   },
@@ -78,5 +78,6 @@
   "disp_internal_short": { "message": "Intern" },
   "disp_unknown": { "message": "Unbekannt" },
   "disp_none": { "message": "Keine" },
-  "action_close": { "message": "Fenster schließen" }
+  "action_close": { "message": "Fenster schließen" },
+  "val_na": { "message": "Nicht verfügbar" }
 }

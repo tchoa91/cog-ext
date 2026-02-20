@@ -159,6 +159,7 @@ export class DataStore {
       output.display = {
         width: display.width,
         height: display.height,
+        gpu: display.gpu,
       };
       // Détection automatique : Si la version "Lourde" a été fetchée, elle contient 'screens'
       if (display.screens) {
@@ -176,7 +177,7 @@ export class DataStore {
 
     // --- 1. LOGIQUE UTILISATEUR (Nettoyage) ---
     // Modèle
-    let cpuNameText = "Unknown";
+    let cpuNameText = "N/A";
     if (info.modelName && info.modelName.length > 0) {
       cpuNameText = info.modelName
         .replace(/\(R\)/g, "®")
@@ -192,7 +193,7 @@ export class DataStore {
     const cpuFeaturesText =
       info.features && info.features.length > 0
         ? info.features.join(", ").toUpperCase().replace(/_/g, ".")
-        : "-";
+        : "N/A";
 
     // --- 2. CALCUL CHARGE (Code existant) ---
     let totalUsageAcc = 0;
@@ -400,7 +401,7 @@ export class DataStore {
 
     if (!displays || displays.length === 0) {
       console.warn("Display Info: Aucune information retournée.");
-      return { width: 0, height: 0, gpu: "Unknown", screens: [] };
+      return { width: 0, height: 0, gpu: "N/A", screens: [] };
     }
 
     // 1. On mappe TOUTES les infos utiles (Nom, Interne, Résolution)
@@ -506,7 +507,7 @@ export class DataStore {
     }
 
     // Fallback si échec ou null
-    this.cachedGpu = this.cachedGpu || "Integrated / Unknown";
+    this.cachedGpu = this.cachedGpu || "N/A";
     return this.cachedGpu;
   }
 }

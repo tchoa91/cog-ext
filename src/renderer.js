@@ -16,6 +16,9 @@ const SVGS = {
   bolt: `<svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>`,
 };
 
+// Raccourci i18n
+const t = chrome.i18n.getMessage;
+
 // === 1. CACHE & ÉTAT ===
 let topBarEl;
 let gridEl;
@@ -62,10 +65,7 @@ export function initRenderer(config, callbacks) {
   overlayEl.style.outline = "none";
 
   // Accessibilité : Label localisé pour le bouton fermer
-  closeBtnEl.setAttribute(
-    "aria-label",
-    chrome.i18n.getMessage("action_close") || "Close",
-  );
+  closeBtnEl.setAttribute("aria-label", t("action_close") || "Close");
 
   buildInterface(config, callbacks);
   setupGlobalEvents(callbacks);
@@ -119,13 +119,13 @@ function buildInterface(config, callbacks) {
             data-link="${item.cardLink}"
             tabindex="${item.hasOvelay ? "0" : "-1"}" 
             ${item.hasOvelay ? 'role="button"' : ""}
-            aria-labelledby="mon-lbl-${item.id} p-comma mon-val-${item.id} p-stop"
+            aria-labelledby="mon-lbl-${item.id} p-comma mon-val-${item.id}"
             ${!item.hasOvelay ? 'style="cursor: default;"' : ""}>
           <div class="monitor-header" aria-hidden="true">
             <span class="monitor-label" id="mon-lbl-${item.id}">${item.title}</span>
             <div>
                 <span class="monitor-status-icon"></span>
-                <span class="monitor-val-text" id="mon-val-${item.id}">--</span>
+                <span class="monitor-val-text" id="mon-val-${item.id}" aria-label="${t("val_na")}">N/A</span>
             </div>
           </div>
           ${
@@ -183,6 +183,22 @@ function buildInterface(config, callbacks) {
   });
 }
 
+// Utilitaires Accessibilité
+function setAriaLabelForValue(el, value) {
+  if (["N/A", "--", "-"].includes(value)) {
+    el.setAttribute("aria-label", t("val_na") || "Not Available");
+  } else {
+    // On remet le point pour marquer la pause (demandé pour les cartes)
+    // String(value) gère le cas où value est le chiffre 0
+    const valStr = value !== null && value !== undefined ? String(value) : "";
+    if (valStr) {
+      el.setAttribute("aria-label", valStr + ". ");
+    } else {
+      el.removeAttribute("aria-label");
+    }
+  }
+}
+
 function renderCardContent(contentItems) {
   if (!contentItems) return "";
   return contentItems
@@ -192,21 +208,21 @@ function renderCardContent(contentItems) {
           return `
             <div class="card-bar-row" data-el-id="${item.id}">
                 <div class="monitor-bar-track"><div class="monitor-bar-fill"></div></div>
-                <div class="card-bar-text" aria-label="--. ">--</div>
+                <div class="card-bar-text" aria-label="${t("val_na")}">N/A</div>
             </div>`;
         case "value":
-          return `<div class="card-main-value" data-el-id="${item.id}" aria-label="--. ">--</div>`;
+          return `<div class="card-main-value" data-el-id="${item.id}" aria-label="${t("val_na")}">N/A</div>`;
         case "kv":
           const lbl = item.title || "";
           return `<div class="card-kv-row">
                     <span class="kv-label" ${lbl ? `aria-label="${lbl}, "` : ""}>${lbl}</span>
-                    <span class="kv-value" data-el-id="${item.id}" aria-label="--. ">--</span>
+                    <span class="kv-value" data-el-id="${item.id}" aria-label="${t("val_na")}">N/A</span>
                   </div>`;
         case "disk":
           return `
             <div class="card-disk-row">
-                <span class="disk-name" data-el-id="${item.id}-name" aria-label="--, ">--</span>
-                <span class="disk-info" data-el-id="${item.id}-info" aria-label="--. ">--</span>
+                <span class="disk-name" data-el-id="${item.id}-name" aria-label="${t("val_na")}">N/A</span>
+                <span class="disk-info" data-el-id="${item.id}-info" aria-label="${t("val_na")}">N/A</span>
             </div>`;
         case "sparkline":
           return `<canvas class="sparkline-canvas" data-el-id="${item.id}" width="180" height="40"></canvas>`;
@@ -232,10 +248,7 @@ export function updateInterface(payload) {
           const textEl = el.querySelector(".monitor-val-text");
           if (textEl) {
             textEl.textContent = mon.label;
-            // Hack phonétique : "Onne" force la prononciation anglaise avec une voix française
-            // car aria-labelledby ignore l'attribut lang="en".
-            if (mon.label === "ON") textEl.setAttribute("aria-label", "Onne");
-            else textEl.removeAttribute("aria-label");
+            setAriaLabelForValue(textEl, mon.label);
           }
           renderCache[key] = mon.label;
         }
@@ -315,10 +328,7 @@ export function updateInterface(payload) {
             // Update Info (Petit)
             if (infoEl && renderCache[`${item.id}-i`] !== item.value.info) {
               infoEl.textContent = item.value.info;
-              infoEl.setAttribute(
-                "aria-label",
-                item.value.info ? item.value.info + ". " : "",
-              );
+              setAriaLabelForValue(infoEl, item.value.info);
               renderCache[`${item.id}-i`] = item.value.info;
             }
             return; // On a traité le disque, on passe à l'item suivant
@@ -364,7 +374,7 @@ export function updateInterface(payload) {
               const txt = targetEl.querySelector(".card-bar-text");
               if (txt) {
                 txt.textContent = item.display;
-                txt.setAttribute("aria-label", item.display + ". ");
+                setAriaLabelForValue(txt, item.display);
               }
               renderCache[keyDisp] = item.display;
             }
@@ -377,10 +387,7 @@ export function updateInterface(payload) {
               renderCache[keyDisp] !== item.display
             ) {
               targetEl.textContent = item.display;
-              targetEl.setAttribute(
-                "aria-label",
-                item.display ? item.display + ". " : "",
-              );
+              setAriaLabelForValue(targetEl, item.display);
               renderCache[keyDisp] = item.display;
             }
 
@@ -429,7 +436,7 @@ export function updateInterface(payload) {
             <div class="overlay-section">
                 <div class="overlay-header-row">
                     <span class="overlay-label">${item.title || ""}</span>
-                    <span class="overlay-val" data-oid="${item.id}-txt">--</span>
+                    <span class="overlay-val" data-oid="${item.id}-txt">N/A</span>
                 </div>
                 <div class="monitor-bar-track">
                     <div class="monitor-bar-fill" data-oid="${item.id}-bar"></div>
@@ -448,10 +455,11 @@ export function updateInterface(payload) {
 
           // Type: Clé/Valeur (ex: Modèle, Architecture)
           if (item.type === "kv") {
+            const lbl = item.title || "";
             return `
-             <div class="overlay-kv-row">
-                <span class="overlay-kv-label">${item.title || ""}</span>
-                <span class="overlay-kv-val" data-oid="${item.id}-txt">--</span>
+             <div class="overlay-kv-row" aria-labelledby="ov-lbl-${item.id} ov-val-${item.id}">
+                <span class="overlay-kv-label" id="ov-lbl-${item.id}" aria-hidden="true">${lbl}</span>
+                <span class="overlay-kv-val" id="ov-val-${item.id}" data-oid="${item.id}-txt" aria-hidden="true">N/A</span>
              </div>`;
           }
 
@@ -577,7 +585,15 @@ export function updateInterface(payload) {
           const txtEl = overlayBody.querySelector(
             `[data-oid="${item.id}-txt"]`,
           );
-          if (txtEl) txtEl.textContent = item.display;
+          if (txtEl) {
+            txtEl.textContent = item.display;
+            // Accessibilité : On ne met un aria-label QUE pour les valeurs vides/inconnues (évite le bégaiement)
+            if (["N/A", "--", "-"].includes(item.display)) {
+              txtEl.setAttribute("aria-label", t("val_na") || "Not Available");
+            } else {
+              txtEl.removeAttribute("aria-label");
+            }
+          }
           renderCache[key] = item.display;
         }
       }

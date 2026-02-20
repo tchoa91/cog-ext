@@ -20,13 +20,13 @@
   "card_storage_title": { "message": "스토리지" },
   "card_settings_title": { "message": "COGext - 설정" },
 
-  "label_mem_total": { "message": "전체 메모리" },
-  "label_mem_used": { "message": "사용 중인 메모리" },
+  "label_mem_total": { "message": "전체 메모리:" },
+  "label_mem_used": { "message": "사용 중인 메모리:" },
   "label_batt_time_general": {
     "message": "완전 충전/방전까지 남은 시간:"
   },
   "label_ip": { "message": "IP 주소:" },
-  "label_latency": { "message": "지연 시간" },
+  "label_latency": { "message": "지연 시간:" },
   "label_platform": { "message": "플랫폼:" },
   "label_free": { "message": "여유 공간" },
   "label_version": { "message": "버전:" },
@@ -37,27 +37,27 @@
   "overlay_chrome_title": { "message": "Chrome 상세 정보" },
   "overlay_storage_title": { "message": "스토리지 상세 정보" },
 
-  "detail_cpu_avg": { "message": "평균 부하" },
-  "detail_cpu_core": { "message": "코어별 부하" },
-  "detail_cpu_arch": { "message": "CPU 아키텍처" },
-  "detail_cpu_model": { "message": "CPU 모델" },
-  "detail_cpu_features": { "message": "CPU 기능" },
+  "detail_cpu_avg": { "message": "평균 부하:" },
+  "detail_cpu_core": { "message": "코어별 부하:" },
+  "detail_cpu_arch": { "message": "CPU 아키텍처:" },
+  "detail_cpu_model": { "message": "CPU 모델:" },
+  "detail_cpu_features": { "message": "CPU 기능:" },
 
-  "detail_temp_avg": { "message": "평균 온도" },
-  "detail_temp_sensor": { "message": "센서별 온도" },
+  "detail_temp_avg": { "message": "평균 온도:" },
+  "detail_temp_sensor": { "message": "센서별 온도:" },
 
-  "detail_disp_prim": { "message": "기본 디스플레이" },
-  "detail_disp_other": { "message": "보조 디스플레이" },
+  "detail_disp_prim": { "message": "기본 디스플레이:" },
+  "detail_disp_other": { "message": "보조 디스플레이:" },
   "detail_gpu": { "message": "그래픽 카드 (GPU):" },
 
   "detail_chrome_langs": { "message": "언어:" },
-  "detail_chrome_exts": { "message": "활성화된 확장 프로그램" },
+  "detail_chrome_exts": { "message": "활성화된 확장 프로그램:" },
 
   "detail_storage_discs": { "message": "디스크:" },
 
-  "settings_mood": { "message": "분위기 색상" },
-  "settings_theme": { "message": "테마: 라이트/다크" },
-  "settings_unit": { "message": "온도 단위: °C/°F" },
+  "settings_mood": { "message": "분위기 색상:" },
+  "settings_theme": { "message": "테마 (라이트/다크):" },
+  "settings_unit": { "message": "온도 단위 (°C/°F):" },
   "settings_footer": {
     "message": "2026 - GPL-3.0 - François Bacconnet <a href='https://ext.tchoa.com'>내 웹사이트</a>"
   },
@@ -78,5 +78,6 @@
   "disp_internal_short": { "message": "내장" },
   "disp_unknown": { "message": "알 수 없음" },
   "disp_none": { "message": "없음" },
-  "action_close": { "message": "창 닫기" }
+  "action_close": { "message": "창 닫기" },
+  "val_na": { "message": "사용할 수 없음" }
 }

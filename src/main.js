@@ -5,7 +5,7 @@
  * @author      François Bacconnet <https://github.com/tchoa91>
  * @copyright   2026 François Bacconnet
  * @license     GPL-3.0
- * @version     2.1
+ * @version     2.2
  * @homepage    https://ext.tchoa.com
  * @see         https://github.com/tchoa91/cog-ext
  */

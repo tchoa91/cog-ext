@@ -72,7 +72,6 @@
   "status_offline": { "message": "Desconectado" },
   "status_on": { "message": "Encendido" },
   "status_off": { "message": "Apagado" },
-  "status_hidden": { "message": "Oculto/Local" },
 
   "disp_internal": { "message": "Pantalla interna" },
   "disp_internal_short": { "message": "Interna" },

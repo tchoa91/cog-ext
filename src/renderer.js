@@ -5,7 +5,7 @@
  * @author      François Bacconnet <https://github.com/tchoa91>
  * @copyright   2026 François Bacconnet
  * @license     GPL-3.0
- * @version     2.1
+ * @version     2.2
  * @homepage    https://ext.tchoa.com
  * @see         https://github.com/tchoa91/cog-ext
  */
@@ -112,8 +112,10 @@ export function toggleTheme() {
 function buildInterface(config, callbacks) {
   // TopBar
   topBarEl.innerHTML = config.monitors
-    .map(
-      (item) => `
+    .map((item) => {
+      const linkedCard = config.cards.find((c) => c.id === item.cardLink);
+      const ariaLabel = linkedCard ? linkedCard.title : item.title;
+      return `
       <div class="monitor-block ${item.hasOvelay ? "interactive" : "static"}" 
             id="monitor-${item.id}" 
             data-link="${item.cardLink}"
@@ -122,7 +124,7 @@ function buildInterface(config, callbacks) {
             aria-labelledby="mon-lbl-${item.id} p-comma mon-val-${item.id}"
             ${!item.hasOvelay ? 'style="cursor: default;"' : ""}>
           <div class="monitor-header" aria-hidden="true">
-            <span class="monitor-label" id="mon-lbl-${item.id}">${item.title}</span>
+            <span class="monitor-label" id="mon-lbl-${item.id}" aria-label="${ariaLabel}">${item.title}</span>
             <div>
                 <span class="monitor-status-icon"></span>
                 <span class="monitor-val-text" id="mon-val-${item.id}" aria-label="${t("val_na")}">N/A</span>
@@ -134,8 +136,8 @@ function buildInterface(config, callbacks) {
               : ""
           }
           ${item.type === "dot" ? `<div class="monitor-dot" aria-hidden="true"></div>` : ""}
-      </div>`,
-    )
+      </div>`;
+    })
     .join("");
 
   // Écouteurs pour la TopBar
@@ -248,7 +250,16 @@ export function updateInterface(payload) {
           const textEl = el.querySelector(".monitor-val-text");
           if (textEl) {
             textEl.textContent = mon.label;
-            setAriaLabelForValue(textEl, mon.label);
+            if (mon.id === "net") {
+              textEl.setAttribute(
+                "aria-label",
+                mon.state === "normal"
+                  ? t("status_online")
+                  : t("status_offline"),
+              );
+            } else {
+              setAriaLabelForValue(textEl, mon.label);
+            }
           }
           renderCache[key] = mon.label;
         }

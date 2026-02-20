@@ -59,7 +59,7 @@
   "settings_unit": { "message": "Unidade de temp (°C/°F):" },
   "settings_mood": { "message": "Cor do ambiente:" },
   "settings_footer": {
-    "message": "2026 - GPL-3.0 - François Bacconnet <a href='https://ext.tchoa.com'>meu site</a>"
+    "message": "2026, GPL-3.0, François Bacconnet, <a href='https://ext.tchoa.com'>meu site</a>"
   },
 
   "status_charging": { "message": "Carregando" },
@@ -72,7 +72,6 @@
   "status_offline": { "message": "Offline" },
   "status_on": { "message": "Ligado" },
   "status_off": { "message": "Desligado" },
-  "status_hidden": { "message": "Oculto/Local" },
 
   "disp_internal": { "message": "Monitor interno" },
   "disp_internal_short": { "message": "Interno" },

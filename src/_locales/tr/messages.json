@@ -59,7 +59,7 @@
   "settings_theme": { "message": "Tema (Açık/Koyu):" },
   "settings_unit": { "message": "Sıcaklık Birimi (°C/°F):" },
   "settings_footer": {
-    "message": "2026 - GPL-3.0 - François Bacconnet <a href='https://ext.tchoa.com'>web sitem</a>"
+    "message": "2026, GPL-3.0, François Bacconnet, <a href='https://ext.tchoa.com'>web sitem</a>"
   },
 
   "status_charging": { "message": "Şarj oluyor" },
@@ -72,7 +72,6 @@
   "status_offline": { "message": "Çevrimdışı" },
   "status_on": { "message": "Açık" },
   "status_off": { "message": "Kapalı" },
-  "status_hidden": { "message": "Gizli/Yerel" },
 
   "disp_internal": { "message": "Dahili Monitör" },
   "disp_internal_short": { "message": "Dahili" },

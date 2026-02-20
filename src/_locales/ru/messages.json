@@ -59,7 +59,7 @@
   "settings_theme": { "message": "Тема (Светлая/Темная):" },
   "settings_unit": { "message": "Единица темп. (°C/°F):" },
   "settings_footer": {
-    "message": "2026 - GPL-3.0 - François Bacconnet <a href='https://ext.tchoa.com'>мой сайт</a>"
+    "message": "2026, GPL-3.0, François Bacconnet, <a href='https://ext.tchoa.com'>мой сайт</a>"
   },
 
   "status_charging": { "message": "Зарядка" },
@@ -72,7 +72,6 @@
   "status_offline": { "message": "Вне сети" },
   "status_on": { "message": "Вкл" },
   "status_off": { "message": "Выкл" },
-  "status_hidden": { "message": "Скрыто/Локально" },
 
   "disp_internal": { "message": "Встроенный монитор" },
   "disp_internal_short": { "message": "Внутр." },

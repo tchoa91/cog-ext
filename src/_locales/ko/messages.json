@@ -59,7 +59,7 @@
   "settings_theme": { "message": "테마 (라이트/다크):" },
   "settings_unit": { "message": "온도 단위 (°C/°F):" },
   "settings_footer": {
-    "message": "2026 - GPL-3.0 - François Bacconnet <a href='https://ext.tchoa.com'>내 웹사이트</a>"
+    "message": "2026, GPL-3.0, François Bacconnet, <a href='https://ext.tchoa.com'>내 웹사이트</a>"
   },
 
   "status_charging": { "message": "충전 중" },
@@ -72,7 +72,6 @@
   "status_offline": { "message": "오프라인" },
   "status_on": { "message": "켜짐" },
   "status_off": { "message": "꺼짐" },
-  "status_hidden": { "message": "숨김/로컬" },
 
   "disp_internal": { "message": "내장 모니터" },
   "disp_internal_short": { "message": "내장" },

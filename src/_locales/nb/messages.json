@@ -59,7 +59,7 @@
   "settings_theme": { "message": "Tema (Lyst/Mørkt):" },
   "settings_unit": { "message": "Temperaturenhet (°C/°F):" },
   "settings_footer": {
-    "message": "2026 - GPL-3.0 - François Bacconnet <a href='https://ext.tchoa.com'>min nettside</a>"
+    "message": "2026, GPL-3.0, François Bacconnet, <a href='https://ext.tchoa.com'>min nettside</a>"
   },
 
   "status_charging": { "message": "Lader" },
@@ -72,7 +72,6 @@
   "status_offline": { "message": "Offline" },
   "status_on": { "message": "På" },
   "status_off": { "message": "Av" },
-  "status_hidden": { "message": "Skjult/Lokal" },
 
   "disp_internal": { "message": "Intern skjerm" },
   "disp_internal_short": { "message": "Intern" },

@@ -1,47 +1,57 @@
-# System Information & Monitor Chrome Extension
+# **System monitor \- Chrome extension**
 
-COGext is a lightweight, high-performance system monitor extension for the Chrome browser. It provides a real-time, glanceable overview of your system's health (CPU, RAM, Battery, Network) wrapped in a modern, native-feeling interface.
+COGext is a highly optimized and accessible system monitor extension for the Chrome browser. It exposes the data provided by the chrome system API plus a little more, in the most effective way for all, including CPU load & temp, RAM, Battery, Network and much more.
 
 <img width="128" height="128" alt="Logo COGext" src="./src/assets/icon128.png" />
 
-## ✨ Features
+## **Features**
 
-### 📦 The Cards
+**4 Monitors & 9 Cards :**
 
-The dashboard is organized around key system metrics:
+- **CPU Usage:** Real-time processor load, plus arch, model & instruction set.\*+
+- **Memory:** RAM capacity and usage.
+- **Battery:** Charge level, power status, and time estimates.\*
+- **Network:** Connection status, public IP and latency.
+- Chip Temperature: Thermal sensors.+
+- Display: Screen resolution, primary display status, and GPU name.+
+- Storage: Disk usage overview. \*+
+- System: OS & platform,
+- Chrome: version, system languages and active extensions.+
 
-- **CPU Usage**: Real-time processor load monitoring.
-- **Temperature**: Thermal sensor readings (Average & Zones).
-- **Memory**: RAM capacity and usage visualization.
-- **Battery**: Charge level, power status, and time estimates.
-- **Network**: Connection status and public IP.
-- **Display**: Screen resolution, primary display status, and GPU name.
-- **Storage**: Disk usage overview.
-- **System**: Software details including Chrome version, OS platform, languages and active extensions.
+(\* OS restrictions apply) (+ Has overlay for details)
 
-### 🎨 User Experience (UX)
+Customisation: Temp unit, Dark/Light mode and 5 color moods.  
+Accessibility: Engineered for universal access (aiming WCAG 2.2 AAA). Includes curated semantic audio, multi-modal navigation, and native support for 17 languages.
 
-- **Grid Layout**: A clean, fixed interface with no scrolling required.
-- **Interactive Overlays**: Click on any card to reveal deep-dive metrics and detailed lists, keeping the main dashboard clean.
-- **Native Integration**: Dark/Light mode support, custom "Inter" font, and smooth animations.
+## **Code history**
 
-## History
+This extension started as a wild hack of the ChromeApp "COG" coded by François Beaufort, Chrome expert at Google, that demonstrated the capabilities of the Chrome system API. As the ChromeApps got deprecated in 2025 and no option available fed my needs, I used Jules & Gemini from Google to port it in an extension, nearly as it was. But I was not happy, because it was far from optimal in a long page to scroll. So I made some plans to rewrite it from scratch with a few objectifs :
 
-This extension is a wild hack from the ChromeApp "COG" coded by François Beaufort, Chrome expert at Google, to demonstrate the capabilities of the Chrome system API.
+- Be useful, like complete, but still simple & clear.
+- Be light in Ko and on ressources, but still solid & fast.
+- Be secure, respectful of privacy and transparent.
 
-Help was provided by Jules & Gemini by Google.
+## **Technologies used**
 
-## 🧠 V2.0 Design Philosophy: From List to Dashboard
+- Vanilla HTML, CSS & JS. Chrome extension MANIFEST V3.
+- MVC: a resilient API data provider, a main controller/tranformer & a dumb & secure renderer.
+- Optimisations: Scoping, Throttling, Caching.
+- Data/UI design in config (and more).
+- One hue value for all UI.
+- ChromeVox testing.
 
-The architecture of Version 2.0 was driven by a major shift in the UX paradigm: moving away from a simple list to a comprehensive **Dashboard**.
+## **Data usage**
 
-- **Immediate Visibility:** The UI is strictly constrained to the viewport—no scrolling required. A **Grid Layout** is used to manage screen real-estate efficiently, giving you the big picture instantly.
-- **Interactive Layers:** To balance simplicity and detail, we use an **Overlay System**:
-  - _State 1 (Card):_ Displays aggregated, essential data (e.g., Total CPU Load).
-  - _State 2 (Overlay):_ Reveals granular data on demand (e.g., Per-core Load).
-- **Smart Performance:** This design dictated a strict decoupling between the **DataStore** and **Renderer**. Heavy granular data is fetched _only_ when an overlay is requested, keeping the main monitoring loop lightweight (5Hz) and responsive.
+The data exposed by this extension and its usage are NOT recorded nor transmitted in any way. All but your preferences is deleted as soon as you close the extension. The extension works well off-line or behind a firewall, but it will not display your IP nor the latency.
 
 ## 🛠 Changelog
+
+### **V 2.2 \- Accessibility & Reliability**
+
+- Optimization of ARIA tree: semantic grouping, punctuation for pacing, label expansion (acronyms), and noise pruning for a cleaner audio interface.
+- Hardened XSS security.
+- Added pings (0.2Hz) to `clients3.google.com/generate\_204` to get “real” latency.
+- Bug fixes : GPU display & Storage on Windows.
 
 ### V 2.1 - Refinement & Personalization
 
@@ -107,6 +117,8 @@ COGext runs entirely locally and respects your privacy. It requires the followin
 - `system.display`: To detect screen resolution and multi-monitor setups.
 - `storage`: To save your preferences (Dark Mode, Unit C°/F°).
 - `management`: To display the list of installed extensions (Chrome Overlay).
+- `clients3.google.com`: To calculate the latency.
+- `api.ipify.org`: To get IP.
 
 ## 🤝 Feedback
 

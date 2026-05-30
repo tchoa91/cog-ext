@@ -33,7 +33,6 @@ const store = new DataStore();
 // CONFIGURATION DES SEUILS (Warn = Orange, Alert = Rouge)
 
 let tickCount = 0;
-let lastTime = 0;
 
 // Rythme de base : 5Hz (Fluidité des barres)
 const UPDATE_INTERVAL = 200;
@@ -160,7 +159,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const initialState = transformDataToRenderFormat(initData, true, null);
   updateInterface(initialState);
 
-  requestAnimationFrame(gameLoop);
+  setInterval(gameLoop, UPDATE_INTERVAL);
 });
 
 /**
@@ -512,41 +511,34 @@ function transformDataToRenderFormat(
 }
 
 // --- 5. BOUCLE PRINCIPALE ---
-async function gameLoop(timestamp) {
-  const deltaTime = timestamp - lastTime;
+async function gameLoop() {
+  tickCount++; // On compte ce tick
 
-  if (deltaTime >= UPDATE_INTERVAL) {
-    lastTime = timestamp;
-    tickCount++; // On compte ce tick
+  // Est-ce un tick "Majeur" (Texte + Barres) ou "Mineur" (Barres seules) ?
+  // Si tickCount est un multiple de 5 (5, 10, 15...), updateText est vrai
+  const updateText = tickCount % TEXT_UPDATE_RATIO === 0;
 
-    // Est-ce un tick "Majeur" (Texte + Barres) ou "Mineur" (Barres seules) ?
-    // Si tickCount est un multiple de 5 (5, 10, 15...), updateText est vrai
-    const updateText = tickCount % TEXT_UPDATE_RATIO === 0;
-
-    // A. SCOPE (Inchangé)
-    let scope = "cards";
-    if (activeOverlayId) {
-      const config = getOverlayConfig(activeOverlayId);
-      // Si overlay dynamique -> focus dessus, sinon mode eco (monitors only)
-      scope = config && config.isDynamic ? activeOverlayId : null;
-    }
-
-    // B. FETCH
-    const sysData = await store.getSystemState(scope);
-
-    // C. TRANSFORMATION
-    // On passe le booléen basé sur le tickCount
-    const renderState = transformDataToRenderFormat(
-      sysData,
-      updateText,
-      activeOverlayId,
-    );
-
-    // D. RENDU
-    updateInterface(renderState);
+  // A. SCOPE (Inchangé)
+  let scope = "cards";
+  if (activeOverlayId) {
+    const config = getOverlayConfig(activeOverlayId);
+    // Si overlay dynamique -> focus dessus, sinon mode eco (monitors only)
+    scope = config && config.isDynamic ? activeOverlayId : null;
   }
 
-  requestAnimationFrame(gameLoop);
+  // B. FETCH
+  const sysData = await store.getSystemState(scope);
+
+  // C. TRANSFORMATION
+  // On passe le booléen basé sur le tickCount
+  const renderState = transformDataToRenderFormat(
+    sysData,
+    updateText,
+    activeOverlayId,
+  );
+
+  // D. RENDU
+  updateInterface(renderState);
 }
 
 // --- UTILITAIRES ---

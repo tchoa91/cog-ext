@@ -15,6 +15,7 @@ import {
   updateInterface,
   setOverlayState,
   toggleTheme,
+  setMiniMode,
 } from "./renderer.js";
 
 import { DataStore } from "./data-store.js";
@@ -49,11 +50,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // ÉTAPE 1 : Chargement des Préférences (Bloquant pour éviter le flash)
   // On définit des défauts clairs ici.
-  const defaultPrefs = { theme: "dark", unit: "C", hue: 195 };
+  const defaultPrefs = { theme: "dark", unit: "C", hue: 195, mini: false };
   let prefs = defaultPrefs;
 
   try {
-    const stored = await chrome.storage.local.get(["theme", "unit", "hue"]);
+    const stored = await chrome.storage.local.get([
+      "theme",
+      "unit",
+      "hue",
+      "mini",
+    ]);
     // Fusionner avec les défauts au cas où une clé manque
     prefs = { ...defaultPrefs, ...stored };
   } catch (e) {
@@ -68,10 +74,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   // C. Hue (Variable CSS)
   appHue = prefs.hue;
   document.documentElement.style.setProperty("--brand-h", appHue);
+  // D. Mode Mini
+  setMiniMode(prefs.mini);
 
   // ÉTAPE 3 : Définition des Actions (Callbacks)
   const callbacks = {
     onOpen: async (cardId, event) => {
+      // Si on est en mode mini, on n'autorise pas l'ouverture des overlays
+      if (document.body.classList.contains("mini-mode")) return;
+
       const clickedEl = event ? event.currentTarget : null;
       if (activeOverlayId === cardId) {
         activeOverlayId = null;
@@ -134,6 +145,20 @@ document.addEventListener("DOMContentLoaded", async () => {
       document.documentElement.style.setProperty("--brand-h", appHue);
       chrome.storage.local.set({ hue: appHue });
       // Le renderer mettra à jour la classe .selected au prochain tick via resolveWidgetData
+    },
+
+    onMiniToggle: () => {
+      const isMini = document.body.classList.contains("mini-mode");
+      const nextMini = !isMini;
+
+      // Si on passe en mode mini, on ferme l'éventuel overlay ouvert
+      if (nextMini && activeOverlayId) {
+        activeOverlayId = null;
+        setOverlayState(false);
+      }
+
+      setMiniMode(nextMini);
+      chrome.storage.local.set({ mini: nextMini });
     },
 
     // Ouvre un nouvel onglet Chrome

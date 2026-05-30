@@ -78,5 +78,6 @@
   "disp_unknown": { "message": "Onbekend" },
   "disp_none": { "message": "Geen" },
   "action_close": { "message": "Venster sluiten" },
+  "action_toggle_mini": { "message": "Mini-modus inschakelen" },
   "val_na": { "message": "Niet beschikbaar" }
 }

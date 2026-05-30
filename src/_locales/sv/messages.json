@@ -78,5 +78,6 @@
   "disp_unknown": { "message": "Okänd" },
   "disp_none": { "message": "Ingen" },
   "action_close": { "message": "Stäng fönster" },
+  "action_toggle_mini": { "message": "Växla miniminimode" },
   "val_na": { "message": "Ej tillgänglig" }
 }

@@ -76,5 +76,6 @@
   "disp_unknown": { "message": "Inconnu" },
   "disp_none": { "message": "Aucun" },
   "action_close": { "message": "Fermer la fenêtre" },
+  "action_toggle_mini": { "message": "Basculer le mode Mini" },
   "val_na": { "message": "Non disponible" }
 }

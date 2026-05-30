@@ -78,5 +78,6 @@
   "disp_unknown": { "message": "不明" },
   "disp_none": { "message": "なし" },
   "action_close": { "message": "ウィンドウを閉じる" },
+  "action_toggle_mini": { "message": "ミニモードの切り替え" },
   "val_na": { "message": "利用不可" }
 }

@@ -78,5 +78,6 @@
   "disp_unknown": { "message": "未知" },
   "disp_none": { "message": "无" },
   "action_close": { "message": "关闭窗口" },
+  "action_toggle_mini": { "message": "切换迷你模式" },
   "val_na": { "message": "不可用" }
 }

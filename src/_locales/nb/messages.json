@@ -78,5 +78,6 @@
   "disp_unknown": { "message": "Ukjent" },
   "disp_none": { "message": "Ingen" },
   "action_close": { "message": "Lukk vindu" },
+  "action_toggle_mini": { "message": "Bytt minimodus" },
   "val_na": { "message": "Ikke tilgjengelig" }
 }

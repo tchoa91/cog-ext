@@ -78,5 +78,6 @@
   "disp_unknown": { "message": "Tidak diketahui" },
   "disp_none": { "message": "Tidak ada" },
   "action_close": { "message": "Tutup jendela" },
+  "action_toggle_mini": { "message": "Alihkan Mode Mini" },
   "val_na": { "message": "Tidak tersedia" }
 }

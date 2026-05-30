@@ -78,5 +78,6 @@
   "disp_unknown": { "message": "Неизвестно" },
   "disp_none": { "message": "Нет" },
   "action_close": { "message": "Закрыть окно" },
+  "action_toggle_mini": { "message": "Переключить мини-режим" },
   "val_na": { "message": "Недоступно" }
 }

@@ -108,18 +108,30 @@ export function toggleTheme() {
   document.body.setAttribute("data-theme", newTheme);
 }
 
+/**
+ * Applique le mode Mini (réduction de hauteur)
+ * @param {Boolean} isMini
+ */
+export function setMiniMode(isMini) {
+  if (isMini) {
+    document.body.classList.add("mini-mode");
+  } else {
+    document.body.classList.remove("mini-mode");
+  }
+}
+
 // === 3. CONSTRUCTION (BUILD) ===
 function buildInterface(config, callbacks) {
   // TopBar
-  topBarEl.innerHTML = config.monitors
+  const monitorsHtml = config.monitors
     .map((item) => {
       const linkedCard = config.cards.find((c) => c.id === item.cardLink);
       const ariaLabel = linkedCard ? linkedCard.title : item.title;
       return `
-      <div class="monitor-block ${item.hasOvelay ? "interactive" : "static"}" 
-            id="monitor-${item.id}" 
+      <div class="monitor-block ${item.hasOvelay ? "interactive" : "static"}"
+            id="monitor-${item.id}"
             data-link="${item.cardLink}"
-            tabindex="${item.hasOvelay ? "0" : "-1"}" 
+            tabindex="${item.hasOvelay ? "0" : "-1"}"
             ${item.hasOvelay ? 'role="button"' : ""}
             aria-labelledby="mon-lbl-${item.id} p-comma mon-val-${item.id}"
             ${!item.hasOvelay ? 'style="cursor: default;"' : ""}>
@@ -140,6 +152,13 @@ function buildInterface(config, callbacks) {
     })
     .join("");
 
+  topBarEl.innerHTML = `
+    ${monitorsHtml}
+    <button id="mini-toggle" class="mini-toggle" aria-label="${t("action_toggle_mini") || "Toggle Mini Mode"}" title="${t("action_toggle_mini") || "Toggle Mini Mode"}">
+      ${SVGS.chevron}
+    </button>
+  `;
+
   // Écouteurs pour la TopBar
   topBarEl.querySelectorAll(".monitor-block.interactive").forEach((el) => {
     el.addEventListener("click", (e) => callbacks.onOpen(el.dataset.link, e));
@@ -152,17 +171,22 @@ function buildInterface(config, callbacks) {
     });
   });
 
+  // Écouteur pour le mini toggle
+  document
+    .getElementById("mini-toggle")
+    .addEventListener("click", () => callbacks.onMiniToggle());
+
   // Grid
   gridEl.innerHTML = config.cards
     .map(
       (card) => `
-        <div class="card ${card.hasOvelay ? "interactive" : "static"}" 
+        <div class="card ${card.hasOvelay ? "interactive" : "static"}"
             id="card-${card.id}"
             data-id="${card.id}"
             tabindex="${card.hasOvelay ? "0" : "-1"}"
             ${card.hasOvelay ? 'role="button"' : ""}
             aria-labelledby="card-title-${card.id} p-comma card-body-${card.id}"
-            style="display: none;"> 
+            style="display: none;">
             <h3 id="card-title-${card.id}" aria-hidden="true">${card.title}</h3>
             <div class="card-body" id="card-body-${card.id}" aria-hidden="true">${renderCardContent(card.content)}</div>
             ${
@@ -522,7 +546,7 @@ export function updateInterface(payload) {
                   ${(item.options || [])
                     .map(
                       (opt) => `
-                    <button class="color-swatch" 
+                    <button class="color-swatch"
                             data-hue="${opt.val}"
                             aria-label="${opt.label}"
                             title="${opt.label} : ${opt.val}"

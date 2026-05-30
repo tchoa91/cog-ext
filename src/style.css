@@ -29,8 +29,9 @@
 
 body {
     width: 600px;
-    height: 600px;
-    /*height: auto;*/
+    height: max-content;
+    min-height: var(--topbar-height);
+    max-height: 600px;
     background-color: var(--bg-color);
     color: var(--text-main);
     font-family:
@@ -127,7 +128,7 @@ body {
    ========================================= */
 .mini-toggle {
     position: absolute;
-    bottom: -5px;
+    bottom: 0px;
     left: 50%;
     transform: translateX(-50%);
     background: var(--bg-color);
@@ -140,8 +141,7 @@ body {
     color: var(--text-muted);
     transition:
         color 0.2s,
-        background-color 0.2s,
-        transform 0.3s;
+        background-color 0.2s;
 }
 
 .mini-toggle:hover {
@@ -178,7 +178,7 @@ body.mini-mode .mini-toggle svg {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 15px;
+    padding: 0 15px 5px;
     gap: 15px;
     z-index: 200; /* Au-dessus de l'overlay */
     position: relative;

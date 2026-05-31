@@ -43,27 +43,6 @@ export function initRenderer(config, callbacks) {
     return;
   }
 
-  // --- PONCTUATION GLOBALE (ARIA) ---
-  // On crée des éléments invisibles référençables par ID pour aria-labelledby
-  const ariaPunct = document.createElement("div");
-  ariaPunct.style.cssText =
-    "position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap;";
-  ariaPunct.innerHTML =
-    '<span id="p-comma">, </span><span id="p-stop">. </span>';
-  document.body.appendChild(ariaPunct);
-  // ----------------------------------
-
-  // Accessibilité : On retire le rôle sémantique (souvent <main>) de la grille
-  // pour supprimer les annonces "Principal" / "Fin de principal" entre les cartes.
-  gridEl.setAttribute("role", "none");
-
-  // Configuration ARIA pour l'Overlay (Dialog Modal)
-  overlayEl.setAttribute("role", "dialog");
-  overlayEl.setAttribute("aria-modal", "true");
-  overlayEl.setAttribute("aria-labelledby", "overlay-title");
-  overlayEl.setAttribute("tabindex", "-1");
-  overlayEl.style.outline = "none";
-
   // Accessibilité : Label localisé pour le bouton fermer
   closeBtnEl.setAttribute("aria-label", t("action_close") || "Close");
 
@@ -133,10 +112,10 @@ function buildInterface(config, callbacks) {
             data-link="${item.cardLink}"
             tabindex="${item.hasOvelay ? "0" : "-1"}"
             ${item.hasOvelay ? 'role="button"' : ""}
-            aria-labelledby="mon-lbl-${item.id} p-comma mon-val-${item.id}"
+            aria-labelledby="mon-lbl-${item.id} mon-val-${item.id}"
             ${!item.hasOvelay ? 'style="cursor: default;"' : ""}>
           <div class="monitor-header" aria-hidden="true">
-            <span class="monitor-label" id="mon-lbl-${item.id}" aria-label="${ariaLabel}">${item.title}</span>
+            <span class="monitor-label" id="mon-lbl-${item.id}" aria-label="${ariaLabel} :">${item.title}</span>
             <div>
                 <span class="monitor-status-icon"></span>
                 <span class="monitor-val-text" id="mon-val-${item.id}" aria-label="${t("val_na")}">N/A</span>
@@ -185,9 +164,9 @@ function buildInterface(config, callbacks) {
             data-id="${card.id}"
             tabindex="${card.hasOvelay ? "0" : "-1"}"
             ${card.hasOvelay ? 'role="button"' : ""}
-            aria-labelledby="card-title-${card.id} p-comma card-body-${card.id}"
+            aria-labelledby="card-title-${card.id} card-body-${card.id}"
             style="display: none;">
-            <h3 id="card-title-${card.id}" aria-hidden="true">${card.title}</h3>
+            <h3 id="card-title-${card.id}" aria-hidden="true">${card.title}<span class="sr-only"> :</span></h3>
             <div class="card-body" id="card-body-${card.id}" aria-hidden="true">${renderCardContent(card.content)}</div>
             ${
               card.hasOvelay
@@ -241,7 +220,7 @@ function renderCardContent(contentItems) {
         case "kv":
           const lbl = item.title || "";
           return `<div class="card-kv-row">
-                    <span class="kv-label" ${lbl ? `aria-label="${lbl}, "` : ""}>${lbl}</span>
+                    <span class="kv-label" ${lbl ? `aria-label="${lbl}"` : ""}>${lbl}</span>
                     <span class="kv-value" data-el-id="${item.id}" aria-label="${t("val_na")}">N/A</span>
                   </div>`;
         case "disk":
@@ -356,7 +335,8 @@ export function updateInterface(payload) {
               nameEl.textContent = item.value.name;
               nameEl.setAttribute(
                 "aria-label",
-                item.value.name ? item.value.name + ", " : "",
+                // item.value.name ? item.value.name + ", " : "",
+                item.value.name,
               );
               renderCache[`${item.id}-n`] = item.value.name;
             }
@@ -439,7 +419,8 @@ export function updateInterface(payload) {
                   labelEl.textContent = item.label;
                   labelEl.setAttribute(
                     "aria-label",
-                    item.label ? item.label + ", " : "",
+                    // item.label ? item.label + ", " : "",
+                    item.label,
                   );
                   renderCache[keyLbl] = item.label;
                 }

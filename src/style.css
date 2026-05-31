@@ -1,6 +1,18 @@
 /* =========================================
    1. TYPOGRAPHIE & RESET
    ========================================= */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border-width: 0;
+}
+
 @font-face {
     font-family: "Inter";
     src: url("assets/fonts/Inter-300.ttf") format("truetype");
@@ -243,6 +255,7 @@ body.mini-mode .monitor-block.interactive:hover {
     justify-content: center;
     align-items: center;
     padding: 10px; /* Marge autour de la carte interne */
+    outline: none;
 
     /* État initial (Fermé) */
     opacity: 0;

@@ -24,8 +24,14 @@ let topBarEl;
 let gridEl;
 let overlayEl;
 let closeBtnEl;
+let alertEl;
 let appCallbacks = null;
 let lastFocusedElement = null;
+
+// Throttling des alertes ARIA
+let lastAlertText = "";
+let lastAlertTime = 0;
+const ALERT_THROTTLE = 15000; // 15 secondes
 
 // Optimisation : On mémorise les valeurs pour ne toucher le DOM que si nécessaire
 const renderCache = {};
@@ -37,6 +43,7 @@ export function initRenderer(config, callbacks) {
   topBarEl = document.getElementById("topbar");
   overlayEl = document.getElementById("overlay");
   closeBtnEl = document.getElementById("close-overlay");
+  alertEl = document.getElementById("aria-alerts");
 
   if (!gridEl || !topBarEl || !overlayEl || !closeBtnEl) {
     console.error("Renderer: DOM manquant.");
@@ -189,15 +196,20 @@ function buildInterface(config, callbacks) {
 }
 
 // Utilitaires Accessibilité
-function setAriaLabelForValue(el, value) {
+function setAriaLabelForValue(el, value, state = "normal") {
   if (["N/A", "--", "-"].includes(value)) {
     el.setAttribute("aria-label", t("val_na") || "Not Available");
   } else {
+    // On ajoute un préfixe selon l'état (Attention/Alerte)
+    let prefix = "";
+    if (state === "warning") prefix = t("status_warning") + ", ";
+    else if (state === "alert") prefix = t("status_alert") + ", ";
+
     // On remet le point pour marquer la pause (demandé pour les cartes)
     // String(value) gère le cas où value est le chiffre 0
     const valStr = value !== null && value !== undefined ? String(value) : "";
     if (valStr) {
-      el.setAttribute("aria-label", valStr + ". ");
+      el.setAttribute("aria-label", prefix + valStr + ". ");
     } else {
       el.removeAttribute("aria-label");
     }
@@ -240,6 +252,36 @@ function renderCardContent(contentItems) {
 
 // === 4. MISE A JOUR (UPDATE) ===
 export function updateInterface(payload) {
+  // 0. GESTION DES ALERTES GLOBALES (ARIA Status)
+  if (payload.globalAlert !== undefined && alertEl) {
+    const now = Date.now();
+    const hasChanged = payload.globalAlert !== lastAlertText;
+    const isExpired = now - lastAlertTime > ALERT_THROTTLE;
+
+    // On n'annonce que si :
+    // 1. Il y a un message (pas tout vert)
+    // 2. ET (le message a changé OU le délai de 15s est passé)
+    if (payload.globalAlert && (hasChanged || isExpired)) {
+      // Pour forcer l'annonce ARIA même si le texte est identique (isExpired),
+      // certains lecteurs ont besoin d'un micro-changement ou d'un vidage.
+      if (isExpired && !hasChanged) {
+        alertEl.textContent = "";
+        // Petit hack pour forcer le refresh dans le prochain cycle
+        setTimeout(() => {
+          if (alertEl) alertEl.textContent = payload.globalAlert;
+        }, 50);
+      } else {
+        alertEl.textContent = payload.globalAlert;
+      }
+      lastAlertText = payload.globalAlert;
+      lastAlertTime = now;
+    } else if (!payload.globalAlert && lastAlertText) {
+      // Tout est redevenu vert, on vide discrètement
+      alertEl.textContent = "";
+      lastAlertText = "";
+    }
+  }
+
   // A. GESTION DES MONITORS (TopBar)
   if (payload.monitors) {
     payload.monitors.forEach((mon) => {
@@ -261,7 +303,7 @@ export function updateInterface(payload) {
                   : t("status_offline"),
               );
             } else {
-              setAriaLabelForValue(textEl, mon.label);
+              setAriaLabelForValue(textEl, mon.label, mon.state);
             }
           }
           renderCache[key] = mon.label;
@@ -295,6 +337,12 @@ export function updateInterface(payload) {
         if (renderCache[key] !== mon.state) {
           el.setAttribute("data-state", mon.state);
           renderCache[key] = mon.state;
+          // Si l'état change, on rafraîchit l'aria-label (sauf pour le réseau)
+          if (mon.id !== "net") {
+            const textEl = el.querySelector(".monitor-val-text");
+            if (textEl)
+              setAriaLabelForValue(textEl, textEl.textContent, mon.state);
+          }
         }
       }
     });
@@ -374,6 +422,9 @@ export function updateInterface(payload) {
             ) {
               targetEl.setAttribute("data-state", item.state);
               renderCache[keyState] = item.state;
+              // Si l'état change, on rafraîchit l'aria-label du texte
+              const txt = targetEl.querySelector(".card-bar-text");
+              if (txt) setAriaLabelForValue(txt, txt.textContent, item.state);
             }
             // Mise à jour de la barre
             if (
@@ -389,20 +440,29 @@ export function updateInterface(payload) {
               const txt = targetEl.querySelector(".card-bar-text");
               if (txt) {
                 txt.textContent = item.display;
-                setAriaLabelForValue(txt, item.display);
+                setAriaLabelForValue(txt, item.display, item.state);
               }
               renderCache[keyDisp] = item.display;
             }
           }
           // Cas B : Valeur texte simple (kv ou value)
           else {
+            const keyState = `item-${item.id}-state`;
+            if (
+              item.state !== undefined &&
+              renderCache[keyState] !== item.state
+            ) {
+              setAriaLabelForValue(targetEl, targetEl.textContent, item.state);
+              renderCache[keyState] = item.state;
+            }
+
             // Mise à jour de la valeur principale
             if (
               item.display !== undefined &&
               renderCache[keyDisp] !== item.display
             ) {
               targetEl.textContent = item.display;
-              setAriaLabelForValue(targetEl, item.display);
+              setAriaLabelForValue(targetEl, item.display, item.state);
               renderCache[keyDisp] = item.display;
             }
 
@@ -603,12 +663,7 @@ export function updateInterface(payload) {
           );
           if (txtEl) {
             txtEl.textContent = item.display;
-            // Accessibilité : On ne met un aria-label QUE pour les valeurs vides/inconnues (évite le bégaiement)
-            if (["N/A", "--", "-"].includes(item.display)) {
-              txtEl.setAttribute("aria-label", t("val_na") || "Not Available");
-            } else {
-              txtEl.removeAttribute("aria-label");
-            }
+            setAriaLabelForValue(txtEl, item.display, item.state);
           }
           renderCache[key] = item.display;
         }
@@ -631,6 +686,12 @@ export function updateInterface(payload) {
               } else {
                 sectionEl.removeAttribute("data-state");
               }
+              // Rafraîchissement de l'aria-label si l'état change
+              const txtEl = sectionEl.querySelector(
+                `[data-oid="${item.id}-txt"]`,
+              );
+              if (txtEl)
+                setAriaLabelForValue(txtEl, txtEl.textContent, item.state);
             }
           }
           renderCache[key] = currentVal;
@@ -683,7 +744,11 @@ export function updateInterface(payload) {
           const ariaLabel = item.value
             .map((data) => {
               const pct = typeof data === "object" ? data.pct : data;
-              return `${pct}%`;
+              const state = typeof data === "object" ? data.state : "normal";
+              let prefix = "";
+              if (state === "warning") prefix = t("status_warning") + " ";
+              else if (state === "alert") prefix = t("status_alert") + " ";
+              return `${prefix}${pct}%`;
             })
             .join(", ");
 

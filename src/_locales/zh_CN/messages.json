@@ -72,6 +72,9 @@
   "status_offline": { "message": "离线" },
   "status_on": { "message": "开启" },
   "status_off": { "message": "关闭" },
+  "status_warning": { "message": "警告" },
+  "status_alert": { "message": "警报" },
+  "label_and": { "message": "和" },
 
   "disp_internal": { "message": "内置显示器" },
   "disp_internal_short": { "message": "内置" },

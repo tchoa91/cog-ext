@@ -72,6 +72,9 @@
   "status_offline": { "message": "Çevrimdışı" },
   "status_on": { "message": "Açık" },
   "status_off": { "message": "Kapalı" },
+  "status_warning": { "message": "Uyarı" },
+  "status_alert": { "message": "Alarm" },
+  "label_and": { "message": "ve" },
 
   "disp_internal": { "message": "Dahili Monitör" },
   "disp_internal_short": { "message": "Dahili" },

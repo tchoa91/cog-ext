@@ -72,6 +72,9 @@
   "status_offline": { "message": "Offline" },
   "status_on": { "message": "Aktif" },
   "status_off": { "message": "Nonaktif" },
+  "status_warning": { "message": "Peringatan" },
+  "status_alert": { "message": "Waspada" },
+  "label_and": { "message": "dan" },
 
   "disp_internal": { "message": "Layar Internal" },
   "disp_internal_short": { "message": "Internal" },

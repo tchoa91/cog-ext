@@ -72,6 +72,9 @@
   "status_offline": { "message": "Offline" },
   "status_on": { "message": "An" },
   "status_off": { "message": "Aus" },
+  "status_warning": { "message": "Warnung" },
+  "status_alert": { "message": "Alarm" },
+  "label_and": { "message": "und" },
 
   "disp_internal": { "message": "Interner Monitor" },
   "disp_internal_short": { "message": "Intern" },

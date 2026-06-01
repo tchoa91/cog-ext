@@ -423,6 +423,15 @@ function resolveWidgetData(itemId, data, updateText, isMonitor = false) {
       if (!firstDisk) return null;
 
       res.value = formatDiskData(firstDisk);
+
+      // Calcul de l'état (Alerte si disque presque plein)
+      if (firstDisk.capacity > 0 && firstDisk.availableCapacity !== null) {
+        const usedPct =
+          ((firstDisk.capacity - firstDisk.availableCapacity) /
+            firstDisk.capacity) *
+          100;
+        res.state = getLoadState(usedPct, THRESHOLDS.storage);
+      }
     }
 
     // Cas 2 : L'Overlay (Liste de tous les disques)
@@ -464,6 +473,8 @@ function transformDataToRenderFormat(
     overlay: null,
   };
 
+  const alertParts = [];
+
   // --- A. MONITORS (Le Socle : Toujours présent) ---
   UI_CONFIG.monitors.forEach((monConfig) => {
     const data = resolveWidgetData(monConfig.id, modulesData, updateText, true);
@@ -474,8 +485,74 @@ function transformDataToRenderFormat(
         id: monConfig.id,
         ...data,
       });
+
+      // Collecte des alertes pour le résumé global
+      if (updateText && data.state && data.state !== "normal") {
+        const label = monConfig.title || monConfig.id;
+        const status =
+          data.state === "alert" ? t("status_alert") : t("status_warning");
+        alertParts.push(`${label} : ${status}`);
+      }
     }
   });
+
+  if (updateText) {
+    const warnings = [];
+    const alerts = [];
+
+    const processItem = (label, state) => {
+      if (state === "alert") alerts.push(label);
+      else if (state === "warning") warnings.push(label);
+    };
+
+    // 1. Collecte des monitors
+    UI_CONFIG.monitors.forEach((monConfig) => {
+      const data = resolveWidgetData(
+        monConfig.id,
+        modulesData,
+        updateText,
+        true,
+      );
+      if (data && data.state) {
+        processItem(monConfig.title || monConfig.id, data.state);
+      }
+    });
+
+    // 2. Collecte des cartes additionnelles
+    UI_CONFIG.cards.forEach((cardConfig) => {
+      const isAlreadyMonitored = UI_CONFIG.monitors.some(
+        (m) => m.cardLink === cardConfig.id,
+      );
+      if (isAlreadyMonitored) return;
+
+      if (cardConfig.content && cardConfig.content[0]) {
+        const itemData = resolveWidgetData(
+          cardConfig.content[0].id,
+          modulesData,
+          updateText,
+          false,
+        );
+        if (itemData && itemData.state) {
+          processItem(cardConfig.title || cardConfig.id, itemData.state);
+        }
+      }
+    });
+
+    // 3. Construction du message final
+    const buildPhrase = (list, statusLabel) => {
+      if (list.length === 0) return "";
+      if (list.length === 1) return `${statusLabel} : ${list[0]}.`;
+
+      const last = list.pop();
+      const andLabel = t("label_and") || "and";
+      return `${statusLabel} : ${list.join(", ")} ${andLabel} ${last}.`;
+    };
+
+    const alertMsg = buildPhrase(alerts, t("status_alert"));
+    const warnMsg = buildPhrase(warnings, t("status_warning"));
+
+    state.globalAlert = [alertMsg, warnMsg].filter(Boolean).join(" ");
+  }
 
   // --- B. LOGIQUE DE SCOPE (Overlay vs Dashboard) ---
 

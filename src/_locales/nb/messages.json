@@ -72,6 +72,9 @@
   "status_offline": { "message": "Offline" },
   "status_on": { "message": "På" },
   "status_off": { "message": "Av" },
+  "status_warning": { "message": "Advarsel" },
+  "status_alert": { "message": "Alarm" },
+  "label_and": { "message": "og" },
 
   "disp_internal": { "message": "Intern skjerm" },
   "disp_internal_short": { "message": "Intern" },

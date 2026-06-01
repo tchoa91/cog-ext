@@ -72,6 +72,9 @@
   "status_offline": { "message": "オフライン" },
   "status_on": { "message": "オン" },
   "status_off": { "message": "オフ" },
+  "status_warning": { "message": "警告" },
+  "status_alert": { "message": "アラート" },
+  "label_and": { "message": "と" },
 
   "disp_internal": { "message": "内蔵モニター" },
   "disp_internal_short": { "message": "内蔵" },

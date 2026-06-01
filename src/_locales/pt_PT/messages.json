@@ -72,6 +72,9 @@
   "status_offline": { "message": "Offline" },
   "status_on": { "message": "Ligado" },
   "status_off": { "message": "Desligado" },
+  "status_warning": { "message": "Atenção" },
+  "status_alert": { "message": "Alerta" },
+  "label_and": { "message": "e" },
 
   "disp_internal": { "message": "Monitor interno" },
   "disp_internal_short": { "message": "Interno" },

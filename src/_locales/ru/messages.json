@@ -72,6 +72,9 @@
   "status_offline": { "message": "Вне сети" },
   "status_on": { "message": "Вкл" },
   "status_off": { "message": "Выкл" },
+  "status_warning": { "message": "Внимание" },
+  "status_alert": { "message": "Тревога" },
+  "label_and": { "message": "и" },
 
   "disp_internal": { "message": "Встроенный монитор" },
   "disp_internal_short": { "message": "Внутр." },

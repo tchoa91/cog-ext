@@ -121,6 +121,7 @@ export const UI_CONFIG = {
       title: t("overlay_cpu_title"),
       isDynamic: true,
       content: [
+        { id: "cpuSemanticDesc", type: "olDesc" },
         { id: "cpuLoadAverage", type: "olBar", title: t("detail_cpu_avg") },
         { id: "cpuLoadList", type: "olLoadList", title: t("detail_cpu_core") },
         { id: "cpuArc", type: "kv", title: t("detail_cpu_arch") },

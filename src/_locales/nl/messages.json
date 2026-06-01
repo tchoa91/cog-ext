@@ -81,6 +81,20 @@
   "disp_unknown": { "message": "Onbekend" },
   "disp_none": { "message": "Geen" },
   "action_close": { "message": "Venster sluiten" },
-  "action_toggle_mini": { "message": "Mini-modus inschakelen" },
-  "val_na": { "message": "Niet beschikbaar" }
+  "action_toggle_mini": { "message": "Mini-modus in-/uitschakelen" },
+  "val_na": { "message": "Niet beschikbaar" },
+  "cpu_mood_idle": { "message": "Systeem inactief" },
+  "cpu_mood_crit": { "message": "Kritieke globale overbelasting" },
+  "cpu_mood_asym": { "message": "Asymmetrische activiteit" },
+  "cpu_mood_homo": { "message": "Homogene belasting" },
+  "cpu_peaks_all": { "message": "Alle kernen staan in het rood." },
+  "cpu_peaks_one": {
+    "message": "Waarschuwing, pieken op kern $desc$.",
+    "placeholders": { "desc": { "content": "$1" } }
+  },
+  "cpu_peaks_none": { "message": "Geen kernoververhitting." },
+  "cpu_avg_label": {
+    "message": "Gemiddelde $avg$%.",
+    "placeholders": { "avg": { "content": "$1" } }
+  }
 }

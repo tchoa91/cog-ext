@@ -82,5 +82,19 @@
   "disp_none": { "message": "None" },
   "action_close": { "message": "Close window" },
   "action_toggle_mini": { "message": "Toggle Mini Mode" },
-  "val_na": { "message": "Not Available" }
+  "val_na": { "message": "Not available" },
+  "cpu_mood_idle": { "message": "System idle" },
+  "cpu_mood_crit": { "message": "Critical global overload" },
+  "cpu_mood_asym": { "message": "Asymmetric activity" },
+  "cpu_mood_homo": { "message": "Homogeneous load" },
+  "cpu_peaks_all": { "message": "All cores are in the red." },
+  "cpu_peaks_one": {
+    "message": "Warning, peaks on core $desc$.",
+    "placeholders": { "desc": { "content": "$1" } }
+  },
+  "cpu_peaks_none": { "message": "No core overheating." },
+  "cpu_avg_label": {
+    "message": "Average $avg$%.",
+    "placeholders": { "avg": { "content": "$1" } }
+  }
 }

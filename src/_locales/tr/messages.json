@@ -82,5 +82,19 @@
   "disp_none": { "message": "Yok" },
   "action_close": { "message": "Pencereyi kapat" },
   "action_toggle_mini": { "message": "Mini Modu Değiştir" },
-  "val_na": { "message": "Mevcut değil" }
+  "val_na": { "message": "Müsait değil" },
+  "cpu_mood_idle": { "message": "Sistem boşta" },
+  "cpu_mood_crit": { "message": "Kritik küresel aşırı yük" },
+  "cpu_mood_asym": { "message": "Asimetrik aktivite" },
+  "cpu_mood_homo": { "message": "Homojen yük" },
+  "cpu_peaks_all": { "message": "Tüm çekirdekler kırmızı bölgede." },
+  "cpu_peaks_one": {
+    "message": "Uyarı, çekirdek $desc$ üzerinde pikler.",
+    "placeholders": { "desc": { "content": "$1" } }
+  },
+  "cpu_peaks_none": { "message": "Çekirdek aşırı ısınması yok." },
+  "cpu_avg_label": {
+    "message": "Ortalama $avg$%.",
+    "placeholders": { "avg": { "content": "$1" } }
+  }
 }

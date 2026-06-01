@@ -82,5 +82,19 @@
   "disp_none": { "message": "Brak" },
   "action_close": { "message": "Zamknij okno" },
   "action_toggle_mini": { "message": "Przełącz tryb mini" },
-  "val_na": { "message": "Niedostępne" }
+  "val_na": { "message": "Niedostępne" },
+  "cpu_mood_idle": { "message": "System bezczynny" },
+  "cpu_mood_crit": { "message": "Krytyczne globalne przeciążenie" },
+  "cpu_mood_asym": { "message": "Aktywność asymetryczna" },
+  "cpu_mood_homo": { "message": "Obciążenie jednorodne" },
+  "cpu_peaks_all": { "message": "Wszystkie rdzenie są w czerwonej strefie." },
+  "cpu_peaks_one": {
+    "message": "Ostrzeżenie, skoki na rdzeniu $desc$.",
+    "placeholders": { "desc": { "content": "$1" } }
+  },
+  "cpu_peaks_none": { "message": "Brak przegrzewania rdzeni." },
+  "cpu_avg_label": {
+    "message": "Średnia $avg$%.",
+    "placeholders": { "avg": { "content": "$1" } }
+  }
 }

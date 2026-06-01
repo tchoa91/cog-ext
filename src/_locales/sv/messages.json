@@ -81,6 +81,20 @@
   "disp_unknown": { "message": "Okänd" },
   "disp_none": { "message": "Ingen" },
   "action_close": { "message": "Stäng fönster" },
-  "action_toggle_mini": { "message": "Växla miniminimode" },
-  "val_na": { "message": "Ej tillgänglig" }
+  "action_toggle_mini": { "message": "Växla minimini-läge" },
+  "val_na": { "message": "Ej tillgänglig" },
+  "cpu_mood_idle": { "message": "Systemet är inaktivt" },
+  "cpu_mood_crit": { "message": "Kritisk global överbelastning" },
+  "cpu_mood_asym": { "message": "Asymmetrisk aktivitet" },
+  "cpu_mood_homo": { "message": "Homogen belastning" },
+  "cpu_peaks_all": { "message": "Alla kärnor är i det röda området." },
+  "cpu_peaks_one": {
+    "message": "Varning, toppar på kärna $desc$.",
+    "placeholders": { "desc": { "content": "$1" } }
+  },
+  "cpu_peaks_none": { "message": "Ingen kärnöverhettning." },
+  "cpu_avg_label": {
+    "message": "Genomsnitt $avg$%.",
+    "placeholders": { "avg": { "content": "$1" } }
+  }
 }

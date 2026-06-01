@@ -609,6 +609,18 @@ body.mini-mode .monitor-block.interactive:hover {
 }
 
 /* --- Structure Interne --- */
+.overlay-desc {
+    margin-bottom: 20px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--text-main);
+    font-size: 0.95rem;
+    height: 5em; /* Permet 4 lignes avec un line-height de 1.2 */
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
 .overlay-section {
     margin-bottom: 20px;
 }
@@ -636,8 +648,14 @@ body.mini-mode .monitor-block.interactive:hover {
     color: var(--text-muted);
 }
 
+.overlay-kv-label {
+    white-space: nowrap;
+    margin-right: 10px;
+}
+
 .overlay-kv-val {
     font-weight: 500;
+    text-align: right;
 }
 
 /* --- Widget: CPU Cores Grid --- */

@@ -82,5 +82,19 @@
   "disp_none": { "message": "Tidak ada" },
   "action_close": { "message": "Tutup jendela" },
   "action_toggle_mini": { "message": "Alihkan Mode Mini" },
-  "val_na": { "message": "Tidak tersedia" }
+  "val_na": { "message": "Tidak tersedia" },
+  "cpu_mood_idle": { "message": "Sistem menganggur" },
+  "cpu_mood_crit": { "message": "Kelebihan beban global kritis" },
+  "cpu_mood_asym": { "message": "Aktivitas asimetris" },
+  "cpu_mood_homo": { "message": "Beban homogen" },
+  "cpu_peaks_all": { "message": "Semua inti berada di zona merah." },
+  "cpu_peaks_one": {
+    "message": "Peringatan, puncak pada inti $desc$.",
+    "placeholders": { "desc": { "content": "$1" } }
+  },
+  "cpu_peaks_none": { "message": "Tidak ada inti yang kepanasan." },
+  "cpu_avg_label": {
+    "message": "Rata-rata $avg$%.",
+    "placeholders": { "avg": { "content": "$1" } }
+  }
 }

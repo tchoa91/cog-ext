@@ -24,6 +24,59 @@ import { UI_CONFIG, THRESHOLDS } from "./config.js";
 // --- Raccourci i18n ---
 const t = chrome.i18n.getMessage;
 
+/**
+ * Traduit un tableau de pourcentages d'utilisation CPU en une description
+ * sémantique et diagnostique pour les lecteurs d'écran (Niveau WCAG AAA).
+ * @param {number[]} cores - Tableau des valeurs (ex: [45, 12, 85, 90])
+ * @returns {string} Phrase de synthèse
+ */
+function generateGraphSemantics(cores) {
+  if (!cores || cores.length === 0) return t("val_na");
+
+  const sum = cores.reduce((a, b) => a + b, 0);
+  const avg = Math.round(sum / cores.length);
+  const max = Math.max(...cores);
+
+  // 1. Détection de la "rugosité"
+  const isChaotic = cores.some((val) => Math.abs(val - avg) > 30);
+
+  // 2. Définition de l'ambiance globale
+  let mood = "";
+  if (avg < 20 && max < 40) {
+    mood = t("cpu_mood_idle");
+  } else if (avg > THRESHOLDS.cpu.alert) {
+    mood = t("cpu_mood_crit");
+  } else {
+    mood = isChaotic ? t("cpu_mood_asym") : t("cpu_mood_homo");
+  }
+
+  // 3. Identification des anomalies
+  const alertThreshold = THRESHOLDS.cpuCores.alert;
+  const peaks = [];
+
+  cores.forEach((val, index) => {
+    if (val >= alertThreshold) {
+      peaks.push({ id: index + 1, val: Math.round(val) });
+    }
+  });
+
+  // 4. Assemblage de la conclusion
+  let peaksText = "";
+  if (peaks.length > 0) {
+    if (peaks.length === cores.length) {
+      peaksText = t("cpu_peaks_all");
+    } else {
+      const peaksDesc = peaks.map((p) => `n°${p.id}: ${p.val}%`).join(", ");
+      peaksText = t("cpu_peaks_one", [peaksDesc]);
+    }
+  } else if (avg >= 20) {
+    peaksText = t("cpu_peaks_none");
+  }
+
+  const avgText = t("cpu_avg_label", [avg.toString()]);
+  return `${mood}. ${avgText} ${peaksText}`.trim();
+}
+
 // --- 1. CONFIGURATION (L'intention d'affichage) ---
 
 // Instanciation du Data Store
@@ -233,6 +286,10 @@ function resolveWidgetData(itemId, data, updateText, isMonitor = false) {
         res.label = res.display;
       }
       res.state = getLoadState(data.cpuUsage.usagePct, THRESHOLDS.cpu);
+    }
+    if (itemId === "cpuSemanticDesc") {
+      if (updateText)
+        res.display = generateGraphSemantics(data.cpuUsage.coresPct);
     }
     if (itemId === "cpuLoadList") {
       res.value = (data.cpuUsage.coresPct || []).map((c) => ({

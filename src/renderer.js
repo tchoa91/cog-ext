@@ -520,6 +520,11 @@ export function updateInterface(payload) {
             </div>`;
           }
 
+          // Type: Description sémantique (CPU)
+          if (item.type === "olDesc") {
+            return `<div class="overlay-desc" data-oid="${item.id}-txt"></div>`;
+          }
+
           // Type: Liste de charge (ex: Coeurs CPU)
           if (item.type === "olLoadList") {
             return `

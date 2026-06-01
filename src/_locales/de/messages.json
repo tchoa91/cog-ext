@@ -82,5 +82,19 @@
   "disp_none": { "message": "Keine" },
   "action_close": { "message": "Fenster schließen" },
   "action_toggle_mini": { "message": "Mini-Modus umschalten" },
-  "val_na": { "message": "Nicht verfügbar" }
+  "val_na": { "message": "Nicht verfügbar" },
+  "cpu_mood_idle": { "message": "System im Leerlauf" },
+  "cpu_mood_crit": { "message": "Kritische globale Überlastung" },
+  "cpu_mood_asym": { "message": "Asymmetrische Aktivität" },
+  "cpu_mood_homo": { "message": "Homogene Last" },
+  "cpu_peaks_all": { "message": "Alle Kerne sind im roten Bereich." },
+  "cpu_peaks_one": {
+    "message": "Warnung, Spitzen auf Kern $desc$.",
+    "placeholders": { "desc": { "content": "$1" } }
+  },
+  "cpu_peaks_none": { "message": "Kein Kern überhitzt." },
+  "cpu_avg_label": {
+    "message": "Durchschnitt $avg$%.",
+    "placeholders": { "avg": { "content": "$1" } }
+  }
 }

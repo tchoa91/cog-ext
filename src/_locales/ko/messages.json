@@ -82,5 +82,19 @@
   "disp_none": { "message": "없음" },
   "action_close": { "message": "창 닫기" },
   "action_toggle_mini": { "message": "미니 모드 전환" },
-  "val_na": { "message": "사용할 수 없음" }
+  "val_na": { "message": "사용 불가능" },
+  "cpu_mood_idle": { "message": "시스템 유휴 상태" },
+  "cpu_mood_crit": { "message": "심각한 전역 과부하" },
+  "cpu_mood_asym": { "message": "비대칭 활동" },
+  "cpu_mood_homo": { "message": "균일한 부하" },
+  "cpu_peaks_all": { "message": "모든 코어가 레드 존에 있습니다." },
+  "cpu_peaks_one": {
+    "message": "경고, 코어 $desc$에서 피크 발생.",
+    "placeholders": { "desc": { "content": "$1" } }
+  },
+  "cpu_peaks_none": { "message": "과열된 코어 없음." },
+  "cpu_avg_label": {
+    "message": "평균 $avg$%.",
+    "placeholders": { "avg": { "content": "$1" } }
+  }
 }

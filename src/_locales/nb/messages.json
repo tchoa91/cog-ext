@@ -81,6 +81,20 @@
   "disp_unknown": { "message": "Ukjent" },
   "disp_none": { "message": "Ingen" },
   "action_close": { "message": "Lukk vindu" },
-  "action_toggle_mini": { "message": "Bytt minimodus" },
-  "val_na": { "message": "Ikke tilgjengelig" }
+  "action_toggle_mini": { "message": "Veksle minimodus" },
+  "val_na": { "message": "Ikke tilgjengelig" },
+  "cpu_mood_idle": { "message": "Systemet er ledig" },
+  "cpu_mood_crit": { "message": "Kritisk global overbelastning" },
+  "cpu_mood_asym": { "message": "Asymmetrisk aktivitet" },
+  "cpu_mood_homo": { "message": "Homogen belastning" },
+  "cpu_peaks_all": { "message": "Alle kjerner er i det røde området." },
+  "cpu_peaks_one": {
+    "message": "Advarsel, topper på kjerne $desc$.",
+    "placeholders": { "desc": { "content": "$1" } }
+  },
+  "cpu_peaks_none": { "message": "Ingen kjerneoveroppheting." },
+  "cpu_avg_label": {
+    "message": "Gjennomsnitt $avg$%.",
+    "placeholders": { "avg": { "content": "$1" } }
+  }
 }

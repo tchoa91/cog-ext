@@ -82,5 +82,19 @@
   "disp_none": { "message": "Нет" },
   "action_close": { "message": "Закрыть окно" },
   "action_toggle_mini": { "message": "Переключить мини-режим" },
-  "val_na": { "message": "Недоступно" }
+  "val_na": { "message": "Недоступно" },
+  "cpu_mood_idle": { "message": "Система простаивает" },
+  "cpu_mood_crit": { "message": "Критическая глобальная перегрузка" },
+  "cpu_mood_asym": { "message": "Асимметричная активность" },
+  "cpu_mood_homo": { "message": "Однородная нагрузка" },
+  "cpu_peaks_all": { "message": "Все ядра находятся в красной зоне." },
+  "cpu_peaks_one": {
+    "message": "Предупреждение, скачки на ядре $desc$.",
+    "placeholders": { "desc": { "content": "$1" } }
+  },
+  "cpu_peaks_none": { "message": "Ядра не перегреваются." },
+  "cpu_avg_label": {
+    "message": "Среднее значение $avg$%.",
+    "placeholders": { "avg": { "content": "$1" } }
+  }
 }

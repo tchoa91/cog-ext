@@ -82,5 +82,19 @@
   "disp_none": { "message": "Nenhum" },
   "action_close": { "message": "Fechar janela" },
   "action_toggle_mini": { "message": "Alternar modo mini" },
-  "val_na": { "message": "Não disponível" }
+  "val_na": { "message": "Não disponível" },
+  "cpu_mood_idle": { "message": "Sistema ocioso" },
+  "cpu_mood_crit": { "message": "Sobrecarga global crítica" },
+  "cpu_mood_asym": { "message": "Atividade assimétrica" },
+  "cpu_mood_homo": { "message": "Carga homogênea" },
+  "cpu_peaks_all": { "message": "Todos os núcleos estão no vermelho." },
+  "cpu_peaks_one": {
+    "message": "Aviso, picos no núcleo $desc$.",
+    "placeholders": { "desc": { "content": "$1" } }
+  },
+  "cpu_peaks_none": { "message": "Nenhum núcleo superaquecido." },
+  "cpu_avg_label": {
+    "message": "Média $avg$%.",
+    "placeholders": { "avg": { "content": "$1" } }
+  }
 }

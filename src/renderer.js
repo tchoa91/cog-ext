@@ -493,7 +493,7 @@ export function updateInterface(payload) {
             return `
             <div class="overlay-section">
                 <div class="overlay-label" style="margin-bottom:5px;">${item.title || ""}</div>
-                <ul class="overlay-text-list" data-oid="${item.id}-list"></ul>
+                <div data-oid="${item.id}-list"></div>
             </div>`;
           }
 
@@ -502,7 +502,7 @@ export function updateInterface(payload) {
             return `
             <div class="overlay-section">
                 <div style="margin-bottom:8px;" class="overlay-label">${item.title || ""}</div>
-                <ul class="overlay-disk-list" data-oid="${item.id}-list"></ul>
+                <div class="overlay-disk-list" data-oid="${item.id}-list"></div>
             </div>`;
           }
 
@@ -646,17 +646,29 @@ export function updateInterface(payload) {
         const key = `ov-${item.id}-list`;
         const currentSig = item.value.length + (item.value[0] || "");
         if (listEl && renderCache[key] !== currentSig) {
-          // CORRECTION SECURITE : Utilisation de textContent pour éviter l'injection HTML
           listEl.textContent = "";
-          const fragment = document.createDocumentFragment(); // Optimisation : 1 seul reflow
 
-          item.value.forEach((line) => {
-            const li = document.createElement("li");
-            li.textContent = line;
-            fragment.appendChild(li);
-          });
+          if (item.value.length === 0) {
+            const emptyDiv = document.createElement("div");
+            emptyDiv.className = "overlay-disk-info"; // Réutilisation d'un style discret
+            emptyDiv.style.padding = "5px 0";
+            emptyDiv.style.textAlign = "right";
+            emptyDiv.textContent = t("disp_none");
+            listEl.appendChild(emptyDiv);
+          } else {
+            const ul = document.createElement("ul");
+            ul.className = "overlay-text-list";
+            const fragment = document.createDocumentFragment();
 
-          listEl.appendChild(fragment);
+            item.value.forEach((line) => {
+              const li = document.createElement("li");
+              li.textContent = line;
+              fragment.appendChild(li);
+            });
+
+            ul.appendChild(fragment);
+            listEl.appendChild(ul);
+          }
           renderCache[key] = currentSig;
         }
       }
@@ -785,8 +797,8 @@ export function updateInterface(payload) {
           listEl.textContent = "";
           const fragment = document.createDocumentFragment();
           item.value.forEach((disk) => {
-            const li = document.createElement("li");
-            li.className = "overlay-disk-item";
+            const container = document.createElement("div");
+            container.className = "overlay-disk-item";
 
             const nameSpan = document.createElement("span");
             nameSpan.className = "disk-name";
@@ -796,9 +808,9 @@ export function updateInterface(payload) {
             infoSpan.className = "disk-info";
             infoSpan.textContent = disk.info;
 
-            li.appendChild(nameSpan);
-            li.appendChild(infoSpan);
-            fragment.appendChild(li);
+            container.appendChild(nameSpan);
+            container.appendChild(infoSpan);
+            fragment.appendChild(container);
           });
           listEl.appendChild(fragment);
           renderCache[key] = currentSig;

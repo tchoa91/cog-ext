@@ -378,7 +378,6 @@ function resolveWidgetData(itemId, data, updateText, isMonitor = false) {
             : s.name || t("disp_unknown");
           return `${name} : ${s.w} x ${s.h}`;
         });
-      if (others.length === 0) others.push(t("disp_none"));
       res.value = updateText ? others : undefined;
     }
     if (itemId === "gpu") res.display = txt(data.display.gpu);
@@ -392,7 +391,7 @@ function resolveWidgetData(itemId, data, updateText, isMonitor = false) {
     if (itemId === "chromeLanguages") res.display = txt(data.system.languages);
     if (itemId === "chromeExtensions") {
       const raw = data.system.extensions;
-      res.value = Array.isArray(raw) ? raw : [raw || t("disp_none")];
+      res.value = Array.isArray(raw) ? raw : [];
     }
     if (itemId === "appVersion") res.display = txt(data.system.appVersion);
   }

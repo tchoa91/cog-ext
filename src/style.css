@@ -337,6 +337,9 @@ body.mini-mode .monitor-block.interactive:hover {
 .monitor-header > div {
     display: flex;
     align-items: center; /* Aligne l'éclair et le texte verticalement */
+    font-variant-numeric: tabular-nums;
+    min-width: 4ch;
+    justify-content: flex-end;
 }
 
 .monitor-status-icon {
@@ -509,6 +512,9 @@ body.mini-mode .monitor-block.interactive:hover {
 .card-kv-row .kv-value {
     color: var(--text-main); /* VOTRE variable pour faire ressortir la data */
     font-weight: 500;
+    min-width: 3ch; /* Évite les micro-reflows sur les chiffres */
+    text-align: right;
+    font-variant-numeric: tabular-nums;
 }
 
 .card-bar-row {
@@ -528,6 +534,8 @@ body.mini-mode .monitor-block.interactive:hover {
     font-size: 1rem;
     text-align: right; /* Sécurité si le texte est long */
     line-height: 0.6em;
+    min-width: 4.5ch; /* Sécurise la largeur pour les % (ex: 100%) */
+    font-variant-numeric: tabular-nums;
 }
 
 .sparkline-canvas {
@@ -578,6 +586,7 @@ body.mini-mode .monitor-block.interactive:hover {
     color: var(--text-main); /* Force la couleur du texte du thème */
     width: 100%;
     height: 100%;
+    min-height: 480px; /* Sécurité pour éviter le collapse */
     border-radius: var(--radius-lg);
     padding: 30px;
     display: flex;
@@ -586,6 +595,13 @@ body.mini-mode .monitor-block.interactive:hover {
     box-shadow: 0 5px 6px rgba(0, 0, 0, 0.05);
     border: 1px solid var(--border-subtle);
     font-size: 1.5em;
+}
+
+#overlay-body {
+    flex: 1;
+    overflow-y: auto; /* Scroll global si le contenu dépasse */
+    margin-right: -10px; /* Petit hack pour coller le scroll au bord */
+    padding-right: 10px;
 }
 
 #close-overlay {

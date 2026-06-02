@@ -74,7 +74,8 @@ function generateGraphSemantics(cores) {
   }
 
   const avgText = t("cpu_avg_label", [avg.toString()]);
-  return `${mood}. ${avgText} ${peaksText}`.trim();
+  // return `${mood}. ${avgText} ${peaksText}`.trim();
+  return `${mood}. ${peaksText}`.trim();
 }
 
 // --- 1. CONFIGURATION (L'intention d'affichage) ---

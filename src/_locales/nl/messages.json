@@ -1,7 +1,7 @@
 {
   "appName": { "message": "COGext: Systeemmonitor" },
   "appDesc": {
-    "message": "Je systeem zoals Chrome het ziet — gepresenteerd in een modern, lichtgewicht en open-source dashboard."
+    "message": "Je systeem zoals Chrome het ziet – gepresenteerd in een modern, lichtgewicht en open-source dashboard."
   },
 
   "monitor_cpu": { "message": "CPU" },
@@ -20,58 +20,58 @@
   "card_storage_title": { "message": "Opslag" },
   "card_settings_title": { "message": "COGext - Instellingen" },
 
-  "label_mem_total": { "message": "Totaal geheugen:" },
-  "label_mem_used": { "message": "Gebruikt geheugen:" },
+  "label_mem_total": { "message": "Totaal geheugen :" },
+  "label_mem_used": { "message": "Gebruikt geheugen :" },
   "label_batt_time_general": {
-    "message": "Tijd tot volledig opgeladen/leeg:"
+    "message": "Tijd tot volledig opgeladen/leeg :"
   },
-  "label_ip": { "message": "IP:" },
-  "label_latency": { "message": "Latentie:" },
-  "label_platform": { "message": "Platform:" },
+  "label_ip": { "message": "IP-adres :" },
+  "label_latency": { "message": "Latentie :" },
+  "label_platform": { "message": "Platform :" },
   "label_free": { "message": "vrij" },
-  "label_version": { "message": "Versie:" },
+  "label_version": { "message": "Versie :" },
 
   "overlay_cpu_title": { "message": "Details CPU-belasting" },
-  "overlay_temp_title": { "message": "Temperatuurdetails" },
-  "overlay_disp_title": { "message": "Schermdetails" },
+  "overlay_temp_title": { "message": "Details temperatuur" },
+  "overlay_disp_title": { "message": "Details scherm" },
   "overlay_chrome_title": { "message": "Chrome-details" },
-  "overlay_storage_title": { "message": "Opslagdetails" },
+  "overlay_storage_title": { "message": "Details opslag" },
 
-  "detail_cpu_avg": { "message": "Gemiddelde belasting:" },
-  "detail_cpu_core": { "message": "Belasting per kern:" },
-  "detail_cpu_arch": { "message": "CPU-architectuur:" },
-  "detail_cpu_model": { "message": "CPU-model:" },
-  "detail_cpu_features": { "message": "CPU-functies:" },
+  "detail_cpu_avg": { "message": "Gemiddelde belasting :" },
+  "detail_cpu_core": { "message": "Belasting per kern :" },
+  "detail_cpu_arch": { "message": "CPU-architectuur :" },
+  "detail_cpu_model": { "message": "CPU-model :" },
+  "detail_cpu_features": { "message": "CPU-functies :" },
 
-  "detail_temp_avg": { "message": "Gemiddelde temperatuur:" },
-  "detail_temp_sensor": { "message": "Temperatuur per sensor:" },
+  "detail_temp_avg": { "message": "Gemiddelde temperatuur :" },
+  "detail_temp_sensor": { "message": "Temperatuur per sensor :" },
 
-  "detail_disp_prim": { "message": "Hoofdscherm:" },
-  "detail_disp_other": { "message": "Extra schermen:" },
-  "detail_gpu": { "message": "Videokaart (GPU):" },
+  "detail_disp_prim": { "message": "Hoofdscherm :" },
+  "detail_disp_other": { "message": "Extra schermen :" },
+  "detail_gpu": { "message": "GPU :" },
 
-  "detail_chrome_langs": { "message": "Talen:" },
-  "detail_chrome_exts": { "message": "Actieve extensies:" },
+  "detail_chrome_langs": { "message": "Talen :" },
+  "detail_chrome_exts": { "message": "Actieve extensies :" },
 
-  "detail_storage_discs": { "message": "Schijven:" },
+  "detail_storage_discs": { "message": "Schijven :" },
 
-  "settings_mood": { "message": "Sfeerkleur:" },
-  "settings_theme": { "message": "Thema (Licht/Donker):" },
-  "settings_unit": { "message": "Temperatuureenheid (°C/°F):" },
+  "settings_theme": { "message": "Donker thema inschakelen :" },
+  "settings_unit": { "message": "Gebruik °F voor temperatuur :" },
+  "settings_mood": { "message": "Sfeerkleur :" },
   "settings_footer": {
-    "message": "2026, GPL-3.0, François Bacconnet, <a href='https://ext.tchoa.com'>mijn website</a>"
+    "message": "2026, GPL-3.0, François Bacconnet, <a href='https://ext.tchoa.com'>Meer info</a>"
   },
 
   "status_charging": { "message": "Opladen" },
   "status_on_battery": { "message": "Op accu" },
-  "status_full_charge_in": { "message": "Volledig geladen in:" },
-  "status_time_left": { "message": "Resterende accutijd:" },
+  "status_full_charge_in": { "message": "Volledig geladen in :" },
+  "status_time_left": { "message": "Resterende tijd :" },
   "status_powered": { "message": "Netstroom" },
 
   "status_online": { "message": "Online" },
   "status_offline": { "message": "Offline" },
-  "status_on": { "message": "Aan" },
-  "status_off": { "message": "Uit" },
+  "status_on": { "message": "AAN" },
+  "status_off": { "message": "UIT" },
   "status_warning": { "message": "Waarschuwing" },
   "status_alert": { "message": "Alarm" },
   "label_and": { "message": "en" },
@@ -92,7 +92,7 @@
     "message": "Waarschuwing, pieken op kern $desc$.",
     "placeholders": { "desc": { "content": "$1" } }
   },
-  "cpu_peaks_none": { "message": "Geen kernoververhitting." },
+  "cpu_peaks_none": { "message": "Geen kern overbelast." },
   "cpu_avg_label": {
     "message": "Gemiddelde $avg$%.",
     "placeholders": { "avg": { "content": "$1" } }

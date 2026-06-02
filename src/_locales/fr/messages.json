@@ -1,7 +1,7 @@
 {
   "appName": { "message": "COGext : Moniteur Système" },
   "appDesc": {
-    "message": "Votre système, tel que le voit Chrome, dans un tableau de bord moderne, léger et open-source."
+    "message": "Votre système, tel que le voit Chrome — présenté dans un tableau de bord moderne, léger et open-source."
   },
 
   "monitor_cpu": { "message": "CPU" },
@@ -18,79 +18,81 @@
   "card_chrome_title": { "message": "Chrome" },
   "card_os_title": { "message": "Système" },
   "card_storage_title": { "message": "Stockage" },
-  "card_settings_title": { "message": "COGext - Réglages" },
+  "card_settings_title": { "message": "COGext - Paramètres" },
 
   "label_mem_total": { "message": "Mémoire totale :" },
   "label_mem_used": { "message": "Mémoire utilisée :" },
-  "label_batt_time_general": { "message": "Temps avant charge/décharge :" },
-  "label_ip": { "message": "IP :" },
+  "label_batt_time_general": {
+    "message": "Temps avant charge/décharge complète :"
+  },
+  "label_ip": { "message": "Adresse IP :" },
   "label_latency": { "message": "Latence :" },
   "label_platform": { "message": "Plateforme :" },
   "label_free": { "message": "libre" },
   "label_version": { "message": "Version :" },
 
-  "overlay_cpu_title": { "message": "Détails Charge CPU" },
-  "overlay_temp_title": { "message": "Détails Température" },
-  "overlay_disp_title": { "message": "Détails Affichage" },
+  "overlay_cpu_title": { "message": "Détails de la charge CPU" },
+  "overlay_temp_title": { "message": "Détails de la température" },
+  "overlay_disp_title": { "message": "Détails de l'affichage" },
   "overlay_chrome_title": { "message": "Détails Chrome" },
-  "overlay_storage_title": { "message": "Détails Stockage" },
+  "overlay_storage_title": { "message": "Détails du stockage" },
 
-  "detail_cpu_avg": { "message": "Charge Moyenne :" },
+  "detail_cpu_avg": { "message": "Charge moyenne :" },
   "detail_cpu_core": { "message": "Charge par cœur :" },
   "detail_cpu_arch": { "message": "Architecture CPU :" },
   "detail_cpu_model": { "message": "Modèle CPU :" },
-  "detail_cpu_features": { "message": "Instructions CPU :" },
+  "detail_cpu_features": { "message": "Fonctionnalités CPU :" },
 
-  "detail_temp_avg": { "message": "Température Moyenne :" },
-  "detail_temp_sensor": { "message": "Température par sonde :" },
+  "detail_temp_avg": { "message": "Température moyenne :" },
+  "detail_temp_sensor": { "message": "Température par capteur :" },
 
-  "detail_disp_prim": { "message": "Écran Principal :" },
-  "detail_disp_other": { "message": "Écrans Secondaires :" },
+  "detail_disp_prim": { "message": "Écran principal :" },
+  "detail_disp_other": { "message": "Écrans secondaires :" },
   "detail_gpu": { "message": "GPU :" },
 
   "detail_chrome_langs": { "message": "Langues :" },
-  "detail_chrome_exts": { "message": "Extensions Actives :" },
+  "detail_chrome_exts": { "message": "Extensions actives :" },
 
   "detail_storage_discs": { "message": "Disques :" },
 
-  "settings_theme": { "message": "Thème (Clair/Sombre) :" },
-  "settings_unit": { "message": "Unité Température (°C/°F) :" },
-  "settings_mood": { "message": "Ambiance :" },
+  "settings_theme": { "message": "Activer le thème sombre :" },
+  "settings_unit": { "message": "Utiliser le °F pour la température :" },
+  "settings_mood": { "message": "Couleur d'ambiance :" },
   "settings_footer": {
-    "message": "2026, GPL-3.0, François Bacconnet, <a href='https://ext.tchoa.com'>Plus d'info</a>"
+    "message": "2026, GPL-3.0, François Bacconnet, <a href='https://ext.tchoa.com'>Plus d'infos</a>"
   },
 
   "status_charging": { "message": "En charge" },
   "status_on_battery": { "message": "Sur batterie" },
   "status_full_charge_in": { "message": "Charge complète dans :" },
   "status_time_left": { "message": "Temps restant :" },
-  "status_powered": { "message": "Branchée" },
+  "status_powered": { "message": "Sur secteur" },
 
   "status_online": { "message": "En ligne" },
   "status_offline": { "message": "Hors ligne" },
   "status_on": { "message": "ON" },
   "status_off": { "message": "OFF" },
-  "status_warning": { "message": "Attention" },
+  "status_warning": { "message": "Avertissement" },
   "status_alert": { "message": "Alerte" },
   "label_and": { "message": "et" },
 
-  "disp_internal": { "message": "Écran Interne" },
+  "disp_internal": { "message": "Écran interne" },
   "disp_internal_short": { "message": "Interne" },
   "disp_unknown": { "message": "Inconnu" },
   "disp_none": { "message": "Aucun" },
   "action_close": { "message": "Fermer la fenêtre" },
-  "action_toggle_mini": { "message": "Basculer le mode Mini" },
-  "val_na": { "message": "Non disponible" },
+  "action_toggle_mini": { "message": "Basculer le mode mini" },
+  "val_na": { "message": "Indisponible" },
   "cpu_mood_idle": { "message": "Système au repos" },
   "cpu_mood_crit": { "message": "Surcharge globale critique" },
   "cpu_mood_asym": { "message": "Activité asymétrique" },
   "cpu_mood_homo": { "message": "Charge homogène" },
   "cpu_peaks_all": { "message": "Tous les cœurs sont dans le rouge." },
   "cpu_peaks_one": {
-    "message": "Attention, pics sur cœur $desc$.",
+    "message": "Attention, pics sur le cœur $desc$.",
     "placeholders": { "desc": { "content": "$1" } }
   },
-  "cpu_peaks_none": { "message": "Aucun cœur en surchauffe." },
+  "cpu_peaks_none": { "message": "Aucun cœur en surcharge." },
   "cpu_avg_label": {
     "message": "Moyenne $avg$%.",
     "placeholders": { "avg": { "content": "$1" } }

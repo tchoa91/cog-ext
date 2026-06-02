@@ -1,7 +1,7 @@
 {
   "appName": { "message": "COGext: Monitor Sistem" },
   "appDesc": {
-    "message": "Sistem Anda, sebagaimana dilihat oleh Chrome — disajikan dalam dashboard modern, ringan, dan open-source."
+    "message": "Sistem Anda, sebagaimana dilihat oleh Chrome – disajikan dalam dashboard modern, ringan, dan open-source."
   },
 
   "monitor_cpu": { "message": "CPU" },
@@ -20,68 +20,66 @@
   "card_storage_title": { "message": "Penyimpanan" },
   "card_settings_title": { "message": "COGext - Pengaturan" },
 
-  "label_mem_total": { "message": "Total memori:" },
-  "label_mem_used": { "message": "Memori terpakai:" },
-  "label_batt_time_general": {
-    "message": "Waktu sebelum daya penuh/habis:"
-  },
-  "label_ip": { "message": "IP:" },
-  "label_latency": { "message": "Latensi:" },
-  "label_platform": { "message": "Platform:" },
+  "label_mem_total": { "message": "Total memori :" },
+  "label_mem_used": { "message": "Memori terpakai :" },
+  "label_batt_time_general": { "message": "Waktu sebelum daya penuh/habis :" },
+  "label_ip": { "message": "Alamat IP :" },
+  "label_latency": { "message": "Latensi :" },
+  "label_platform": { "message": "Platform :" },
   "label_free": { "message": "tersedia" },
-  "label_version": { "message": "Versi:" },
+  "label_version": { "message": "Versi :" },
 
-  "overlay_cpu_title": { "message": "Detail Beban CPU" },
-  "overlay_temp_title": { "message": "Detail Suhu" },
-  "overlay_disp_title": { "message": "Detail Layar" },
+  "overlay_cpu_title": { "message": "Detail beban CPU" },
+  "overlay_temp_title": { "message": "Detail suhu" },
+  "overlay_disp_title": { "message": "Detail layar" },
   "overlay_chrome_title": { "message": "Detail Chrome" },
-  "overlay_storage_title": { "message": "Detail Penyimpanan" },
+  "overlay_storage_title": { "message": "Detail penyimpanan" },
 
-  "detail_cpu_avg": { "message": "Beban rata-rata:" },
-  "detail_cpu_core": { "message": "Beban per inti:" },
-  "detail_cpu_arch": { "message": "Arsitektur CPU:" },
-  "detail_cpu_model": { "message": "Model CPU:" },
-  "detail_cpu_features": { "message": "Fitur CPU:" },
+  "detail_cpu_avg": { "message": "Beban rata-rata :" },
+  "detail_cpu_core": { "message": "Beban per inti :" },
+  "detail_cpu_arch": { "message": "Arsitektur CPU :" },
+  "detail_cpu_model": { "message": "Model CPU :" },
+  "detail_cpu_features": { "message": "Fitur CPU :" },
 
-  "detail_temp_avg": { "message": "Suhu rata-rata:" },
-  "detail_temp_sensor": { "message": "Suhu per sensor:" },
+  "detail_temp_avg": { "message": "Suhu rata-rata :" },
+  "detail_temp_sensor": { "message": "Suhu per sensor :" },
 
-  "detail_disp_prim": { "message": "Layar Utama:" },
-  "detail_disp_other": { "message": "Layar Sekunder:" },
-  "detail_gpu": { "message": "GPU:" },
+  "detail_disp_prim": { "message": "Layar utama :" },
+  "detail_disp_other": { "message": "Layar sekunder :" },
+  "detail_gpu": { "message": "GPU :" },
 
-  "detail_chrome_langs": { "message": "Bahasa:" },
-  "detail_chrome_exts": { "message": "Ekstensi Aktif:" },
+  "detail_chrome_langs": { "message": "Bahasa :" },
+  "detail_chrome_exts": { "message": "Ekstensi aktif :" },
 
-  "detail_storage_discs": { "message": "Disk:" },
+  "detail_storage_discs": { "message": "Disk :" },
 
-  "settings_mood": { "message": "Warna Suasana:" },
-  "settings_theme": { "message": "Tema (Terang/Gelap):" },
-  "settings_unit": { "message": "Unit Suhu (°C/°F):" },
+  "settings_theme": { "message": "Aktifkan tema gelap :" },
+  "settings_unit": { "message": "Gunakan °F untuk suhu :" },
+  "settings_mood": { "message": "Warna suasana :" },
   "settings_footer": {
-    "message": "2026, GPL-3.0, François Bacconnet, <a href='https://ext.tchoa.com'>situs web saya</a>"
+    "message": "2026, GPL-3.0, François Bacconnet, <a href='https://ext.tchoa.com'>Info lanjut</a>"
   },
 
   "status_charging": { "message": "Mengisi daya" },
   "status_on_battery": { "message": "Menggunakan baterai" },
-  "status_full_charge_in": { "message": "Penuh dalam:" },
-  "status_time_left": { "message": "Sisa waktu baterai:" },
+  "status_full_charge_in": { "message": "Penuh dalam :" },
+  "status_time_left": { "message": "Sisa waktu :" },
   "status_powered": { "message": "Tersambung daya" },
 
   "status_online": { "message": "Online" },
   "status_offline": { "message": "Offline" },
-  "status_on": { "message": "Aktif" },
-  "status_off": { "message": "Nonaktif" },
+  "status_on": { "message": "AKTIF" },
+  "status_off": { "message": "NONAKTIF" },
   "status_warning": { "message": "Peringatan" },
   "status_alert": { "message": "Waspada" },
   "label_and": { "message": "dan" },
 
-  "disp_internal": { "message": "Layar Internal" },
+  "disp_internal": { "message": "Layar internal" },
   "disp_internal_short": { "message": "Internal" },
   "disp_unknown": { "message": "Tidak diketahui" },
   "disp_none": { "message": "Tidak ada" },
   "action_close": { "message": "Tutup jendela" },
-  "action_toggle_mini": { "message": "Alihkan Mode Mini" },
+  "action_toggle_mini": { "message": "Alihkan mode mini" },
   "val_na": { "message": "Tidak tersedia" },
   "cpu_mood_idle": { "message": "Sistem menganggur" },
   "cpu_mood_crit": { "message": "Kelebihan beban global kritis" },
@@ -92,7 +90,7 @@
     "message": "Peringatan, puncak pada inti $desc$.",
     "placeholders": { "desc": { "content": "$1" } }
   },
-  "cpu_peaks_none": { "message": "Tidak ada inti yang kepanasan." },
+  "cpu_peaks_none": { "message": "Tidak ada inti kelebihan beban." },
   "cpu_avg_label": {
     "message": "Rata-rata $avg$%.",
     "placeholders": { "avg": { "content": "$1" } }

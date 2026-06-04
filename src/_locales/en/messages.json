@@ -18,14 +18,14 @@
   "card_chrome_title": { "message": "Chrome" },
   "card_os_title": { "message": "OS" },
   "card_storage_title": { "message": "Storage" },
-  "card_settings_title": { "message": "COGext - settings" },
+  "card_settings_title": { "message": "COGext - Settings" },
 
   "label_mem_total": { "message": "Total memory :" },
   "label_mem_used": { "message": "Used memory :" },
   "label_batt_time_general": {
     "message": "Time before full charge/discharge :"
   },
-  "label_ip": { "message": "IP :" },
+  "label_ip": { "message": "IP address :" },
   "label_latency": { "message": "Latency :" },
   "label_platform": { "message": "Platform :" },
   "label_free": { "message": "free" },
@@ -37,46 +37,64 @@
   "overlay_chrome_title": { "message": "Chrome details" },
   "overlay_storage_title": { "message": "Storage details" },
 
-  "detail_cpu_avg": { "message": "Average CPU Load :" },
-  "detail_cpu_core": { "message": "CPU Load per core :" },
-  "detail_cpu_arch": { "message": "CPU Architecture :" },
-  "detail_cpu_model": { "message": "CPU Model :" },
-  "detail_cpu_features": { "message": "CPU Features :" },
+  "detail_cpu_avg": { "message": "Average CPU load :" },
+  "detail_cpu_core": { "message": "CPU load per core :" },
+  "detail_cpu_arch": { "message": "CPU architecture :" },
+  "detail_cpu_model": { "message": "CPU model :" },
+  "detail_cpu_features": { "message": "CPU features :" },
 
-  "detail_temp_avg": { "message": "Average CPU Temperature :" },
-  "detail_temp_sensor": { "message": "CPU Temperature per sensor :" },
+  "detail_temp_avg": { "message": "Average CPU temperature :" },
+  "detail_temp_sensor": { "message": "CPU temperature per sensor :" },
 
-  "detail_disp_prim": { "message": "Primary Display :" },
-  "detail_disp_other": { "message": "Secondary Displays :" },
+  "detail_disp_prim": { "message": "Primary display :" },
+  "detail_disp_other": { "message": "Secondary displays :" },
   "detail_gpu": { "message": "GPU :" },
 
   "detail_chrome_langs": { "message": "Languages :" },
-  "detail_chrome_exts": { "message": "Active Extensions :" },
+  "detail_chrome_exts": { "message": "Active extensions :" },
 
-  "detail_storage_discs": { "message": "Discs:" },
+  "detail_storage_discs": { "message": "Discs :" },
 
-  "settings_mood": { "message": "Ambiance Color :" },
-  "settings_theme": { "message": "Theme (Light/Dark) :" },
-  "settings_unit": { "message": "Temperature Unit (°C/°F) :" },
+  "settings_mood": { "message": "Ambiance color :" },
+  "settings_theme": { "message": "Enable dark theme :" },
+  "settings_unit": { "message": "Use °F for temperature :" },
   "settings_footer": {
-    "message": "2026, GPL-3.0, François Bacconnet, <a href='https://ext.tchoa.com'>my website</a>"
+    "message": "2026, GPL-3.0, François Bacconnet, <a href='https://ext.tchoa.com'>More info</a>"
   },
 
   "status_charging": { "message": "Charging" },
   "status_on_battery": { "message": "On battery" },
-  "status_full_charge_in": { "message": "Full charge in:" },
-  "status_time_left": { "message": "Battery time left:" },
-  "status_powered": { "message": "Powered" },
+  "status_full_charge_in": { "message": "Full charge in :" },
+  "status_time_left": { "message": "Time left :" },
+  "status_powered": { "message": "Plugged in" },
 
   "status_online": { "message": "Online" },
   "status_offline": { "message": "Offline" },
   "status_on": { "message": "ON" },
   "status_off": { "message": "OFF" },
+  "status_warning": { "message": "Warning" },
+  "status_alert": { "message": "Alert" },
+  "label_and": { "message": "and" },
 
-  "disp_internal": { "message": "Internal Display" },
+  "disp_internal": { "message": "Internal display" },
   "disp_internal_short": { "message": "Internal" },
   "disp_unknown": { "message": "Unknown" },
   "disp_none": { "message": "None" },
   "action_close": { "message": "Close window" },
-  "val_na": { "message": "Not Available" }
+  "action_toggle_mini": { "message": "Toggle mini mode" },
+  "val_na": { "message": "Not available" },
+  "cpu_mood_idle": { "message": "System idle" },
+  "cpu_mood_crit": { "message": "Critical global overload" },
+  "cpu_mood_asym": { "message": "Asymmetric activity" },
+  "cpu_mood_homo": { "message": "Homogeneous load" },
+  "cpu_peaks_all": { "message": "All cores are in the red." },
+  "cpu_peaks_one": {
+    "message": "Warning, peaks on core $desc$.",
+    "placeholders": { "desc": { "content": "$1" } }
+  },
+  "cpu_peaks_none": { "message": "No core in overload." },
+  "cpu_avg_label": {
+    "message": "Average $avg$%.",
+    "placeholders": { "avg": { "content": "$1" } }
+  }
 }

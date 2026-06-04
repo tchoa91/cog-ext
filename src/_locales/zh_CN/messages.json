@@ -1,7 +1,7 @@
 {
   "appName": { "message": "COGext : 系统监控" },
   "appDesc": {
-    "message": "Chrome 视角下的系统信息——通过现代化、轻量化且开源的仪表板呈现"
+    "message": "Chrome 视角下的系统信息 – 通过现代化、轻量化且开源的仪表板呈现"
   },
 
   "monitor_cpu": { "message": "处理器" },
@@ -20,16 +20,14 @@
   "card_storage_title": { "message": "存储" },
   "card_settings_title": { "message": "COGext - 设置" },
 
-  "label_mem_total": { "message": "总内存：" },
-  "label_mem_used": { "message": "已用内存：" },
-  "label_batt_time_general": {
-    "message": "距充满/耗尽剩余时间："
-  },
-  "label_ip": { "message": "IP 地址：" },
-  "label_latency": { "message": "延迟：" },
-  "label_platform": { "message": "平台：" },
+  "label_mem_total": { "message": "总内存 ：" },
+  "label_mem_used": { "message": "已用内存 ：" },
+  "label_batt_time_general": { "message": "距充满/耗尽剩余时间 ：" },
+  "label_ip": { "message": "IP 地址 ：" },
+  "label_latency": { "message": "延迟 ：" },
+  "label_platform": { "message": "平台 ：" },
   "label_free": { "message": "可用" },
-  "label_version": { "message": "版本：" },
+  "label_version": { "message": "版本 ：" },
 
   "overlay_cpu_title": { "message": "CPU 负载详情" },
   "overlay_temp_title": { "message": "CPU 温度详情" },
@@ -37,46 +35,64 @@
   "overlay_chrome_title": { "message": "Chrome 详情" },
   "overlay_storage_title": { "message": "存储详情" },
 
-  "detail_cpu_avg": { "message": "平均 CPU 负载：" },
-  "detail_cpu_core": { "message": "每核心 CPU 负载：" },
-  "detail_cpu_arch": { "message": "CPU 架构：" },
-  "detail_cpu_model": { "message": "CPU 型号：" },
-  "detail_cpu_features": { "message": "CPU 特性：" },
+  "detail_cpu_avg": { "message": "平均 CPU 负载 ：" },
+  "detail_cpu_core": { "message": "每核心 CPU 负载 ：" },
+  "detail_cpu_arch": { "message": "CPU 架构 ：" },
+  "detail_cpu_model": { "message": "CPU 型号 ：" },
+  "detail_cpu_features": { "message": "CPU 特性 ：" },
 
-  "detail_temp_avg": { "message": "平均 CPU 温度：" },
-  "detail_temp_sensor": { "message": "每传感器 CPU 温度：" },
+  "detail_temp_avg": { "message": "平均 CPU 温度 ：" },
+  "detail_temp_sensor": { "message": "每传感器 CPU 温度 ：" },
 
-  "detail_disp_prim": { "message": "主显示器：" },
-  "detail_disp_other": { "message": "次要显示器：" },
-  "detail_gpu": { "message": "显卡 (GPU)：" },
+  "detail_disp_prim": { "message": "主显示器 ：" },
+  "detail_disp_other": { "message": "次要显示器 ：" },
+  "detail_gpu": { "message": "GPU ：" },
 
-  "detail_chrome_langs": { "message": "语言：" },
-  "detail_chrome_exts": { "message": "已启用的扩展程序：" },
+  "detail_chrome_langs": { "message": "语言 ：" },
+  "detail_chrome_exts": { "message": "已启用的扩展程序 ：" },
 
-  "detail_storage_discs": { "message": "磁盘：" },
+  "detail_storage_discs": { "message": "磁盘 ：" },
 
-  "settings_mood": { "message": "氛围颜色：" },
-  "settings_theme": { "message": "主题 (浅色/深色)：" },
-  "settings_unit": { "message": "温度单位 (°C/°F)：" },
+  "settings_theme": { "message": "开启深色主题 ：" },
+  "settings_unit": { "message": "温度单位使用 °F ：" },
+  "settings_mood": { "message": "氛围颜色 ：" },
   "settings_footer": {
-    "message": "2026, GPL-3.0, François Bacconnet, <a href='https://ext.tchoa.com'>我的网站</a>"
+    "message": "2026, GPL-3.0, François Bacconnet, <a href='https://ext.tchoa.com'>更多信息</a>"
   },
 
   "status_charging": { "message": "正在充电" },
   "status_on_battery": { "message": "电池供电" },
-  "status_full_charge_in": { "message": "距充满还需：" },
-  "status_time_left": { "message": "电池剩余时间：" },
+  "status_full_charge_in": { "message": "距充满还需 ：" },
+  "status_time_left": { "message": "剩余时间 ：" },
   "status_powered": { "message": "接通电源" },
 
   "status_online": { "message": "在线" },
   "status_offline": { "message": "离线" },
   "status_on": { "message": "开启" },
   "status_off": { "message": "关闭" },
+  "status_warning": { "message": "警告" },
+  "status_alert": { "message": "警报" },
+  "label_and": { "message": "和" },
 
   "disp_internal": { "message": "内置显示器" },
   "disp_internal_short": { "message": "内置" },
   "disp_unknown": { "message": "未知" },
   "disp_none": { "message": "无" },
   "action_close": { "message": "关闭窗口" },
-  "val_na": { "message": "不可用" }
+  "action_toggle_mini": { "message": "切换迷你模式" },
+  "val_na": { "message": "不可用" },
+  "cpu_mood_idle": { "message": "系统空闲" },
+  "cpu_mood_crit": { "message": "严重的全局过载" },
+  "cpu_mood_asym": { "message": "非对称活动" },
+  "cpu_mood_homo": { "message": "均匀负载" },
+  "cpu_peaks_all": { "message": "所有核心都处于红色区域。" },
+  "cpu_peaks_one": {
+    "message": "警告，核心 $desc$ 出现峰值。",
+    "placeholders": { "desc": { "content": "$1" } }
+  },
+  "cpu_peaks_none": { "message": "核心未过载。" },
+  "cpu_avg_label": {
+    "message": "平均 $avg$%。",
+    "placeholders": { "avg": { "content": "$1" } }
+  }
 }

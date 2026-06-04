@@ -15,6 +15,7 @@ import {
   updateInterface,
   setOverlayState,
   toggleTheme,
+  setMiniMode,
 } from "./renderer.js";
 
 import { DataStore } from "./data-store.js";
@@ -22,6 +23,60 @@ import { UI_CONFIG, THRESHOLDS } from "./config.js";
 
 // --- Raccourci i18n ---
 const t = chrome.i18n.getMessage;
+
+/**
+ * Traduit un tableau de pourcentages d'utilisation CPU en une description
+ * sémantique et diagnostique pour les lecteurs d'écran (Niveau WCAG AAA).
+ * @param {number[]} cores - Tableau des valeurs (ex: [45, 12, 85, 90])
+ * @returns {string} Phrase de synthèse
+ */
+function generateGraphSemantics(cores) {
+  if (!cores || cores.length === 0) return t("val_na");
+
+  const sum = cores.reduce((a, b) => a + b, 0);
+  const avg = Math.round(sum / cores.length);
+  const max = Math.max(...cores);
+
+  // 1. Détection de la "rugosité"
+  const isChaotic = cores.some((val) => Math.abs(val - avg) > 30);
+
+  // 2. Définition de l'ambiance globale
+  let mood = "";
+  if (avg < 20 && max < 40) {
+    mood = t("cpu_mood_idle");
+  } else if (avg > THRESHOLDS.cpu.alert) {
+    mood = t("cpu_mood_crit");
+  } else {
+    mood = isChaotic ? t("cpu_mood_asym") : t("cpu_mood_homo");
+  }
+
+  // 3. Identification des anomalies
+  const alertThreshold = THRESHOLDS.cpuCores.alert;
+  const peaks = [];
+
+  cores.forEach((val, index) => {
+    if (val >= alertThreshold) {
+      peaks.push({ id: index + 1, val: Math.round(val) });
+    }
+  });
+
+  // 4. Assemblage de la conclusion
+  let peaksText = "";
+  if (peaks.length > 0) {
+    if (peaks.length === cores.length) {
+      peaksText = t("cpu_peaks_all");
+    } else {
+      const peaksDesc = peaks.map((p) => `n°${p.id}: ${p.val}%`).join(", ");
+      peaksText = t("cpu_peaks_one", [peaksDesc]);
+    }
+  } else if (avg >= 20) {
+    peaksText = t("cpu_peaks_none");
+  }
+
+  const avgText = t("cpu_avg_label", [avg.toString()]);
+  // return `${mood}. ${avgText} ${peaksText}`.trim();
+  return `${mood}. ${peaksText}`.trim();
+}
 
 // --- 1. CONFIGURATION (L'intention d'affichage) ---
 
@@ -33,7 +88,6 @@ const store = new DataStore();
 // CONFIGURATION DES SEUILS (Warn = Orange, Alert = Rouge)
 
 let tickCount = 0;
-let lastTime = 0;
 
 // Rythme de base : 5Hz (Fluidité des barres)
 const UPDATE_INTERVAL = 200;
@@ -50,11 +104,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // ÉTAPE 1 : Chargement des Préférences (Bloquant pour éviter le flash)
   // On définit des défauts clairs ici.
-  const defaultPrefs = { theme: "dark", unit: "C", hue: 195 };
+  const defaultPrefs = { theme: "dark", unit: "C", hue: 195, mini: false };
   let prefs = defaultPrefs;
 
   try {
-    const stored = await chrome.storage.local.get(["theme", "unit", "hue"]);
+    const stored = await chrome.storage.local.get([
+      "theme",
+      "unit",
+      "hue",
+      "mini",
+    ]);
     // Fusionner avec les défauts au cas où une clé manque
     prefs = { ...defaultPrefs, ...stored };
   } catch (e) {
@@ -69,10 +128,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   // C. Hue (Variable CSS)
   appHue = prefs.hue;
   document.documentElement.style.setProperty("--brand-h", appHue);
+  // D. Mode Mini
+  setMiniMode(prefs.mini);
 
   // ÉTAPE 3 : Définition des Actions (Callbacks)
   const callbacks = {
     onOpen: async (cardId, event) => {
+      // Si on est en mode mini, on n'autorise pas l'ouverture des overlays
+      if (document.body.classList.contains("mini-mode")) return;
+
       const clickedEl = event ? event.currentTarget : null;
       if (activeOverlayId === cardId) {
         activeOverlayId = null;
@@ -137,6 +201,20 @@ document.addEventListener("DOMContentLoaded", async () => {
       // Le renderer mettra à jour la classe .selected au prochain tick via resolveWidgetData
     },
 
+    onMiniToggle: () => {
+      const isMini = document.body.classList.contains("mini-mode");
+      const nextMini = !isMini;
+
+      // Si on passe en mode mini, on ferme l'éventuel overlay ouvert
+      if (nextMini && activeOverlayId) {
+        activeOverlayId = null;
+        setOverlayState(false);
+      }
+
+      setMiniMode(nextMini);
+      chrome.storage.local.set({ mini: nextMini });
+    },
+
     // Ouvre un nouvel onglet Chrome
     onLinkClick: (url) => {
       chrome.tabs.create({ url: url });
@@ -160,7 +238,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const initialState = transformDataToRenderFormat(initData, true, null);
   updateInterface(initialState);
 
-  requestAnimationFrame(gameLoop);
+  setInterval(gameLoop, UPDATE_INTERVAL);
 });
 
 /**
@@ -209,6 +287,10 @@ function resolveWidgetData(itemId, data, updateText, isMonitor = false) {
         res.label = res.display;
       }
       res.state = getLoadState(data.cpuUsage.usagePct, THRESHOLDS.cpu);
+    }
+    if (itemId === "cpuSemanticDesc") {
+      if (updateText)
+        res.display = generateGraphSemantics(data.cpuUsage.coresPct);
     }
     if (itemId === "cpuLoadList") {
       res.value = (data.cpuUsage.coresPct || []).map((c) => ({
@@ -354,7 +436,6 @@ function resolveWidgetData(itemId, data, updateText, isMonitor = false) {
             : s.name || t("disp_unknown");
           return `${name} : ${s.w} x ${s.h}`;
         });
-      if (others.length === 0) others.push(t("disp_none"));
       res.value = updateText ? others : undefined;
     }
     if (itemId === "gpu") res.display = txt(data.display.gpu);
@@ -368,7 +449,7 @@ function resolveWidgetData(itemId, data, updateText, isMonitor = false) {
     if (itemId === "chromeLanguages") res.display = txt(data.system.languages);
     if (itemId === "chromeExtensions") {
       const raw = data.system.extensions;
-      res.value = Array.isArray(raw) ? raw : [raw || t("disp_none")];
+      res.value = Array.isArray(raw) ? raw : [];
     }
     if (itemId === "appVersion") res.display = txt(data.system.appVersion);
   }
@@ -400,6 +481,15 @@ function resolveWidgetData(itemId, data, updateText, isMonitor = false) {
       if (!firstDisk) return null;
 
       res.value = formatDiskData(firstDisk);
+
+      // Calcul de l'état (Alerte si disque presque plein)
+      if (firstDisk.capacity > 0 && firstDisk.availableCapacity !== null) {
+        const usedPct =
+          ((firstDisk.capacity - firstDisk.availableCapacity) /
+            firstDisk.capacity) *
+          100;
+        res.state = getLoadState(usedPct, THRESHOLDS.storage);
+      }
     }
 
     // Cas 2 : L'Overlay (Liste de tous les disques)
@@ -441,6 +531,8 @@ function transformDataToRenderFormat(
     overlay: null,
   };
 
+  const alertParts = [];
+
   // --- A. MONITORS (Le Socle : Toujours présent) ---
   UI_CONFIG.monitors.forEach((monConfig) => {
     const data = resolveWidgetData(monConfig.id, modulesData, updateText, true);
@@ -451,8 +543,74 @@ function transformDataToRenderFormat(
         id: monConfig.id,
         ...data,
       });
+
+      // Collecte des alertes pour le résumé global
+      if (updateText && data.state && data.state !== "normal") {
+        const label = monConfig.title || monConfig.id;
+        const status =
+          data.state === "alert" ? t("status_alert") : t("status_warning");
+        alertParts.push(`${label} : ${status}`);
+      }
     }
   });
+
+  if (updateText) {
+    const warnings = [];
+    const alerts = [];
+
+    const processItem = (label, state) => {
+      if (state === "alert") alerts.push(label);
+      else if (state === "warning") warnings.push(label);
+    };
+
+    // 1. Collecte des monitors
+    UI_CONFIG.monitors.forEach((monConfig) => {
+      const data = resolveWidgetData(
+        monConfig.id,
+        modulesData,
+        updateText,
+        true,
+      );
+      if (data && data.state) {
+        processItem(monConfig.title || monConfig.id, data.state);
+      }
+    });
+
+    // 2. Collecte des cartes additionnelles
+    UI_CONFIG.cards.forEach((cardConfig) => {
+      const isAlreadyMonitored = UI_CONFIG.monitors.some(
+        (m) => m.cardLink === cardConfig.id,
+      );
+      if (isAlreadyMonitored) return;
+
+      if (cardConfig.content && cardConfig.content[0]) {
+        const itemData = resolveWidgetData(
+          cardConfig.content[0].id,
+          modulesData,
+          updateText,
+          false,
+        );
+        if (itemData && itemData.state) {
+          processItem(cardConfig.title || cardConfig.id, itemData.state);
+        }
+      }
+    });
+
+    // 3. Construction du message final
+    const buildPhrase = (list, statusLabel) => {
+      if (list.length === 0) return "";
+      if (list.length === 1) return `${statusLabel} : ${list[0]}.`;
+
+      const last = list.pop();
+      const andLabel = t("label_and") || "and";
+      return `${statusLabel} : ${list.join(", ")} ${andLabel} ${last}.`;
+    };
+
+    const alertMsg = buildPhrase(alerts, t("status_alert"));
+    const warnMsg = buildPhrase(warnings, t("status_warning"));
+
+    state.globalAlert = [alertMsg, warnMsg].filter(Boolean).join(" ");
+  }
 
   // --- B. LOGIQUE DE SCOPE (Overlay vs Dashboard) ---
 
@@ -512,41 +670,34 @@ function transformDataToRenderFormat(
 }
 
 // --- 5. BOUCLE PRINCIPALE ---
-async function gameLoop(timestamp) {
-  const deltaTime = timestamp - lastTime;
+async function gameLoop() {
+  tickCount++; // On compte ce tick
 
-  if (deltaTime >= UPDATE_INTERVAL) {
-    lastTime = timestamp;
-    tickCount++; // On compte ce tick
+  // Est-ce un tick "Majeur" (Texte + Barres) ou "Mineur" (Barres seules) ?
+  // Si tickCount est un multiple de 5 (5, 10, 15...), updateText est vrai
+  const updateText = tickCount % TEXT_UPDATE_RATIO === 0;
 
-    // Est-ce un tick "Majeur" (Texte + Barres) ou "Mineur" (Barres seules) ?
-    // Si tickCount est un multiple de 5 (5, 10, 15...), updateText est vrai
-    const updateText = tickCount % TEXT_UPDATE_RATIO === 0;
-
-    // A. SCOPE (Inchangé)
-    let scope = "cards";
-    if (activeOverlayId) {
-      const config = getOverlayConfig(activeOverlayId);
-      // Si overlay dynamique -> focus dessus, sinon mode eco (monitors only)
-      scope = config && config.isDynamic ? activeOverlayId : null;
-    }
-
-    // B. FETCH
-    const sysData = await store.getSystemState(scope);
-
-    // C. TRANSFORMATION
-    // On passe le booléen basé sur le tickCount
-    const renderState = transformDataToRenderFormat(
-      sysData,
-      updateText,
-      activeOverlayId,
-    );
-
-    // D. RENDU
-    updateInterface(renderState);
+  // A. SCOPE (Inchangé)
+  let scope = "cards";
+  if (activeOverlayId) {
+    const config = getOverlayConfig(activeOverlayId);
+    // Si overlay dynamique -> focus dessus, sinon mode eco (monitors only)
+    scope = config && config.isDynamic ? activeOverlayId : null;
   }
 
-  requestAnimationFrame(gameLoop);
+  // B. FETCH
+  const sysData = await store.getSystemState(scope);
+
+  // C. TRANSFORMATION
+  // On passe le booléen basé sur le tickCount
+  const renderState = transformDataToRenderFormat(
+    sysData,
+    updateText,
+    activeOverlayId,
+  );
+
+  // D. RENDU
+  updateInterface(renderState);
 }
 
 // --- UTILITAIRES ---

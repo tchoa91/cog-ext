@@ -24,11 +24,24 @@ let topBarEl;
 let gridEl;
 let overlayEl;
 let closeBtnEl;
+let alertEl;
 let appCallbacks = null;
 let lastFocusedElement = null;
 
+// Throttling des alertes ARIA
+let lastAlertText = "";
+let lastAlertTime = 0;
+const ALERT_THROTTLE = 15000; // 15 secondes
+
 // Optimisation : On mémorise les valeurs pour ne toucher le DOM que si nécessaire
-const renderCache = {};
+const cache = {
+  monitors: {},
+  cards: {},
+  overlay: {},
+  graphs: {},
+  activeOverlayId: null,
+  themeColor: null,
+};
 
 // === 2. INITIALISATION ===
 export function initRenderer(config, callbacks) {
@@ -37,32 +50,12 @@ export function initRenderer(config, callbacks) {
   topBarEl = document.getElementById("topbar");
   overlayEl = document.getElementById("overlay");
   closeBtnEl = document.getElementById("close-overlay");
+  alertEl = document.getElementById("aria-alerts");
 
   if (!gridEl || !topBarEl || !overlayEl || !closeBtnEl) {
     console.error("Renderer: DOM manquant.");
     return;
   }
-
-  // --- PONCTUATION GLOBALE (ARIA) ---
-  // On crée des éléments invisibles référençables par ID pour aria-labelledby
-  const ariaPunct = document.createElement("div");
-  ariaPunct.style.cssText =
-    "position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap;";
-  ariaPunct.innerHTML =
-    '<span id="p-comma">, </span><span id="p-stop">. </span>';
-  document.body.appendChild(ariaPunct);
-  // ----------------------------------
-
-  // Accessibilité : On retire le rôle sémantique (souvent <main>) de la grille
-  // pour supprimer les annonces "Principal" / "Fin de principal" entre les cartes.
-  gridEl.setAttribute("role", "none");
-
-  // Configuration ARIA pour l'Overlay (Dialog Modal)
-  overlayEl.setAttribute("role", "dialog");
-  overlayEl.setAttribute("aria-modal", "true");
-  overlayEl.setAttribute("aria-labelledby", "overlay-title");
-  overlayEl.setAttribute("tabindex", "-1");
-  overlayEl.style.outline = "none";
 
   // Accessibilité : Label localisé pour le bouton fermer
   closeBtnEl.setAttribute("aria-label", t("action_close") || "Close");
@@ -77,10 +70,11 @@ function setupGlobalEvents(callbacks) {
     // CORRECTION : On ferme si on clique sur :
     // 1. Le backdrop extérieur (overlayEl)
     // 2. Le conteneur interne vide (overlay-content)
-    // Mais on NE ferme PAS si e.target est un bouton, un texte, un switch, etc.
+    // 3. Le corps de l'overlay (overlay-body) s'il n'y a pas d'élément interactif en dessous
     if (
       e.target === overlayEl ||
-      e.target.classList.contains("overlay-content")
+      e.target.classList.contains("overlay-content") ||
+      e.target.id === "overlay-body"
     ) {
       callbacks.onClose();
     }
@@ -106,25 +100,47 @@ export function toggleTheme() {
   const currentTheme = document.body.getAttribute("data-theme");
   const newTheme = currentTheme === "light" ? "dark" : "light";
   document.body.setAttribute("data-theme", newTheme);
+  cache.themeColor = null; // Invalidation du cache de couleur pour les canvas
+}
+
+/**
+ * Applique le mode Mini (réduction de hauteur)
+ * @param {Boolean} isMini
+ */
+export function setMiniMode(isMini) {
+  const main = document.querySelector("main");
+  if (isMini) {
+    document.body.classList.add("mini-mode");
+    if (main) {
+      main.inert = true;
+      main.setAttribute("aria-hidden", "true");
+    }
+  } else {
+    document.body.classList.remove("mini-mode");
+    if (main) {
+      main.inert = false;
+      main.removeAttribute("aria-hidden");
+    }
+  }
 }
 
 // === 3. CONSTRUCTION (BUILD) ===
 function buildInterface(config, callbacks) {
   // TopBar
-  topBarEl.innerHTML = config.monitors
+  const monitorsHtml = config.monitors
     .map((item) => {
       const linkedCard = config.cards.find((c) => c.id === item.cardLink);
       const ariaLabel = linkedCard ? linkedCard.title : item.title;
       return `
-      <div class="monitor-block ${item.hasOvelay ? "interactive" : "static"}" 
-            id="monitor-${item.id}" 
+      <div class="monitor-block ${item.hasOvelay ? "interactive" : "static"}"
+            id="monitor-${item.id}"
             data-link="${item.cardLink}"
-            tabindex="${item.hasOvelay ? "0" : "-1"}" 
+            tabindex="${item.hasOvelay ? "0" : "-1"}"
             ${item.hasOvelay ? 'role="button"' : ""}
-            aria-labelledby="mon-lbl-${item.id} p-comma mon-val-${item.id}"
+            aria-labelledby="mon-lbl-${item.id} mon-val-${item.id}"
             ${!item.hasOvelay ? 'style="cursor: default;"' : ""}>
           <div class="monitor-header" aria-hidden="true">
-            <span class="monitor-label" id="mon-lbl-${item.id}" aria-label="${ariaLabel}">${item.title}</span>
+            <span class="monitor-label" id="mon-lbl-${item.id}" aria-label="${ariaLabel} :">${item.title}</span>
             <div>
                 <span class="monitor-status-icon"></span>
                 <span class="monitor-val-text" id="mon-val-${item.id}" aria-label="${t("val_na")}">N/A</span>
@@ -140,6 +156,13 @@ function buildInterface(config, callbacks) {
     })
     .join("");
 
+  topBarEl.innerHTML = `
+    ${monitorsHtml}
+    <button id="mini-toggle" class="mini-toggle" aria-label="${t("action_toggle_mini") || "Toggle Mini Mode"}" title="${t("action_toggle_mini") || "Toggle Mini Mode"}">
+      ${SVGS.chevron}
+    </button>
+  `;
+
   // Écouteurs pour la TopBar
   topBarEl.querySelectorAll(".monitor-block.interactive").forEach((el) => {
     el.addEventListener("click", (e) => callbacks.onOpen(el.dataset.link, e));
@@ -152,18 +175,23 @@ function buildInterface(config, callbacks) {
     });
   });
 
+  // Écouteur pour le mini toggle
+  document
+    .getElementById("mini-toggle")
+    .addEventListener("click", () => callbacks.onMiniToggle());
+
   // Grid
   gridEl.innerHTML = config.cards
     .map(
       (card) => `
-        <div class="card ${card.hasOvelay ? "interactive" : "static"}" 
+        <div class="card ${card.hasOvelay ? "interactive" : "static"}"
             id="card-${card.id}"
             data-id="${card.id}"
             tabindex="${card.hasOvelay ? "0" : "-1"}"
             ${card.hasOvelay ? 'role="button"' : ""}
-            aria-labelledby="card-title-${card.id} p-comma card-body-${card.id}"
-            style="display: none;"> 
-            <h3 id="card-title-${card.id}" aria-hidden="true">${card.title}</h3>
+            aria-labelledby="card-title-${card.id} card-body-${card.id}"
+            style="display: none;">
+            <h3 id="card-title-${card.id}" aria-hidden="true">${card.title}<span class="sr-only"> :</span></h3>
             <div class="card-body" id="card-body-${card.id}" aria-hidden="true">${renderCardContent(card.content)}</div>
             ${
               card.hasOvelay
@@ -186,15 +214,20 @@ function buildInterface(config, callbacks) {
 }
 
 // Utilitaires Accessibilité
-function setAriaLabelForValue(el, value) {
+function setAriaLabelForValue(el, value, state = "normal") {
   if (["N/A", "--", "-"].includes(value)) {
     el.setAttribute("aria-label", t("val_na") || "Not Available");
   } else {
+    // On ajoute un préfixe selon l'état (Attention/Alerte)
+    let prefix = "";
+    if (state === "warning") prefix = t("status_warning") + ", ";
+    else if (state === "alert") prefix = t("status_alert") + ", ";
+
     // On remet le point pour marquer la pause (demandé pour les cartes)
     // String(value) gère le cas où value est le chiffre 0
     const valStr = value !== null && value !== undefined ? String(value) : "";
     if (valStr) {
-      el.setAttribute("aria-label", valStr + ". ");
+      el.setAttribute("aria-label", prefix + valStr + ". ");
     } else {
       el.removeAttribute("aria-label");
     }
@@ -217,7 +250,7 @@ function renderCardContent(contentItems) {
         case "kv":
           const lbl = item.title || "";
           return `<div class="card-kv-row">
-                    <span class="kv-label" ${lbl ? `aria-label="${lbl}, "` : ""}>${lbl}</span>
+                    <span class="kv-label" ${lbl ? `aria-label="${lbl}"` : ""}>${lbl}</span>
                     <span class="kv-value" data-el-id="${item.id}" aria-label="${t("val_na")}">N/A</span>
                   </div>`;
         case "disk":
@@ -237,6 +270,36 @@ function renderCardContent(contentItems) {
 
 // === 4. MISE A JOUR (UPDATE) ===
 export function updateInterface(payload) {
+  // 0. GESTION DES ALERTES GLOBALES (ARIA Status)
+  if (payload.globalAlert !== undefined && alertEl) {
+    const now = Date.now();
+    const hasChanged = payload.globalAlert !== lastAlertText;
+    const isExpired = now - lastAlertTime > ALERT_THROTTLE;
+
+    // On n'annonce que si :
+    // 1. Il y a un message (pas tout vert)
+    // 2. ET (le message a changé OU le délai de 15s est passé)
+    if (payload.globalAlert && (hasChanged || isExpired)) {
+      // Pour forcer l'annonce ARIA même si le texte est identique (isExpired),
+      // certains lecteurs ont besoin d'un micro-changement ou d'un vidage.
+      if (isExpired && !hasChanged) {
+        alertEl.textContent = "";
+        // Petit hack pour forcer le refresh dans le prochain cycle
+        setTimeout(() => {
+          if (alertEl) alertEl.textContent = payload.globalAlert;
+        }, 50);
+      } else {
+        alertEl.textContent = payload.globalAlert;
+      }
+      lastAlertText = payload.globalAlert;
+      lastAlertTime = now;
+    } else if (!payload.globalAlert && lastAlertText) {
+      // Tout est redevenu vert, on vide discrètement
+      alertEl.textContent = "";
+      lastAlertText = "";
+    }
+  }
+
   // A. GESTION DES MONITORS (TopBar)
   if (payload.monitors) {
     payload.monitors.forEach((mon) => {
@@ -246,7 +309,7 @@ export function updateInterface(payload) {
       // 1. Texte (Label)
       if (mon.label !== undefined) {
         const key = `mon-${mon.id}-lbl`;
-        if (renderCache[key] !== mon.label) {
+        if (cache.monitors[key] !== mon.label) {
           const textEl = el.querySelector(".monitor-val-text");
           if (textEl) {
             textEl.textContent = mon.label;
@@ -258,20 +321,20 @@ export function updateInterface(payload) {
                   : t("status_offline"),
               );
             } else {
-              setAriaLabelForValue(textEl, mon.label);
+              setAriaLabelForValue(textEl, mon.label, mon.state);
             }
           }
-          renderCache[key] = mon.label;
+          cache.monitors[key] = mon.label;
         }
       }
 
       // 2. Barre (Percent)
       if (mon.percent !== undefined) {
         const key = `mon-${mon.id}-pct`;
-        if (renderCache[key] !== mon.percent) {
+        if (cache.monitors[key] !== mon.percent) {
           const barEl = el.querySelector(".monitor-bar-fill");
           if (barEl) barEl.style.transform = `scaleX(${mon.percent / 100})`;
-          renderCache[key] = mon.percent;
+          cache.monitors[key] = mon.percent;
         }
       }
 
@@ -279,19 +342,25 @@ export function updateInterface(payload) {
       // Note: mon.icon est soit "bolt", soit vide/undefined
       if (mon.icon !== undefined) {
         const key = `mon-${mon.id}-icon`;
-        if (renderCache[key] !== mon.icon) {
+        if (cache.monitors[key] !== mon.icon) {
           const iconEl = el.querySelector(".monitor-status-icon");
           if (iconEl) iconEl.innerHTML = mon.icon === "bolt" ? SVGS.bolt : "";
-          renderCache[key] = mon.icon;
+          cache.monitors[key] = mon.icon;
         }
       }
 
       // 4. État (Couleur / Warning)
       if (mon.state !== undefined) {
         const key = `mon-${mon.id}-state`;
-        if (renderCache[key] !== mon.state) {
+        if (cache.monitors[key] !== mon.state) {
           el.setAttribute("data-state", mon.state);
-          renderCache[key] = mon.state;
+          cache.monitors[key] = mon.state;
+          // Si l'état change, on rafraîchit l'aria-label (sauf pour le réseau)
+          if (mon.id !== "net") {
+            const textEl = el.querySelector(".monitor-val-text");
+            if (textEl)
+              setAriaLabelForValue(textEl, textEl.textContent, mon.state);
+          }
         }
       }
     });
@@ -306,11 +375,11 @@ export function updateInterface(payload) {
       // Affichage initial (si display: none)
       // On optimise aussi : on ne lit le style que si on ne l'a pas déjà marqué comme visible
       const keyVis = `card-${card.id}-vis`;
-      if (!renderCache[keyVis]) {
+      if (!cache.cards[keyVis]) {
         if (getComputedStyle(cardEl).display === "none") {
           cardEl.style.display = "flex";
         }
-        renderCache[keyVis] = true;
+        cache.cards[keyVis] = true;
       }
 
       if (card.content) {
@@ -328,19 +397,20 @@ export function updateInterface(payload) {
             );
 
             // Update Nom (Gros)
-            if (nameEl && renderCache[`${item.id}-n`] !== item.value.name) {
+            if (nameEl && cache.cards[`${item.id}-n`] !== item.value.name) {
               nameEl.textContent = item.value.name;
               nameEl.setAttribute(
                 "aria-label",
-                item.value.name ? item.value.name + ", " : "",
+                // item.value.name ? item.value.name + ", " : "",
+                item.value.name,
               );
-              renderCache[`${item.id}-n`] = item.value.name;
+              cache.cards[`${item.id}-n`] = item.value.name;
             }
             // Update Info (Petit)
-            if (infoEl && renderCache[`${item.id}-i`] !== item.value.info) {
+            if (infoEl && cache.cards[`${item.id}-i`] !== item.value.info) {
               infoEl.textContent = item.value.info;
               setAriaLabelForValue(infoEl, item.value.info);
-              renderCache[`${item.id}-i`] = item.value.info;
+              cache.cards[`${item.id}-i`] = item.value.info;
             }
             return; // On a traité le disque, on passe à l'item suivant
           }
@@ -366,46 +436,58 @@ export function updateInterface(payload) {
             const keyState = `item-${item.id}-state`;
             if (
               item.state !== undefined &&
-              renderCache[keyState] !== item.state
+              cache.cards[keyState] !== item.state
             ) {
               targetEl.setAttribute("data-state", item.state);
-              renderCache[keyState] = item.state;
+              cache.cards[keyState] = item.state;
+              // Si l'état change, on rafraîchit l'aria-label du texte
+              const txt = targetEl.querySelector(".card-bar-text");
+              if (txt) setAriaLabelForValue(txt, txt.textContent, item.state);
             }
             // Mise à jour de la barre
             if (
               item.value !== undefined &&
-              renderCache[keyVal] !== item.value
+              cache.cards[keyVal] !== item.value
             ) {
               const bar = targetEl.querySelector(".monitor-bar-fill");
               if (bar) bar.style.transform = `scaleX(${item.value / 100})`;
-              renderCache[keyVal] = item.value;
+              cache.cards[keyVal] = item.value;
             }
             // Mise à jour du texte à côté de la barre
-            if (item.display && renderCache[keyDisp] !== item.display) {
+            if (item.display && cache.cards[keyDisp] !== item.display) {
               const txt = targetEl.querySelector(".card-bar-text");
               if (txt) {
                 txt.textContent = item.display;
-                setAriaLabelForValue(txt, item.display);
+                setAriaLabelForValue(txt, item.display, item.state);
               }
-              renderCache[keyDisp] = item.display;
+              cache.cards[keyDisp] = item.display;
             }
           }
           // Cas B : Valeur texte simple (kv ou value)
           else {
+            const keyState = `item-${item.id}-state`;
+            if (
+              item.state !== undefined &&
+              cache.cards[keyState] !== item.state
+            ) {
+              setAriaLabelForValue(targetEl, targetEl.textContent, item.state);
+              cache.cards[keyState] = item.state;
+            }
+
             // Mise à jour de la valeur principale
             if (
               item.display !== undefined &&
-              renderCache[keyDisp] !== item.display
+              cache.cards[keyDisp] !== item.display
             ) {
               targetEl.textContent = item.display;
-              setAriaLabelForValue(targetEl, item.display);
-              renderCache[keyDisp] = item.display;
+              setAriaLabelForValue(targetEl, item.display, item.state);
+              cache.cards[keyDisp] = item.display;
             }
 
             // Mise à jour du LABEL DYNAMIQUE
             if (
               item.label !== undefined &&
-              renderCache[keyLbl] !== item.label
+              cache.cards[keyLbl] !== item.label
             ) {
               if (targetEl.classList.contains("kv-value")) {
                 // On cherche le label dans le parent car previousElementSibling peut être la ponctuation
@@ -415,9 +497,10 @@ export function updateInterface(payload) {
                   labelEl.textContent = item.label;
                   labelEl.setAttribute(
                     "aria-label",
-                    item.label ? item.label + ", " : "",
+                    // item.label ? item.label + ", " : "",
+                    item.label,
                   );
-                  renderCache[keyLbl] = item.label;
+                  cache.cards[keyLbl] = item.label;
                 }
               }
             }
@@ -433,11 +516,10 @@ export function updateInterface(payload) {
     const overlayBody = document.getElementById("overlay-body");
 
     // 1. Construction de la structure (Uniquement si l'ID de l'overlay change)
-    if (renderCache["activeOverlay"] !== ov.id) {
+    if (cache.activeOverlayId !== ov.id) {
       // Invalidation du cache Overlay pour forcer la mise à jour du nouveau DOM
-      Object.keys(renderCache).forEach((k) => {
-        if (k.startsWith("ov-")) delete renderCache[k];
-      });
+      cache.overlay = {};
+      cache.activeOverlayId = ov.id;
 
       overlayBody.innerHTML = ov.content
         .map((item) => {
@@ -453,6 +535,11 @@ export function updateInterface(payload) {
                     <div class="monitor-bar-fill" data-oid="${item.id}-bar"></div>
                 </div>
             </div>`;
+          }
+
+          // Type: Description sémantique (CPU)
+          if (item.type === "olDesc") {
+            return `<div class="overlay-desc" data-oid="${item.id}-txt"></div>`;
           }
 
           // Type: Liste de charge (ex: Coeurs CPU)
@@ -488,7 +575,7 @@ export function updateInterface(payload) {
             return `
             <div class="overlay-section">
                 <div class="overlay-label" style="margin-bottom:5px;">${item.title || ""}</div>
-                <ul class="overlay-text-list" data-oid="${item.id}-list"></ul>
+                <div data-oid="${item.id}-list"></div>
             </div>`;
           }
 
@@ -497,7 +584,7 @@ export function updateInterface(payload) {
             return `
             <div class="overlay-section">
                 <div style="margin-bottom:8px;" class="overlay-label">${item.title || ""}</div>
-                <ul class="overlay-disk-list" data-oid="${item.id}-list"></ul>
+                <div class="overlay-disk-list" data-oid="${item.id}-list"></div>
             </div>`;
           }
 
@@ -522,7 +609,7 @@ export function updateInterface(payload) {
                   ${(item.options || [])
                     .map(
                       (opt) => `
-                    <button class="color-swatch" 
+                    <button class="color-swatch"
                             data-hue="${opt.val}"
                             aria-label="${opt.label}"
                             title="${opt.label} : ${opt.val}"
@@ -542,8 +629,6 @@ export function updateInterface(payload) {
           return "";
         })
         .join("");
-
-      renderCache["activeOverlay"] = ov.id;
 
       // --- Attachement des événements dynamiques ---
       const switches = overlayBody.querySelectorAll('input[type="checkbox"]');
@@ -592,20 +677,15 @@ export function updateInterface(payload) {
       // Mise à jour Texte (commun à tous)
       if (item.display !== undefined) {
         const key = `ov-${item.id}-txt`;
-        if (renderCache[key] !== item.display) {
+        if (cache.overlay[key] !== item.display) {
           const txtEl = overlayBody.querySelector(
             `[data-oid="${item.id}-txt"]`,
           );
           if (txtEl) {
             txtEl.textContent = item.display;
-            // Accessibilité : On ne met un aria-label QUE pour les valeurs vides/inconnues (évite le bégaiement)
-            if (["N/A", "--", "-"].includes(item.display)) {
-              txtEl.setAttribute("aria-label", t("val_na") || "Not Available");
-            } else {
-              txtEl.removeAttribute("aria-label");
-            }
+            setAriaLabelForValue(txtEl, item.display, item.state);
           }
-          renderCache[key] = item.display;
+          cache.overlay[key] = item.display;
         }
       }
 
@@ -613,7 +693,7 @@ export function updateInterface(payload) {
       if (item.type === "olBar" && item.value !== undefined) {
         const key = `ov-${item.id}-bar`;
         const currentVal = `${item.value}|${item.state || ""}`;
-        if (renderCache[key] !== currentVal) {
+        if (cache.overlay[key] !== currentVal) {
           const barEl = overlayBody.querySelector(
             `[data-oid="${item.id}-bar"]`,
           );
@@ -626,9 +706,15 @@ export function updateInterface(payload) {
               } else {
                 sectionEl.removeAttribute("data-state");
               }
+              // Rafraîchissement de l'aria-label si l'état change
+              const txtEl = sectionEl.querySelector(
+                `[data-oid="${item.id}-txt"]`,
+              );
+              if (txtEl)
+                setAriaLabelForValue(txtEl, txtEl.textContent, item.state);
             }
           }
-          renderCache[key] = currentVal;
+          cache.overlay[key] = currentVal;
         }
       }
 
@@ -640,19 +726,31 @@ export function updateInterface(payload) {
         // On utilise une clé simple basée sur la longueur et le premier élément pour éviter de tout stringify
         const key = `ov-${item.id}-list`;
         const currentSig = item.value.length + (item.value[0] || "");
-        if (listEl && renderCache[key] !== currentSig) {
-          // CORRECTION SECURITE : Utilisation de textContent pour éviter l'injection HTML
+        if (listEl && cache.overlay[key] !== currentSig) {
           listEl.textContent = "";
-          const fragment = document.createDocumentFragment(); // Optimisation : 1 seul reflow
 
-          item.value.forEach((line) => {
-            const li = document.createElement("li");
-            li.textContent = line;
-            fragment.appendChild(li);
-          });
+          if (item.value.length === 0) {
+            const emptyDiv = document.createElement("div");
+            emptyDiv.className = "overlay-disk-info"; // Réutilisation d'un style discret
+            emptyDiv.style.padding = "5px 0";
+            emptyDiv.style.textAlign = "right";
+            emptyDiv.textContent = t("disp_none");
+            listEl.appendChild(emptyDiv);
+          } else {
+            const ul = document.createElement("ul");
+            ul.className = "overlay-text-list";
+            const fragment = document.createDocumentFragment();
 
-          listEl.appendChild(fragment);
-          renderCache[key] = currentSig;
+            item.value.forEach((line) => {
+              const li = document.createElement("li");
+              li.textContent = line;
+              fragment.appendChild(li);
+            });
+
+            ul.appendChild(fragment);
+            listEl.appendChild(ul);
+          }
+          cache.overlay[key] = currentSig;
         }
       }
 
@@ -666,14 +764,18 @@ export function updateInterface(payload) {
           const ariaLabel = item.value
             .map((data) => {
               const pct = typeof data === "object" ? data.pct : data;
-              return `${pct}%`;
+              const state = typeof data === "object" ? data.state : "normal";
+              let prefix = "";
+              if (state === "warning") prefix = t("status_warning") + " ";
+              else if (state === "alert") prefix = t("status_alert") + " ";
+              return `${prefix}${pct}%`;
             })
             .join(", ");
 
           const keyLabel = `ov-${item.id}-aria`;
-          if (renderCache[keyLabel] !== ariaLabel) {
+          if (cache.overlay[keyLabel] !== ariaLabel) {
             gridEl.setAttribute("aria-label", ariaLabel);
-            renderCache[keyLabel] = ariaLabel;
+            cache.overlay[keyLabel] = ariaLabel;
           }
 
           // Si le nombre de cœurs diffère (init), on recrée les barres
@@ -702,14 +804,14 @@ export function updateInterface(payload) {
             const key = `ov-${item.id}-core-${i}`;
             const currentVal = `${pct}|${state || ""}`;
 
-            if (renderCache[key] !== currentVal) {
+            if (cache.overlay[key] !== currentVal) {
               const fill = child.querySelector(".core-fill");
               if (fill) {
                 fill.style.transform = `scaleY(${pct / 100})`;
                 if (state) fill.setAttribute("data-state", state);
                 else fill.removeAttribute("data-state");
               }
-              renderCache[key] = currentVal;
+              cache.overlay[key] = currentVal;
             }
           });
         }
@@ -727,9 +829,9 @@ export function updateInterface(payload) {
           .map((temp) => `${temp}${symbol}`)
           .join(", ");
         const keyLabel = `ov-${item.id}-aria`;
-        if (renderCache[keyLabel] !== ariaLabel) {
+        if (cache.overlay[keyLabel] !== ariaLabel) {
           gridEl.setAttribute("aria-label", ariaLabel);
-          renderCache[keyLabel] = ariaLabel;
+          cache.overlay[keyLabel] = ariaLabel;
         }
 
         const key = `ov-${item.id}-temps`;
@@ -737,7 +839,7 @@ export function updateInterface(payload) {
         const currentVal = item.value.join(",");
 
         // On vérifie si on doit redessiner (changement de nombre de zones ou premier rendu)
-        if (gridEl && renderCache[key] !== currentVal) {
+        if (gridEl && cache.overlay[key] !== currentVal) {
           // Astuce perf : On recrée le HTML car le nombre de zones est petit (<20)
           // et l'opération est légère.
           gridEl.textContent = "";
@@ -762,7 +864,7 @@ export function updateInterface(payload) {
             fragment.appendChild(itemEl);
           });
           gridEl.appendChild(fragment);
-          renderCache[key] = currentVal;
+          cache.overlay[key] = currentVal;
         }
       }
 
@@ -775,13 +877,13 @@ export function updateInterface(payload) {
         // Signature simple : nombre de disques + espace libre du premier
         const currentSig = item.value.length + (item.value[0]?.info || "");
 
-        if (listEl && renderCache[key] !== currentSig) {
+        if (listEl && cache.overlay[key] !== currentSig) {
           // On génère la liste. Format identique à la carte mais en liste <li>
           listEl.textContent = "";
           const fragment = document.createDocumentFragment();
           item.value.forEach((disk) => {
-            const li = document.createElement("li");
-            li.className = "overlay-disk-item";
+            const container = document.createElement("div");
+            container.className = "overlay-disk-item";
 
             const nameSpan = document.createElement("span");
             nameSpan.className = "disk-name";
@@ -791,12 +893,12 @@ export function updateInterface(payload) {
             infoSpan.className = "disk-info";
             infoSpan.textContent = disk.info;
 
-            li.appendChild(nameSpan);
-            li.appendChild(infoSpan);
-            fragment.appendChild(li);
+            container.appendChild(nameSpan);
+            container.appendChild(infoSpan);
+            fragment.appendChild(container);
           });
           listEl.appendChild(fragment);
-          renderCache[key] = currentSig;
+          cache.overlay[key] = currentSig;
         }
       }
 
@@ -813,14 +915,14 @@ export function updateInterface(payload) {
         const currentHue = item.value;
         // On utilise une clé simple pour éviter de scanner le DOM à chaque frame
         const key = `ov-${item.id}-hue`;
-        if (renderCache[key] !== currentHue) {
+        if (cache.overlay[key] !== currentHue) {
           const swatches = overlayBody.querySelectorAll(".color-swatch");
           swatches.forEach((s) => {
             const sHue = parseInt(s.dataset.hue, 10);
             if (sHue === currentHue) s.classList.add("selected");
             else s.classList.remove("selected");
           });
-          renderCache[key] = currentHue;
+          cache.overlay[key] = currentHue;
         }
       }
 
@@ -831,43 +933,74 @@ export function updateInterface(payload) {
 
 /**
  * Dessine une sparkline (graphique de ligne simple) sur un canvas.
- * Gère un historique de 50 valeurs.
+ * Optimisation : Décalage de canvas + traçage incrémental.
+ * Gère un historique de 61 valeurs (pour un pas de 3px sur 180px).
  */
 function updateSparkline(canvas, id, value) {
-  // 1. Gestion de l'historique dans le cache
   const cacheKey = `spark-${id}`;
-  if (!renderCache[cacheKey]) {
-    // Initialisation avec des zéros pour éviter un graph vide au début
-    renderCache[cacheKey] = new Array(50).fill(0);
+  const historyLen = 61; // 60 intervalles de 3px = 180px
+  const step = 3;
+
+  if (!cache.graphs[cacheKey]) {
+    cache.graphs[cacheKey] = new Array(historyLen).fill(0);
   }
-  const history = renderCache[cacheKey];
+  const history = cache.graphs[cacheKey];
 
   // Rotation FIFO
+  const prevVal = history[history.length - 1];
   history.push(value);
   history.shift();
 
-  // 2. Dessin
   const ctx = canvas.getContext("2d");
   const w = canvas.width;
   const h = canvas.height;
 
-  // Nettoyage (Fond transparent)
-  ctx.clearRect(0, 0, w, h);
+  // Récupération de la couleur du thème (mise en cache)
+  let themeChanged = false;
+  if (!cache.themeColor) {
+    const style = getComputedStyle(document.body);
+    cache.themeColor = style.getPropertyValue("--text-muted") || "#888";
+    themeChanged = true;
+  }
 
-  // Récupération de la couleur du thème (muted_text)
-  const style = getComputedStyle(document.body);
-  ctx.strokeStyle = style.getPropertyValue("--text-muted") || "#888";
+  ctx.strokeStyle = cache.themeColor;
   ctx.lineWidth = 2;
   ctx.lineJoin = "round";
+  ctx.lineCap = "round";
 
-  ctx.beginPath();
-  const step = w / (history.length - 1);
-  history.forEach((val, i) => {
-    const y = h - (val / 100) * h; // 100% en haut (y=0), 0% en bas (y=h)
-    if (i === 0) ctx.moveTo(i * step, y);
-    else ctx.lineTo(i * step, y);
-  });
-  ctx.stroke();
+  // LOGIQUE D'OPTIMISATION
+  // Si le thème a changé, on doit tout redessiner pour changer la couleur
+  if (themeChanged) {
+    ctx.clearRect(0, 0, w, h);
+    ctx.beginPath();
+    history.forEach((val, i) => {
+      const x = i * step;
+      const y = h - (val / 100) * h;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+  } else {
+    // Sinon, on décale et on ne trace que le dernier segment
+    // 1. Décalage
+    ctx.globalCompositeOperation = "copy";
+    ctx.drawImage(canvas, -step, 0);
+    ctx.globalCompositeOperation = "source-over";
+
+    // 2. Nettoyage de la nouvelle zone
+    ctx.clearRect(w - step, 0, step, h);
+
+    // 3. Tracé du segment
+    const x1 = w - step;
+    const y1 = h - (prevVal / 100) * h;
+    const x2 = w;
+    const y2 = h - (value / 100) * h;
+
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+  }
 }
 
 // === 5. GESTION OVERLAY (OUVERTURE/FERMETURE) ===
@@ -885,9 +1018,9 @@ export function setOverlayState(isOpen, payload = {}, event = null) {
       if (!overlayEl.classList.contains("active")) {
         const overlayBody = document.getElementById("overlay-body");
         if (overlayBody) overlayBody.innerHTML = "";
-        // IMPORTANT : On force le renderer à reconstruire le DOM au prochain appel
-        // (renderCache est la variable globale définie en haut du fichier)
-        renderCache["activeOverlay"] = null;
+        // IMPORTANT : On vide le cache Overlay lors de la fermeture
+        cache.overlay = {};
+        cache.activeOverlayId = null;
       }
     }, 300);
     if (lastFocusedElement) {

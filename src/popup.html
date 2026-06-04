@@ -1,26 +1,39 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CogExt Dashboard</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <header id="topbar"></header>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>CogExt Dashboard</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <div
+            id="aria-alerts"
+            class="sr-only"
+            role="status"
+            aria-live="polite"
+        ></div>
+        <header id="topbar"></header>
 
-    <main id="dashboard-grid"></main>
+        <main id="dashboard-grid" role="none"></main>
 
-    <div id="overlay" class="hidden">
-      <div class="overlay-content">
-        <button id="close-overlay">×</button>
-        <h3 id="overlay-title">Titre du détail</h3>
-        <div id="overlay-body">
-          <p>Chargement des données...</p>
+        <div
+            id="overlay"
+            class="hidden"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="overlay-title"
+            tabindex="-1"
+        >
+            <div class="overlay-content">
+                <button id="close-overlay">×</button>
+                <h3 id="overlay-title" aria-hidden="true">Titre du détail</h3>
+                <div id="overlay-body">
+                    <p>Chargement des données...</p>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
 
-    <script type="module" src="main.js"></script>
-  </body>
+        <script type="module" src="main.js"></script>
+    </body>
 </html>

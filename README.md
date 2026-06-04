@@ -6,6 +6,8 @@ COGext is a highly optimized and accessible system monitor extension for the Chr
 
 ## **Features**
 
+**NEW : mini mode**
+
 **4 Monitors & 9 Cards :**
 
 - **CPU Usage:** Real-time processor load, plus arch, model & instruction set.\*+
@@ -45,6 +47,13 @@ This extension started as a wild hack of the ChromeApp "COG" coded by François 
 The data exposed by this extension and its usage are NOT recorded nor transmitted in any way. All but your preferences is deleted as soon as you close the extension. The extension works well off-line or behind a firewall, but it will not display your IP nor the latency.
 
 ## 🛠 Changelog
+
+### **V 2.3**
+
+- Added mini mode
+- ARIA enhancements: punctuation, thresholds, alerts and semantic description
+- Improved text and translations
+- Miscellaneous bug fixes and optimizations
 
 ### **V 2.2 \- Accessibility & Reliability**
 

@@ -280,13 +280,20 @@ function resolveWidgetData(itemId, data, updateText, isMonitor = false) {
       itemId === "cpuLoadAverage" ||
       itemId === "cpuSparkline"
     ) {
-      res.value = data.cpuUsage.usagePct;
-      res.display = txt(`${data.cpuUsage.usagePct}%`);
+      const hasUsage =
+        typeof data.cpuUsage.usagePct === "number" &&
+        !isNaN(data.cpuUsage.usagePct);
+      res.value = hasUsage ? data.cpuUsage.usagePct : 0;
+      res.display = hasUsage
+        ? txt(`${data.cpuUsage.usagePct}%`)
+        : txt(t("val_na") || "N/A");
       if (isMonitor) {
-        res.percent = data.cpuUsage.usagePct;
+        res.percent = hasUsage ? data.cpuUsage.usagePct : 0;
         res.label = res.display;
       }
-      res.state = getLoadState(data.cpuUsage.usagePct, THRESHOLDS.cpu);
+      res.state = hasUsage
+        ? getLoadState(data.cpuUsage.usagePct, THRESHOLDS.cpu)
+        : "normal";
     }
     if (itemId === "cpuSemanticDesc") {
       if (updateText)

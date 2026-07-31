@@ -195,30 +195,42 @@ export class DataStore {
         ? info.features.join(", ").toUpperCase().replace(/_/g, ".")
         : "N/A";
 
-    // --- 2. CALCUL CHARGE (Code existant) ---
+    // --- 2. CALCUL CHARGE (Code existant - Sécurisé) ---
     let totalUsageAcc = 0;
     let coresPct = [];
+    const hasProcessors =
+      info && Array.isArray(info.processors) && info.processors.length > 0;
 
-    if (this.previousCpuInfo) {
-      coresPct = info.processors.map((proc, i) => {
-        const prev = this.previousCpuInfo.processors[i];
-        const deltaTotal = proc.usage.total - prev.usage.total;
-        const deltaIdle = proc.usage.idle - prev.usage.idle;
-        const pct =
-          deltaTotal > 0 ? ((deltaTotal - deltaIdle) / deltaTotal) * 100 : 0;
-        totalUsageAcc += pct;
-        return Math.round(pct);
-      });
-    } else {
-      coresPct = info.processors.map(() => 0);
+    if (hasProcessors) {
+      if (
+        this.previousCpuInfo &&
+        Array.isArray(this.previousCpuInfo.processors) &&
+        this.previousCpuInfo.processors.length === info.processors.length
+      ) {
+        coresPct = info.processors.map((proc, i) => {
+          const prev = this.previousCpuInfo.processors[i];
+          const deltaTotal = proc.usage.total - prev.usage.total;
+          const deltaIdle = proc.usage.idle - prev.usage.idle;
+          const pct =
+            deltaTotal > 0 ? ((deltaTotal - deltaIdle) / deltaTotal) * 100 : 0;
+          totalUsageAcc += pct;
+          return Math.round(pct);
+        });
+      } else {
+        coresPct = info.processors.map(() => 0);
+      }
     }
 
     this.previousCpuInfo = info;
 
-    // --- 3. CALCUL TEMPÉRATURE (Code existant) ---
+    // --- 3. CALCUL TEMPÉRATURE (Code existant - Sécurisé) ---
     let computedTemp = null;
     let zones = [];
-    if (info.temperatures && info.temperatures.length > 0) {
+    if (
+      info &&
+      Array.isArray(info.temperatures) &&
+      info.temperatures.length > 0
+    ) {
       zones = info.temperatures;
       const sum = zones.reduce((a, b) => a + b, 0);
       computedTemp = Math.round(sum / zones.length);
@@ -226,7 +238,9 @@ export class DataStore {
 
     // --- 4. RETOUR PROPRE ---
     const result = {
-      usageTotal: Math.round(totalUsageAcc / info.processors.length),
+      usageTotal: hasProcessors
+        ? Math.round(totalUsageAcc / info.processors.length)
+        : null,
       cores: coresPct,
       // On renvoie les versions nettoyées
       modelName: cpuNameText,

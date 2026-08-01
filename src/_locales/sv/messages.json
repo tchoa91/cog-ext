@@ -55,6 +55,7 @@
 
   "detail_storage_discs": { "message": "Diskar :" },
 
+  "settings_zoom": { "message": "Aktivera zoom :" },
   "settings_theme": { "message": "Aktivera mörkt tema :" },
   "settings_unit": { "message": "Använd °F för temperatur :" },
   "settings_mood": { "message": "Stämningsfärg :" },

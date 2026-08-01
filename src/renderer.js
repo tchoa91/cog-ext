@@ -637,6 +637,7 @@ export function updateInterface(payload) {
           if (!appCallbacks) return;
 
           // Mapping ID -> Action
+          if (e.target.id === "toggleZoom") appCallbacks.onZoomToggle();
           if (e.target.id === "toggleTheme") {
             appCallbacks.onThemeToggle();
           }

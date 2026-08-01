@@ -195,6 +195,7 @@ export const UI_CONFIG = {
           title: t("settings_mood"),
           options: MOOD_COLORS,
         },
+        { id: "toggleZoom", type: "switch", title: t("settings_zoom") },
         { id: "toggleTheme", type: "switch", title: t("settings_theme") },
         { id: "toggleUnit", type: "switch", title: t("settings_unit") },
         {

@@ -53,6 +53,7 @@
 
   "detail_storage_discs": { "message": "Disker :" },
 
+  "settings_zoom": { "message": "Aktiver zoom :" },
   "settings_theme": { "message": "Aktiver mørkt tema :" },
   "settings_unit": { "message": "Bruk °F for temperatur :" },
   "settings_mood": { "message": "Stemningsfarge :" },

@@ -53,6 +53,7 @@
 
   "detail_storage_discs": { "message": "Diskler :" },
 
+  "settings_zoom": { "message": "Yakınlaştırmayı etkinleştir :" },
   "settings_theme": { "message": "Koyu temayı etkinleştir :" },
   "settings_unit": { "message": "Sıcaklık için °F kullan :" },
   "settings_mood": { "message": "Ortam rengi :" },

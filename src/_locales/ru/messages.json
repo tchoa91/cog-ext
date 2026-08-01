@@ -53,6 +53,7 @@
 
   "detail_storage_discs": { "message": "Диски :" },
 
+  "settings_zoom": { "message": "Включить масштаб :" },
   "settings_theme": { "message": "Включить темную тему :" },
   "settings_unit": { "message": "Использовать °F для температуры :" },
   "settings_mood": { "message": "Цвет атмосферы :" },

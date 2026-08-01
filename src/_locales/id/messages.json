@@ -53,6 +53,7 @@
 
   "detail_storage_discs": { "message": "Disk :" },
 
+  "settings_zoom": { "message": "Aktifkan zoom :" },
   "settings_theme": { "message": "Aktifkan tema gelap :" },
   "settings_unit": { "message": "Gunakan °F untuk suhu :" },
   "settings_mood": { "message": "Warna suasana :" },

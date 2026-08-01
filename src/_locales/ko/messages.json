@@ -53,6 +53,7 @@
 
   "detail_storage_discs": { "message": "디스크 :" },
 
+  "settings_zoom": { "message": "확대 활성화 :" },
   "settings_theme": { "message": "다크 테마 활성화 :" },
   "settings_unit": { "message": "온도 단위로 °F 사용 :" },
   "settings_mood": { "message": "분위기 색상 :" },

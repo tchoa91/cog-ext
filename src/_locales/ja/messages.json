@@ -53,6 +53,7 @@
 
   "detail_storage_discs": { "message": "ディスク :" },
 
+  "settings_zoom": { "message": "ズームを有効にする :" },
   "settings_theme": { "message": "ダークテーマを有効にする :" },
   "settings_unit": { "message": "温度に °F を使用する :" },
   "settings_mood": { "message": "ムードカラー :" },

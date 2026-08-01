@@ -53,6 +53,7 @@
 
   "detail_storage_discs": { "message": "Laufwerke :" },
 
+  "settings_zoom": { "message": "Zoom aktivieren :" },
   "settings_theme": { "message": "Dunkles Design aktivieren :" },
   "settings_unit": { "message": "Nutze °F für Temperatur :" },
   "settings_mood": { "message": "Ambiente-Farbe :" },

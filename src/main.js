@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // ÉTAPE 1 : Chargement des Préférences (Bloquant pour éviter le flash)
   // On définit des défauts clairs ici.
-  const defaultPrefs = { theme: "dark", unit: "C", hue: 195, mini: false };
+  const defaultPrefs = { theme: "dark", unit: "C", hue: 195, mini: false, zoom: false };
   let prefs = defaultPrefs;
 
   try {
@@ -113,6 +113,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       "unit",
       "hue",
       "mini",
+      "zoom",
     ]);
     // Fusionner avec les défauts au cas où une clé manque
     prefs = { ...defaultPrefs, ...stored };
@@ -130,6 +131,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.documentElement.style.setProperty("--brand-h", appHue);
   // D. Mode Mini
   setMiniMode(prefs.mini);
+  // E. Zoom (Taille de police racine 16px si zoomé, 14px sinon)
+  applyZoom(prefs.zoom);
 
   // ÉTAPE 3 : Définition des Actions (Callbacks)
   const callbacks = {
@@ -170,6 +173,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     onClose: () => {
       activeOverlayId = null;
       setOverlayState(false);
+    },
+
+    onZoomToggle: () => {
+      const isZoomed = document.documentElement.style.fontSize === "16px";
+      const nextZoom = !isZoomed;
+      applyZoom(nextZoom);
+      chrome.storage.local.set({ zoom: nextZoom });
     },
 
     onThemeToggle: () => {
@@ -506,12 +516,22 @@ function resolveWidgetData(itemId, data, updateText, isMonitor = false) {
   }
 
   // --- 9. SETTINGS ---
+  if (itemId === "toggleZoom")
+    res.value = document.documentElement.style.fontSize === "16px";
   if (itemId === "toggleTheme")
     res.value = document.body.getAttribute("data-theme") !== "light";
   if (itemId === "toggleUnit") res.value = appUnit === "F";
   if (itemId === "moodSelector") res.value = appHue;
 
   return res;
+}
+
+/**
+ * Applique la taille de police racine (16px = Zoomé, 14px = Compact / Par défaut).
+ * @param {boolean} isZoom
+ */
+function applyZoom(isZoom) {
+  document.documentElement.style.fontSize = isZoom ? "16px" : "14px";
 }
 
 // --- 4. TRANSFORMATEUR DE DONNÉES (Adapter / Mapper) ---

@@ -53,6 +53,7 @@
 
   "detail_storage_discs": { "message": "磁盘 ：" },
 
+  "settings_zoom": { "message": "开启缩放 ：" },
   "settings_theme": { "message": "开启深色主题 ：" },
   "settings_unit": { "message": "温度单位使用 °F ：" },
   "settings_mood": { "message": "氛围颜色 ：" },

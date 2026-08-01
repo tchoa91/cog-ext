@@ -55,6 +55,7 @@
 
   "detail_storage_discs": { "message": "Schijven :" },
 
+  "settings_zoom": { "message": "Zoom inschakelen :" },
   "settings_theme": { "message": "Donker thema inschakelen :" },
   "settings_unit": { "message": "Gebruik °F voor temperatuur :" },
   "settings_mood": { "message": "Sfeerkleur :" },

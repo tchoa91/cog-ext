@@ -55,6 +55,7 @@
 
   "detail_storage_discs": { "message": "Discos :" },
 
+  "settings_zoom": { "message": "Ativar zoom :" },
   "settings_theme": { "message": "Ativar tema escuro :" },
   "settings_unit": { "message": "Usar °F para temperatura :" },
   "settings_mood": { "message": "Cor do ambiente :" },

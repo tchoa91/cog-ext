@@ -39,11 +39,15 @@
     user-select: none;
 }
 
+html,
 body {
-    width: 600px;
+    width: 37.5rem;
     height: max-content;
     min-height: var(--topbar-height);
-    max-height: 600px;
+    max-height: 37.5rem;
+}
+
+body {
     background-color: var(--bg-color);
     color: var(--text-main);
     font-family:
@@ -105,12 +109,12 @@ body {
     --warning: hsl(35, 90%, 50%);
     --alert: hsl(0, 80%, 60%);
 
-    /* Autres variables structurelles */
-    --topbar-height: 90px;
-    --grid-gap: 15px;
-    --radius-lg: 12px;
+    /* Autres variables structurelles (Exprimées en rem pour l'échelle relative) */
+    --topbar-height: 5.25rem;
+    --grid-gap: 0.875rem;
+    --radius-lg: 0.75rem;
     --font-main: "Inter", system-ui, sans-serif;
-    --shadow: 2px 2px 4px rgba(0, 0, 0, 0.05);
+    --shadow: 0.125rem 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
     --overlay-backdrop: var(--bg-color);
     --modal-bg: hsl(var(--brand-base), 20%);
 }
@@ -161,8 +165,8 @@ body {
 }
 
 .mini-toggle svg {
-    width: 18px;
-    height: 18px;
+    width: 1.125rem;
+    height: 1.125rem;
     fill: currentColor;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -190,16 +194,14 @@ body.mini-mode .mini-toggle svg {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 15px 5px;
-    gap: 15px;
+    padding: 0 0.875rem 0.25rem;
+    gap: 0.875rem;
     z-index: 200; /* Au-dessus de l'overlay */
     position: relative;
-    /* background-color: var(--bg-color); */
     color: var(--text-main);
-    font-family: var(--font-main); /* Nouvelle font */
+    font-family: var(--font-main);
     font-weight: 700;
 
-    /* Transition douce pour le changement de thème */
     transition:
         background-color 0.3s,
         color 0.3s;
@@ -214,7 +216,6 @@ body.mini-mode .mini-toggle svg {
     grid-template-columns: 1fr 1fr;
     grid-template-rows: repeat(5, 1fr);
     gap: var(--grid-gap);
-    /* Transition pour la grille */
     transition:
         opacity 0.3s ease,
         transform 0.3s ease;
@@ -227,7 +228,7 @@ body.mini-mode {
 
 body.mini-mode #dashboard-grid {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-1.25rem);
     pointer-events: none;
 }
 
@@ -245,16 +246,16 @@ body.mini-mode .monitor-block.interactive:hover {
 /* --- ZONE C: Overlay (Conteneur Global) --- */
 #overlay {
     position: absolute;
-    top: var(--topbar-height); /* Commence SOUS la barre */
+    top: calc(var(--topbar-height) - 0.625rem); /* Remonté d'environ 10px */
     left: 0;
     width: 100%;
-    height: calc(100% - var(--topbar-height)); /* Remplit le reste */
+    height: calc(100% - var(--topbar-height) + 0.625rem);
     background: var(--overlay-backdrop);
     z-index: 100;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 10px; /* Marge autour de la carte interne */
+    padding: 0.5rem; /* Marge autour de la carte interne */
     outline: none;
 
     /* État initial (Fermé) */
@@ -263,8 +264,6 @@ body.mini-mode .monitor-block.interactive:hover {
     visibility: hidden;
     pointer-events: none;
 
-    /* TRANSITION DE FERMETURE (Rapide et propre) */
-    /* On attend 0s pour l'opacité, mais on retarde la visibility pour laisser le fade-out finir */
     transition:
         opacity 0.2s ease,
         transform 0.2s cubic-bezier(0.4, 0, 1, 1),
@@ -278,11 +277,9 @@ body.mini-mode .monitor-block.interactive:hover {
     visibility: visible;
     pointer-events: auto;
 
-    /* TRANSITION D'OUVERTURE (Hero Bounce) */
-    /* transform-origin est géré par le JS (renderer.js) au point de clic */
     transition:
         opacity 0.2s ease,
-        transform 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.15); /* Rebond élastique léger */
+        transform 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.15);
 }
 
 /* =========================================
@@ -296,15 +293,13 @@ body.mini-mode .monitor-block.interactive:hover {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    /* cursor: pointer; */
-    margin: 10px 0 10px;
-    padding: 0 12px;
-    background-color: var(--monitor-bg); /* Fond sombre/clair selon thème */
+    margin: 0.5rem 0;
+    padding: 0 0.625rem;
+    background-color: var(--monitor-bg);
     border-radius: var(--radius-lg);
     border: var(--border-subtle);
     contain: content;
 
-    /* Interaction */
     transition:
         transform 0.1s,
         background-color 0.2s,
@@ -322,12 +317,12 @@ body.mini-mode .monitor-block.interactive:hover {
 .monitor-header {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 15px;
-    font-weight: 700; /* Utilise la version semi-bold */
+    margin-bottom: 0.75rem;
+    font-weight: 700;
     color: var(--text-main);
-    font-size: 0.95rem;
+    font-size: 0.875rem;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.03125rem;
 }
 .monitor-label {
     font-weight: 500;
@@ -336,7 +331,7 @@ body.mini-mode .monitor-block.interactive:hover {
 
 .monitor-header > div {
     display: flex;
-    align-items: center; /* Aligne l'éclair et le texte verticalement */
+    align-items: center;
     font-variant-numeric: tabular-nums;
     min-width: 4ch;
     justify-content: flex-end;
@@ -345,25 +340,25 @@ body.mini-mode .monitor-block.interactive:hover {
 .monitor-status-icon {
     display: flex;
     align-items: center;
-    margin-right: 4px; /* Espace entre l'éclair et le % */
-    color: var(--accent); /* L'éclair prend la couleur verte/accent */
+    margin-right: 0.25rem;
+    color: var(--accent);
     transition:
         color 0.6s ease,
         fill 0.6s ease;
 }
 
 .monitor-status-icon svg {
-    width: 16px; /* Taille discrète */
-    height: 16px;
+    width: 0.9rem;
+    height: 0.9rem;
     fill: currentColor;
 }
 
 /* --- Barres & Indicateurs --- */
 .monitor-bar-track {
     width: 100%;
-    height: 10px;
+    height: 0.5rem;
     background-color: var(--bar-bg);
-    border-radius: 5px;
+    border-radius: 0.25rem;
     overflow: hidden;
 }
 .monitor-bar-fill {
@@ -373,16 +368,16 @@ body.mini-mode .monitor-block.interactive:hover {
     transform: scaleX(0);
     transform-origin: left;
     will-change: transform;
-    border-radius: 5px;
+    border-radius: 0.25rem;
     transition:
         transform 0.2s linear,
         background-color 0.2s ease;
 }
 .monitor-dot {
-    width: 10px;
-    height: 10px;
+    width: 0.5rem;
+    height: 0.5rem;
     border-radius: 50%;
-    background-color: var(--text-muted); /* Couleur par défaut (gris/éteint) */
+    background-color: var(--text-muted);
     transition: background-color 0.3s ease;
     align-self: center;
     transition: background-color 0.6s ease;
@@ -392,14 +387,13 @@ body.mini-mode .monitor-block.interactive:hover {
 }
 
 /* --- États (Warning / Alert) --- */
-/* S'applique au Remplissage des barres, aux Icônes et aux Points */
 [data-state="warning"] .monitor-bar-fill,
 [data-state="warning"] .monitor-status-icon,
 [data-state="warning"] .monitor-dot,
 .core-fill[data-state="warning"] {
     background-color: var(--warning);
     fill: var(--warning);
-    color: var(--warning); /* Pour les SVG utilisant currentColor */
+    color: var(--warning);
 }
 [data-state="alert"] .monitor-bar-fill,
 [data-state="alert"] .monitor-status-icon,
@@ -424,12 +418,11 @@ body.mini-mode .monitor-block.interactive:hover {
     border: var(--border-subtle);
     position: relative;
     contain: content;
-    padding: 0 10px;
-    /* MODIFICATION FLEXBOX */
+    padding: 0 0.625rem;
     display: flex;
-    flex-direction: column; /* On empile verticalement */
-    align-items: flex-start; /* On cale tout à gauche */
-    justify-content: flex-start; /* On cale tout en haut */
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
     transition:
         transform 0.1s,
         background 0.2s;
@@ -442,32 +435,28 @@ body.mini-mode .monitor-block.interactive:hover {
     transform: translateY(-1px);
     box-shadow: var(--shadow);
 }
-.card h3,
-#overlay h3 {
-    font-size: 1.75rem;
+.card h3 {
+    font-size: 1.5rem;
     font-weight: 300;
     z-index: 2;
-    width: 100%; /* Prend toute la largeur */
+    width: 100%;
     line-height: 0.8em;
-    margin: 5px 0 0 0; /* Espace sous le titre */
-    color: var(--titles); /* Utilisation de VOTRE variable */
+    margin: 0.3125rem 0 0 0;
+    color: var(--titles);
 }
-#overlay h3 {
-    margin-bottom: 30px;
-}
+
 .card-body {
     width: 100%;
     display: flex;
-    /* C'est la clé : on autorise les éléments à se mettre côte à côte */
     flex-flow: row wrap;
     align-items: center;
-    padding-left: 10px;
-    gap: 6px; /* Espace standard entre les éléments */
+    padding-left: 0.5rem;
+    gap: 0.375rem;
     z-index: 3;
 }
 .card-icon {
-    width: 24px;
-    height: 24px;
+    width: 1.375rem;
+    height: 1.375rem;
     fill: #666;
     z-index: 2;
     transition: fill 0.2s;
@@ -477,42 +466,38 @@ body.mini-mode .monitor-block.interactive:hover {
 }
 .card-watermark {
     position: absolute;
-    right: -5px;
-    bottom: -10px;
-    width: 60px;
-    height: 60px;
-    opacity: 0.12; /* Augmenté de 0.04 à 0.12 pour visibilité */
+    right: -0.3125rem;
+    bottom: -0.5rem;
+    width: 3.25rem;
+    height: 3.25rem;
+    opacity: 0.12;
     pointer-events: none;
     fill: var(--text-main);
-    transition: opacity 0.2s; /* Transition douce si on veut animer plus tard */
+    transition: opacity 0.2s;
 }
 
 /* --- Types de contenu Card --- */
 .card-main-value {
-    font-size: 1rem; /* Assez gros */
+    font-size: 0.95rem;
     font-weight: 500;
-    color: var(--text-main); /* VOTRE variable */
+    color: var(--text-main);
     line-height: 1;
-    /* Pousse cet élément tout à droite de la ligne courante */
-    /* margin-left: auto; */
 }
 
 .card-kv-row {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 0.5rem;
     font-size: 0.85rem;
-    color: var(--text-muted); /* VOTRE variable */
-    /* Force le retour à la ligne pour ces éléments */
+    color: var(--text-muted);
     width: 100%;
     line-height: 0.8em;
-    /* margin-top: 4px; */ /* Un petit peu d'espace si nécessaire */
 }
 
 .card-kv-row .kv-value {
-    color: var(--text-main); /* VOTRE variable pour faire ressortir la data */
+    color: var(--text-main);
     font-weight: 500;
-    min-width: 3ch; /* Évite les micro-reflows sur les chiffres */
+    min-width: 3ch;
     text-align: right;
     font-variant-numeric: tabular-nums;
 }
@@ -520,28 +505,29 @@ body.mini-mode .monitor-block.interactive:hover {
 .card-bar-row {
     width: 100%;
     display: flex;
-    align-items: center; /* Alignement vertical centré */
-    justify-content: space-between; /* Barre à gauche, Texte tout à droite */
-    /* margin-bottom: 8px; */ /* Espacement sous la ligne */
+    align-items: center;
+    justify-content: space-between;
 }
 .card-bar-row .monitor-bar-track {
-    width: 190px; /* Largeur demandée */
-    flex: 0 0 190px; /* Empêche le rétrécissement ou l'agrandissement */
+    flex: 1;
+    min-width: 6rem;
+    margin-right: 0.5rem;
 }
 .card-bar-text {
     font-weight: 700;
     color: var(--text-main);
-    font-size: 1rem;
-    text-align: right; /* Sécurité si le texte est long */
+    font-size: 0.95rem;
+    text-align: right;
     line-height: 0.6em;
-    min-width: 4.5ch; /* Sécurise la largeur pour les % (ex: 100%) */
+    min-width: 4.5ch;
     font-variant-numeric: tabular-nums;
 }
 
 .sparkline-canvas {
-    width: 190px;
-    height: 40px;
-    margin-top: 8px;
+    width: 100%;
+    max-width: 11.25rem;
+    height: 2.25rem;
+    margin-top: 0.375rem;
 }
 
 /* =========================================
@@ -549,19 +535,22 @@ body.mini-mode .monitor-block.interactive:hover {
    ========================================= */
 
 /* --- Animations & Titre --- */
-/* Assure-toi que #overlay-title a la même typo que .card h3 */
 #overlay-title {
+    font-size: 1.5rem;
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 0.875rem;
+    color: var(--titles);
     opacity: 0;
-    transform: translateY(10px); /* Part d'un peu plus bas */
+    transform: translateY(0.625rem);
     transition:
         opacity 0.1s ease,
-        transform 0.1s ease; /* Disparition immédiate si fermeture */
+        transform 0.1s ease;
 }
 
 #overlay.active #overlay-title {
     opacity: 1;
     transform: translateY(0);
-    /* DÉLAI MAGIQUE : Le titre arrive pendant que la boite s'ouvre (à 0.1s) */
     transition:
         opacity 0.3s ease 0.1s,
         transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) 0.1s;
@@ -570,49 +559,44 @@ body.mini-mode .monitor-block.interactive:hover {
 /* --- Contenu Interne --- */
 .overlay-content {
     opacity: 0;
-    /* Fermeture : Disparition immédiate pour ne pas voir le contenu s'écraser */
     transition: opacity 0.1s ease 0s;
+    background: var(--modal-bg);
+    color: var(--text-main);
+    width: 100%;
+    height: 100%;
+    min-height: 24rem;
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: 0 0.3125rem 0.375rem rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-subtle);
+    font-size: 0.875rem;
 }
 
 #overlay.active .overlay-content {
     opacity: 1;
-    /* DÉLAI MAGIQUE 2 : Le contenu n'arrive que quand la boîte est quasi stable (0.25s) */
     transition: opacity 0.4s ease 0.25s;
-}
-
-.overlay-content {
-    /* Utilise la variable "Lumineuse/Modal" du thème */
-    background: var(--modal-bg);
-    color: var(--text-main); /* Force la couleur du texte du thème */
-    width: 100%;
-    height: 100%;
-    min-height: 480px; /* Sécurité pour éviter le collapse */
-    border-radius: var(--radius-lg);
-    padding: 30px;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    box-shadow: 0 5px 6px rgba(0, 0, 0, 0.05);
-    border: 1px solid var(--border-subtle);
-    font-size: 1.5em;
 }
 
 #overlay-body {
     flex: 1;
-    overflow-y: auto; /* Scroll global si le contenu dépasse */
-    margin-right: -10px; /* Petit hack pour coller le scroll au bord */
-    padding-right: 10px;
+    overflow-y: auto;
+    margin-right: -0.5rem;
+    padding-right: 0.5rem;
 }
 
 #close-overlay {
     position: absolute;
-    top: 15px;
-    right: 15px;
+    top: 0.75rem;
+    right: 0.75rem;
     background: none;
     border: none;
-    padding: 0 5px;
+    padding: 0.25rem;
     color: var(--text-main);
-    font-size: 1.8rem;
+    font-size: 1.4rem;
+    line-height: 1;
     cursor: pointer;
     transition:
         color 0.2s,
@@ -626,59 +610,65 @@ body.mini-mode .monitor-block.interactive:hover {
 
 /* --- Structure Interne --- */
 .overlay-desc {
-    margin-bottom: 20px;
+    margin-bottom: 0.875rem;
     font-weight: 500;
-    line-height: 1.2;
+    line-height: 1.3;
     color: var(--text-main);
-    font-size: 0.95rem;
-    height: 5em; /* Permet 4 lignes avec un line-height de 1.2 */
+    font-size: 0.875rem;
     display: flex;
     align-items: center;
     overflow: hidden;
 }
 
 .overlay-section {
-    margin-bottom: 20px;
+    margin-bottom: 0.875rem;
 }
+
 .overlay-val {
     font-weight: 600;
+    font-size: 0.9rem;
 }
 
 .overlay-header-row {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 5px;
+    align-items: center;
+    margin-bottom: 0.375rem;
+    font-size: 0.875rem;
 }
 
-/* Key-Value Rows (ex: Model, Arch...) */
 .overlay-kv-row {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 10px;
+    align-items: center;
+    margin-bottom: 0.5rem;
     border-bottom: 1px solid var(--border-subtle);
-    padding-bottom: 4px;
+    padding-bottom: 0.25rem;
+    font-size: 0.875rem;
 }
 
 .overlay-kv-label,
 .overlay-label {
     color: var(--text-muted);
+    font-size: 0.875rem;
 }
 
 .overlay-kv-label {
     white-space: nowrap;
-    margin-right: 10px;
+    margin-right: 0.625rem;
 }
 
 .overlay-kv-val {
     font-weight: 500;
     text-align: right;
+    font-size: 0.875rem;
 }
 
 /* --- Widget: CPU Cores Grid --- */
 .overlay-cores-grid {
     display: flex;
-    gap: 4px;
-    height: 60px;
+    gap: 0.25rem;
+    height: 3.25rem;
     align-items: flex-end;
 }
 
@@ -687,7 +677,7 @@ body.mini-mode .monitor-block.interactive:hover {
     background: var(--bar-bg);
     height: 100%;
     position: relative;
-    border-radius: 4px;
+    border-radius: 0.25rem;
     overflow: hidden;
 }
 
@@ -709,27 +699,27 @@ body.mini-mode .monitor-block.interactive:hover {
 /* --- Widget: Temperature Grid --- */
 .overlay-temp-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-    gap: 8px;
+    grid-template-columns: repeat(auto-fill, minmax(4rem, 1fr));
+    gap: 0.5rem;
 }
 
 .temp-item {
-    /* background: var(--surface); */
-    padding: 6px;
-    border-radius: 4px;
+    padding: 0.375rem;
+    border-radius: 0.25rem;
     text-align: center;
     border: 1px solid var(--text-muted);
 }
 
 .temp-label {
-    font-size: 0.75em;
+    font-size: 0.75rem;
     color: var(--text-muted);
-    margin-bottom: 2px;
+    margin-bottom: 0.125rem;
     text-transform: uppercase;
 }
 
 .temp-val {
     font-weight: 600;
+    font-size: 0.875rem;
 }
 
 /* --- Widget: Text List --- */
@@ -737,15 +727,15 @@ body.mini-mode .monitor-block.interactive:hover {
     list-style: none;
     padding: 0;
     margin: 0;
-    max-height: 300px; /* Sécurité si la liste est très longue */
-    overflow-y: auto; /* Scroll si nécessaire */
+    max-height: 16rem;
+    overflow-y: auto;
     text-align: right;
 }
 
 .overlay-text-list li {
-    padding: 6px 0;
+    padding: 0.375rem 0;
     border-bottom: 1px solid var(--border-subtle);
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     color: var(--text-main);
 }
 
@@ -755,11 +745,10 @@ body.mini-mode .monitor-block.interactive:hover {
 
 /* --- Widget: HTML Generic --- */
 .overlay-html {
-    margin-top: 20px;
-    padding-top: 15px;
+    margin-top: 1rem;
+    padding-top: 0.75rem;
     border-top: 1px solid var(--border-subtle);
-    /* text-align: center; */
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--text-muted);
 }
 
@@ -776,16 +765,14 @@ body.mini-mode .monitor-block.interactive:hover {
    7. MODULE PARTAGÉ : DISK (Card & Overlay)
    ========================================= */
 
-/* Conteneur Ligne (Utilisé dans la Carte) */
 .card-disk-row {
     width: 100%;
     display: flex;
     justify-content: space-between;
-    align-items: baseline; /* Aligne le texte sur la ligne de base */
-    gap: 10px;
+    align-items: baseline;
+    gap: 0.5rem;
 }
 
-/* Conteneur Liste (Utilisé dans l'Overlay) */
 .overlay-disk-list {
     list-style: none;
     padding: 0;
@@ -796,31 +783,30 @@ body.mini-mode .monitor-block.interactive:hover {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    padding: 12px 0;
+    padding: 0.5rem 0;
     border-bottom: 1px solid var(--border-subtle);
+    font-size: 0.875rem;
 }
 .overlay-disk-item:last-child {
     border-bottom: none;
 }
 
-/* Styles communs Texte */
 .disk-name {
-    font-weight: 600; /* Gras mais pas trop */
+    font-weight: 600;
     color: var(--text-main);
-    font-size: 0.95rem;
-    /* Gestion des noms longs */
+    font-size: 0.875rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    flex: 1; /* Prend la place dispo */
-    margin-right: 10px;
+    flex: 1;
+    margin-right: 0.5rem;
 }
 
 .disk-info {
-    font-size: 0.85rem; /* Plus petit */
-    color: var(--text-muted); /* Discret */
+    font-size: 0.8rem;
+    color: var(--text-muted);
     white-space: nowrap;
-    font-variant-numeric: tabular-nums; /* Chiffres alignés */
+    font-variant-numeric: tabular-nums;
 }
 
 /* =========================================
@@ -831,27 +817,26 @@ body.mini-mode .monitor-block.interactive:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
-    padding-bottom: 8px;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
     border-bottom: 1px solid var(--border-subtle);
+    font-size: 0.875rem;
 }
 
 /* The Switch Container */
 .switch {
     position: relative;
     display: inline-block;
-    width: 40px;
-    height: 22px;
+    width: 2.25rem;
+    height: 1.25rem;
 }
 
-/* Hide default HTML checkbox */
 .switch input {
     opacity: 0;
     width: 0;
     height: 0;
 }
 
-/* The slider */
 .slider {
     position: absolute;
     cursor: pointer;
@@ -861,62 +846,53 @@ body.mini-mode .monitor-block.interactive:hover {
     bottom: 0;
     background-color: var(--bar-bg);
     transition: 0.4s;
-    border-radius: 34px;
+    border-radius: 2rem;
 }
 
 .slider:before {
     position: absolute;
     content: "";
-    height: 16px;
-    width: 16px;
-    left: 3px;
-    bottom: 3px;
+    height: 0.9rem;
+    width: 0.9rem;
+    left: 0.175rem;
+    bottom: 0.175rem;
     background-color: white;
     transition: 0.4s;
     border-radius: 50%;
 }
 
-input:checked + .slider {
-    background-color: var(--accent);
-}
-
 input:checked + .slider:before {
-    transform: translateX(18px);
+    transform: translateX(1rem);
 }
 
-/* ACCESSIBILITÉ : Focus visible pour les Switchs */
-/* Quand l'input (masqué) reçoit le focus clavier, on illumine le slider voisin */
-/* On applique un encadrement simple (type "cadre blanc") aux switches quand ils ont le focus.
-   On utilise var(--text-main) pour que ce soit blanc en thème sombre et noir en thème clair,
-   sans ajouter de nouvelles couleurs en dur. */
 .switch input:focus + .slider {
-    outline: 2px solid var(--text-main);
-    outline-offset: 2px;
+    outline: 0.125rem solid var(--text-main);
+    outline-offset: 0.125rem;
 }
 
 .overlay-color-row {
-    margin-bottom: 20px;
-    padding-bottom: 15px;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
     border-bottom: 1px solid var(--border-subtle);
+    font-size: 0.875rem;
 }
 
 .overlay-color-grid {
     display: flex;
-    gap: 15px;
-    margin-top: 10px;
-    justify-content: flex-end; /* Alignement à droite comme les switchs */
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+    justify-content: flex-end;
 }
 
 .color-swatch {
-    width: 32px;
-    height: 32px;
+    width: 1.75rem;
+    height: 1.75rem;
     border-radius: 50%;
     border: 2px solid transparent;
     cursor: pointer;
     transition:
         transform 0.2s,
         border-color 0.2s;
-    /* L'accessibilité clavier */
     outline: none;
 }
 
@@ -925,11 +901,11 @@ input:checked + .slider:before {
 }
 
 .color-swatch:focus-visible {
-    outline: 2px solid var(--text-main);
-    outline-offset: 2px;
+    outline: 0.125rem solid var(--text-main);
+    outline-offset: 0.125rem;
 }
 
 .color-swatch.selected {
-    border-color: var(--accent); /* Vert d'accentuation */
+    border-color: var(--accent);
     transform: scale(1.1);
 }

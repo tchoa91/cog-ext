@@ -3,7 +3,10 @@
  * @description Configuration statique de l'interface, des couleurs et des seuils.
  */
 
-const t = chrome.i18n.getMessage;
+export const t = (key, substitutions) =>
+  chrome?.i18n?.getMessage
+    ? chrome.i18n.getMessage(key, substitutions) || key
+    : key;
 
 export const MOOD_COLORS = [
   { val: 195, label: "Electric Cyan" },

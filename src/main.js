@@ -19,10 +19,7 @@ import {
 } from "./renderer.js";
 
 import { DataStore } from "./data-store.js";
-import { UI_CONFIG, THRESHOLDS } from "./config.js";
-
-// --- Raccourci i18n ---
-const t = chrome.i18n.getMessage;
+import { UI_CONFIG, THRESHOLDS, t } from "./config.js";
 
 /**
  * Traduit un tableau de pourcentages d'utilisation CPU en une description
@@ -704,9 +701,11 @@ async function gameLoop() {
   // Si tickCount est un multiple de 5 (5, 10, 15...), updateText est vrai
   const updateText = tickCount % TEXT_UPDATE_RATIO === 0;
 
-  // A. SCOPE (Inchangé)
+  // A. SCOPE
   let scope = "cards";
-  if (activeOverlayId) {
+  if (document.body.classList.contains("mini-mode")) {
+    scope = null; // Mode Eco : uniquement les moniteurs (TopBar)
+  } else if (activeOverlayId) {
     const config = getOverlayConfig(activeOverlayId);
     // Si overlay dynamique -> focus dessus, sinon mode eco (monitors only)
     scope = config && config.isDynamic ? activeOverlayId : null;

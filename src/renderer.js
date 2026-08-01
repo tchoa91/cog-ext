@@ -10,14 +10,13 @@
  * @see         https://github.com/tchoa91/cog-ext
  */
 
+import { t } from "./config.js";
+
 // Constantes graphiques
 const SVGS = {
   chevron: `<svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>`,
   bolt: `<svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>`,
 };
-
-// Raccourci i18n
-const t = chrome.i18n.getMessage;
 
 // === 1. CACHE & ÉTAT ===
 let topBarEl;

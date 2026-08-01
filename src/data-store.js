@@ -12,13 +12,20 @@
 
 const TTL = {
   FAST: 5000, // 5 secondes (Storage, Display, Network Basic)
-  SLOW: 30000, // 30 secondes (IP)
+  SLOW_INIT: 30000, // 30 secondes (3 premiers fetches IP ou si changement d'IP/réseau)
+  SLOW_STABLE: 300000, // 5 minutes (si l'IP reste identique après 3 fetches)
 };
 
 export class DataStore {
   constructor() {
     this.cachedGpu = null;
     this.cachedStaticInfo = null;
+
+    this.ipFetchState = {
+      sameIpCount: 0,
+      lastIp: null,
+      wasOffline: true,
+    };
 
     this.cache = {
       storage: { data: null, ts: 0 },
@@ -261,19 +268,44 @@ export class DataStore {
   }
 
   async _fetchBattery() {
-    // Si l'API n'existe pas (ex: PC fixe sans onduleur détecté par l'OS), on renvoie null.
-    if (!navigator.getBattery) return null;
+    // Si l'API n'existe pas ou n'est pas une fonction, on renvoie null.
+    if (typeof navigator.getBattery !== "function") return null;
 
     try {
       const b = await navigator.getBattery();
+      if (!b) return null;
+
+      // Protection contre le "floutage" (anti-fingerprinting) :
+      // Vérification que le niveau est un nombre fini valide entre 0 et 1.
+      const rawLevel = typeof b.level === "number" ? b.level : null;
+      const level =
+        rawLevel !== null && !isNaN(rawLevel) && isFinite(rawLevel)
+          ? Math.max(0, Math.min(1, rawLevel))
+          : null;
+
+      // Si le niveau de batterie n'est pas lisible ou flouté, on considère le module indisponible.
+      if (level === null) return null;
+
+      const charging = typeof b.charging === "boolean" ? b.charging : true;
+
+      const chargingTime =
+        typeof b.chargingTime === "number" && isFinite(b.chargingTime)
+          ? b.chargingTime
+          : null;
+
+      const dischargingTime =
+        typeof b.dischargingTime === "number" && isFinite(b.dischargingTime)
+          ? b.dischargingTime
+          : null;
+
       return {
-        level: b.level,
-        charging: b.charging,
-        chargingTime: b.chargingTime,
-        dischargingTime: b.dischargingTime,
+        level,
+        charging,
+        chargingTime,
+        dischargingTime,
       };
     } catch (e) {
-      return null; // En cas d'erreur, on considère le module comme absent
+      return null; // En cas d'erreur de sécurité, permission refusée ou exception du navigateur
     }
   }
 
@@ -293,40 +325,59 @@ export class DataStore {
 
     // 1. Mise à jour Fréquente (Status + Latence) : TTL.FAST (5s)
     if (now - netCache.ts > TTL.FAST) {
-      netCache.data.online = navigator.onLine;
+      const isOnline = navigator.onLine;
+      netCache.data.online = isOnline;
       netCache.data.type = navigator.connection
         ? navigator.connection.effectiveType
         : "unknown";
 
       netCache.ts = now; // On met à jour le timestamp immédiatement
 
-      if (netCache.data.online) {
-        // Mesure Latence : On ping un serveur Anycast (Google) pour simuler un vrai Ping.
-        // "generate_204" renvoie une réponse vide instantanée depuis le CDN le plus proche.
+      if (isOnline) {
+        // Si le réseau était précédemment coupé, réinitialiser le compteur IP pour repartir sur 30s
+        if (this.ipFetchState.wasOffline) {
+          this.ipFetchState.sameIpCount = 0;
+          this.ipFetchState.wasOffline = false;
+        }
+
+        // Mesure Latence : Ping Anycast (Google) avec timeout strict de 2000ms
+        const pingController = new AbortController();
+        const pingTimeout = setTimeout(() => pingController.abort(), 2000);
+
         try {
           const start = performance.now();
           await fetch("https://clients3.google.com/generate_204", {
             method: "HEAD",
-            mode: "no-cors", // Mode opaque (plus rapide, évite le parsing)
+            mode: "no-cors",
             cache: "no-store",
+            signal: pingController.signal,
           });
+          clearTimeout(pingTimeout);
           netCache.data.latency = Math.round(performance.now() - start);
         } catch (e) {
-          // En cas d'échec (firewall, etc.), on garde l'ancienne valeur
+          clearTimeout(pingTimeout);
+          // Si le ping échoue ou dépasse 2000ms (timeout/abort), la latence est considérée comme mauvaise / indisponible
+          netCache.data.latency = null;
         }
       } else {
+        // Réseau coupé
         netCache.data.ip = null;
         netCache.data.latency = null;
+        this.ipFetchState.wasOffline = true;
+        this.ipFetchState.sameIpCount = 0;
       }
     }
 
-    // 2. Mise à jour IP (Seulement si en ligne et TTL expiré)
-    if (netCache.data.online && now - netCache.ipTs > TTL.SLOW) {
+    // 2. Mise à jour IP (Seulement si en ligne)
+    // Rythme : 30s pour les 3 premiers fetches (ou si l'IP change / coupure réseau), puis 5 minutes si l'IP reste identique.
+    const currentIpTtl =
+      this.ipFetchState.sameIpCount >= 3 ? TTL.SLOW_STABLE : TTL.SLOW_INIT;
+
+    if (netCache.data.online && now - netCache.ipTs > currentIpTtl) {
       try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 2000);
 
-        // On ne mesure plus la latence ici, juste l'IP
         const response = await fetch("https://api.ipify.org", {
           signal: controller.signal,
           cache: "no-store",
@@ -337,10 +388,17 @@ export class DataStore {
           const ip = await response.text();
           netCache.data.ip = ip;
           netCache.ipTs = now;
+
+          if (ip === this.ipFetchState.lastIp) {
+            this.ipFetchState.sameIpCount++;
+          } else {
+            this.ipFetchState.lastIp = ip;
+            this.ipFetchState.sameIpCount = 1;
+          }
         }
       } catch (e) {
-        // Si le fetch échoue (ex: bloqueur de pub), on garde l'info "Online" mais sans IP
-        // On ne retourne pas null ici car "Online" est une info utile en soi.
+        // En cas d'échec du fetch IP, réinitialiser le compteur pour réessayer dans 30s
+        this.ipFetchState.sameIpCount = 0;
       }
     }
 

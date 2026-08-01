@@ -80,7 +80,7 @@
   "disp_none": { "message": "Yok" },
   "action_close": { "message": "Pencereyi kapat" },
   "action_toggle_mini": { "message": "Mini modu değiştir" },
-  "val_na": { "message": "Müsait değil" },
+  "val_na": { "message": "N/A" },
   "cpu_mood_idle": { "message": "Sistem boşta" },
   "cpu_mood_crit": { "message": "Kritik genel aşırı yük" },
   "cpu_mood_asym": { "message": "Asimetrik aktivite" },

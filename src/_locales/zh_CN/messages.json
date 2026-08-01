@@ -80,7 +80,7 @@
   "disp_none": { "message": "无" },
   "action_close": { "message": "关闭窗口" },
   "action_toggle_mini": { "message": "切换迷你模式" },
-  "val_na": { "message": "不可用" },
+  "val_na": { "message": "N/A" },
   "cpu_mood_idle": { "message": "系统空闲" },
   "cpu_mood_crit": { "message": "严重的全局过载" },
   "cpu_mood_asym": { "message": "非对称活动" },

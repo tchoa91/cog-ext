@@ -82,7 +82,7 @@
   "disp_none": { "message": "Geen" },
   "action_close": { "message": "Venster sluiten" },
   "action_toggle_mini": { "message": "Mini-modus in-/uitschakelen" },
-  "val_na": { "message": "Niet beschikbaar" },
+  "val_na": { "message": "N/A" },
   "cpu_mood_idle": { "message": "Systeem inactief" },
   "cpu_mood_crit": { "message": "Kritieke globale overbelasting" },
   "cpu_mood_asym": { "message": "Asymmetrische activiteit" },

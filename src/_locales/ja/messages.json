@@ -80,7 +80,7 @@
   "disp_none": { "message": "なし" },
   "action_close": { "message": "ウィンドウを閉じる" },
   "action_toggle_mini": { "message": "ミニモードの切り替え" },
-  "val_na": { "message": "利用不可" },
+  "val_na": { "message": "N/A" },
   "cpu_mood_idle": { "message": "システムアイドル" },
   "cpu_mood_crit": { "message": "重大な全体負荷過多" },
   "cpu_mood_asym": { "message": "非対称アクティビティ" },

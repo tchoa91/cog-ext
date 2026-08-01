@@ -80,7 +80,7 @@
   "disp_none": { "message": "Tidak ada" },
   "action_close": { "message": "Tutup jendela" },
   "action_toggle_mini": { "message": "Alihkan mode mini" },
-  "val_na": { "message": "Tidak tersedia" },
+  "val_na": { "message": "N/A" },
   "cpu_mood_idle": { "message": "Sistem menganggur" },
   "cpu_mood_crit": { "message": "Kelebihan beban global kritis" },
   "cpu_mood_asym": { "message": "Aktivitas asimetris" },

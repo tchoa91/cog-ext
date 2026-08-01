@@ -82,7 +82,7 @@
   "disp_none": { "message": "Brak" },
   "action_close": { "message": "Zamknij okno" },
   "action_toggle_mini": { "message": "Przełącz tryb mini" },
-  "val_na": { "message": "Niedostępne" },
+  "val_na": { "message": "N/A" },
   "cpu_mood_idle": { "message": "System bezczynny" },
   "cpu_mood_crit": { "message": "Krytyczne globalne przeciążenie" },
   "cpu_mood_asym": { "message": "Aktywność asymetryczna" },

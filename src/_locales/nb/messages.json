@@ -80,7 +80,7 @@
   "disp_none": { "message": "Ingen" },
   "action_close": { "message": "Lukk vindu" },
   "action_toggle_mini": { "message": "Veksle minimodus" },
-  "val_na": { "message": "Ikke tilgjengelig" },
+  "val_na": { "message": "N/A" },
   "cpu_mood_idle": { "message": "Systemet er ledig" },
   "cpu_mood_crit": { "message": "Kritisk global overbelastning" },
   "cpu_mood_asym": { "message": "Asymmetrisk aktivitet" },

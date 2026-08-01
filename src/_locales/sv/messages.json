@@ -82,7 +82,7 @@
   "disp_none": { "message": "Ingen" },
   "action_close": { "message": "Stäng fönster" },
   "action_toggle_mini": { "message": "Växla mini-läge" },
-  "val_na": { "message": "Ej tillgänglig" },
+  "val_na": { "message": "N/A" },
   "cpu_mood_idle": { "message": "Systemet är inaktivt" },
   "cpu_mood_crit": { "message": "Kritisk global överbelastning" },
   "cpu_mood_asym": { "message": "Asymmetrisk aktivitet" },

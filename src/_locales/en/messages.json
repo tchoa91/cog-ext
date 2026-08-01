@@ -82,7 +82,7 @@
   "disp_none": { "message": "None" },
   "action_close": { "message": "Close window" },
   "action_toggle_mini": { "message": "Toggle mini mode" },
-  "val_na": { "message": "Not available" },
+  "val_na": { "message": "N/A" },
   "cpu_mood_idle": { "message": "System idle" },
   "cpu_mood_crit": { "message": "Critical global overload" },
   "cpu_mood_asym": { "message": "Asymmetric activity" },

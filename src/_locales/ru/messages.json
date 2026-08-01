@@ -80,7 +80,7 @@
   "disp_none": { "message": "Нет" },
   "action_close": { "message": "Закрыть окно" },
   "action_toggle_mini": { "message": "Переключить мини-режим" },
-  "val_na": { "message": "Недоступно" },
+  "val_na": { "message": "N/A" },
   "cpu_mood_idle": { "message": "Система простаивает" },
   "cpu_mood_crit": { "message": "Критическая перегрузка" },
   "cpu_mood_asym": { "message": "Асимметричная активность" },

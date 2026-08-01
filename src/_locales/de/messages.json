@@ -80,7 +80,7 @@
   "disp_none": { "message": "Keine" },
   "action_close": { "message": "Fenster schließen" },
   "action_toggle_mini": { "message": "Mini-Modus umschalten" },
-  "val_na": { "message": "Nicht verfügbar" },
+  "val_na": { "message": "N/A" },
   "cpu_mood_idle": { "message": "System im Leerlauf" },
   "cpu_mood_crit": { "message": "Kritische globale Überlastung" },
   "cpu_mood_asym": { "message": "Asymmetrische Aktivität" },

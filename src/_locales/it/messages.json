@@ -90,8 +90,26 @@
   "cpu_mood_homo": { "message": "Carico omogeneo" },
   "cpu_peaks_all": { "message": "Tutti i core sono nella zona rossa." },
   "cpu_peaks_one": {
-    "message": "Attenzione, picchi sul core $desc$.",
-    "placeholders": { "desc": { "content": "$1" } }
+    "message": "Elevata attività sul core $id$ al $val$%.",
+    "placeholders": {
+      "id": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_many": {
+    "message": "Elevata attività sui core $ids$. Tra $min$ e $max$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "min": { "content": "$2" },
+      "max": { "content": "$3" }
+    }
+  },
+  "cpu_peaks_many_same": {
+    "message": "Elevata attività sui core $ids$ al $val$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
   },
   "cpu_peaks_none": { "message": "Nessun core in sovraccarico." },
   "cpu_avg_label": {

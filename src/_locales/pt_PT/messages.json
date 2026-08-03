@@ -90,8 +90,26 @@
   "cpu_mood_homo": { "message": "Carga homogénea" },
   "cpu_peaks_all": { "message": "Todos os núcleos estão no vermelho." },
   "cpu_peaks_one": {
-    "message": "Aviso, picos no núcleo $desc$.",
-    "placeholders": { "desc": { "content": "$1" } }
+    "message": "Alta atividade no núcleo $id$ a $val$%.",
+    "placeholders": {
+      "id": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_many": {
+    "message": "Alta atividade nos núcleos $ids$. Entre $min$ e $max$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "min": { "content": "$2" },
+      "max": { "content": "$3" }
+    }
+  },
+  "cpu_peaks_many_same": {
+    "message": "Alta atividade nos núcleos $ids$ a $val$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
   },
   "cpu_peaks_none": { "message": "Nenhum núcleo em sobrecarga." },
   "cpu_avg_label": {

@@ -88,8 +88,26 @@
   "cpu_mood_homo": { "message": "Homojen yük" },
   "cpu_peaks_all": { "message": "Tüm çekirdekler kırmızı bölgede." },
   "cpu_peaks_one": {
-    "message": "Uyarı, $desc$ çekirdeğinde pikler.",
-    "placeholders": { "desc": { "content": "$1" } }
+    "message": "Çekirdek $id$ üzerinde yüksek aktivite: %$val$.",
+    "placeholders": {
+      "id": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_many": {
+    "message": "Çekirdekler $ids$ üzerinde yüksek aktivite. %$min$ ile %$max$ arasında.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "min": { "content": "$2" },
+      "max": { "content": "$3" }
+    }
+  },
+  "cpu_peaks_many_same": {
+    "message": "Çekirdekler $ids$ üzerinde yüksek aktivite: %$val$.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
   },
   "cpu_peaks_none": { "message": "Aşırı yüklenen çekirdek yok." },
   "cpu_avg_label": {

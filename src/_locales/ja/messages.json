@@ -88,8 +88,26 @@
   "cpu_mood_homo": { "message": "均質な負荷" },
   "cpu_peaks_all": { "message": "すべてのコアがレッドゾーンにあります。" },
   "cpu_peaks_one": {
-    "message": "警告、コア $desc$ でピークが発生しています。",
-    "placeholders": { "desc": { "content": "$1" } }
+    "message": "コア $id$ の高負荷：$val$%。",
+    "placeholders": {
+      "id": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_many": {
+    "message": "コア $ids$ の高負荷。$min$% 〜 $max$%。",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "min": { "content": "$2" },
+      "max": { "content": "$3" }
+    }
+  },
+  "cpu_peaks_many_same": {
+    "message": "コア $ids$ の高負荷：$val$%。",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
   },
   "cpu_peaks_none": { "message": "過負荷のコアはありません。" },
   "cpu_avg_label": {

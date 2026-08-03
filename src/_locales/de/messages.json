@@ -88,8 +88,26 @@
   "cpu_mood_homo": { "message": "Homogene Last" },
   "cpu_peaks_all": { "message": "Alle Kerne sind im roten Bereich." },
   "cpu_peaks_one": {
-    "message": "Warnung, Spitzen auf Kern $desc$.",
-    "placeholders": { "desc": { "content": "$1" } }
+    "message": "Hohe Aktivität auf Kern $id$ bei $val$%.",
+    "placeholders": {
+      "id": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_many": {
+    "message": "Hohe Aktivität auf den Kernen $ids$. Zwischen $min$ und $max$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "min": { "content": "$2" },
+      "max": { "content": "$3" }
+    }
+  },
+  "cpu_peaks_many_same": {
+    "message": "Hohe Aktivität auf den Kernen $ids$ bei $val$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
   },
   "cpu_peaks_none": { "message": "Kein Kern überlastet." },
   "cpu_avg_label": {

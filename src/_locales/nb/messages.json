@@ -88,8 +88,26 @@
   "cpu_mood_homo": { "message": "Homogen belastning" },
   "cpu_peaks_all": { "message": "Alle kjerner er i det røde området." },
   "cpu_peaks_one": {
-    "message": "Advarsel, topper på kjerne $desc$.",
-    "placeholders": { "desc": { "content": "$1" } }
+    "message": "Høy aktivitet på kjerne $id$ ved $val$%.",
+    "placeholders": {
+      "id": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_many": {
+    "message": "Høy aktivitet på kjernene $ids$. Mellom $min$ og $max$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "min": { "content": "$2" },
+      "max": { "content": "$3" }
+    }
+  },
+  "cpu_peaks_many_same": {
+    "message": "Høy aktivitet på kjernene $ids$ ved $val$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
   },
   "cpu_peaks_none": { "message": "Ingen overbelastet kjerne." },
   "cpu_avg_label": {

@@ -88,8 +88,26 @@
   "cpu_mood_homo": { "message": "均匀负载" },
   "cpu_peaks_all": { "message": "所有核心都处于红色区域。" },
   "cpu_peaks_one": {
-    "message": "警告，核心 $desc$ 出现峰值。",
-    "placeholders": { "desc": { "content": "$1" } }
+    "message": "核心 $id$ 活动频繁：$val$%。",
+    "placeholders": {
+      "id": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_many": {
+    "message": "核心 $ids$ 活动频繁。介于 $min$% 至 $max$% 之间。",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "min": { "content": "$2" },
+      "max": { "content": "$3" }
+    }
+  },
+  "cpu_peaks_many_same": {
+    "message": "核心 $ids$ 活动频繁：$val$%。",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
   },
   "cpu_peaks_none": { "message": "核心未过载。" },
   "cpu_avg_label": {

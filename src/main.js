@@ -60,11 +60,25 @@ function generateGraphSemantics(cores) {
   // 4. Assemblage de la conclusion
   let peaksText = "";
   if (peaks.length > 0) {
-    if (peaks.length === cores.length) {
+    if (peaks.length === cores.length && cores.length > 1) {
       peaksText = t("cpu_peaks_all");
+    } else if (peaks.length === 1) {
+      const p = peaks[0];
+      peaksText = t("cpu_peaks_one", [p.id.toString(), p.val.toString()]);
     } else {
-      const peaksDesc = peaks.map((p) => `n°${p.id}: ${p.val}%`).join(", ");
-      peaksText = t("cpu_peaks_one", [peaksDesc]);
+      const ids = peaks.map((p) => p.id).join(", ");
+      const vals = peaks.map((p) => p.val);
+      const minVal = Math.min(...vals);
+      const maxVal = Math.max(...vals);
+      if (minVal === maxVal) {
+        peaksText = t("cpu_peaks_many_same", [ids, minVal.toString()]);
+      } else {
+        peaksText = t("cpu_peaks_many", [
+          ids,
+          minVal.toString(),
+          maxVal.toString(),
+        ]);
+      }
     }
   } else if (avg >= 20) {
     peaksText = t("cpu_peaks_none");
@@ -528,7 +542,7 @@ function resolveWidgetData(itemId, data, updateText, isMonitor = false) {
  * @param {boolean} isZoom
  */
 function applyZoom(isZoom) {
-  document.documentElement.style.fontSize = isZoom ? "16px" : "14px";
+  document.documentElement.style.fontSize = isZoom ? "16px" : "12px";
 }
 
 // --- 4. TRANSFORMATEUR DE DONNÉES (Adapter / Mapper) ---

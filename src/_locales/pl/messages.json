@@ -90,8 +90,26 @@
   "cpu_mood_homo": { "message": "Obciążenie jednorodne" },
   "cpu_peaks_all": { "message": "Wszystkie rdzenie są w czerwonej strefie." },
   "cpu_peaks_one": {
-    "message": "Ostrzeżenie, skoki na rdzeniu $desc$.",
-    "placeholders": { "desc": { "content": "$1" } }
+    "message": "Wysoka aktywność na rdzeniu $id$ przy $val$%.",
+    "placeholders": {
+      "id": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_many": {
+    "message": "Wysoka aktywność na rdzeniach $ids$. Między $min$ a $max$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "min": { "content": "$2" },
+      "max": { "content": "$3" }
+    }
+  },
+  "cpu_peaks_many_same": {
+    "message": "Wysoka aktywność na rdzeniach $ids$ przy $val$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
   },
   "cpu_peaks_none": { "message": "Brak przeciążenia rdzeni." },
   "cpu_avg_label": {

@@ -90,8 +90,26 @@
   "cpu_mood_homo": { "message": "Charge homogène" },
   "cpu_peaks_all": { "message": "Tous les cœurs sont dans le rouge." },
   "cpu_peaks_one": {
-    "message": "Attention, pics sur le cœur $desc$.",
-    "placeholders": { "desc": { "content": "$1" } }
+    "message": "Forte activité sur le cœur $id$ à $val$%.",
+    "placeholders": {
+      "id": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_many": {
+    "message": "Forte activité sur les cœurs $ids$. Entre $min$ et $max$ %.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "min": { "content": "$2" },
+      "max": { "content": "$3" }
+    }
+  },
+  "cpu_peaks_many_same": {
+    "message": "Forte activité sur les cœurs $ids$ à $val$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
   },
   "cpu_peaks_none": { "message": "Aucun cœur en surcharge." },
   "cpu_avg_label": {

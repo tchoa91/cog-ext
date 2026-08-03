@@ -90,8 +90,26 @@
   "cpu_mood_homo": { "message": "Homogeneous load" },
   "cpu_peaks_all": { "message": "All cores are in the red." },
   "cpu_peaks_one": {
-    "message": "Warning, peaks on core $desc$.",
-    "placeholders": { "desc": { "content": "$1" } }
+    "message": "High activity on core $id$ at $val$%.",
+    "placeholders": {
+      "id": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_many": {
+    "message": "High activity on cores $ids$. Between $min$ and $max$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "min": { "content": "$2" },
+      "max": { "content": "$3" }
+    }
+  },
+  "cpu_peaks_many_same": {
+    "message": "High activity on cores $ids$ at $val$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
   },
   "cpu_peaks_none": { "message": "No core in overload." },
   "cpu_avg_label": {

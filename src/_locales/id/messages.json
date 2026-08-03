@@ -88,8 +88,26 @@
   "cpu_mood_homo": { "message": "Beban homogen" },
   "cpu_peaks_all": { "message": "Semua inti berada di zona merah." },
   "cpu_peaks_one": {
-    "message": "Peringatan, puncak pada inti $desc$.",
-    "placeholders": { "desc": { "content": "$1" } }
+    "message": "Aktivitas tinggi pada inti $id$ di $val$%.",
+    "placeholders": {
+      "id": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_many": {
+    "message": "Aktivitas tinggi pada inti $ids$. Antara $min$ dan $max$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "min": { "content": "$2" },
+      "max": { "content": "$3" }
+    }
+  },
+  "cpu_peaks_many_same": {
+    "message": "Aktivitas tinggi pada inti $ids$ di $val$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
   },
   "cpu_peaks_none": { "message": "Tidak ada inti kelebihan beban." },
   "cpu_avg_label": {

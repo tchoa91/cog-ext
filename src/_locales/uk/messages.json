@@ -1,0 +1,119 @@
+{
+  "appName": { "message": "COGext : Системний монітор" },
+  "appDesc": {
+    "message": "Ваша система очима Chrome — у сучасному, легкому та відкритому дашборді."
+  },
+
+  "monitor_cpu": { "message": "ЦП" },
+  "monitor_mem": { "message": "ПАМ" },
+  "monitor_batt": { "message": "БАТ" },
+  "monitor_net": { "message": "МЕР" },
+
+  "card_cpu_title": { "message": "Навантаження ЦП" },
+  "card_mem_title": { "message": "Пам'ять" },
+  "card_temp_title": { "message": "Температура ЦП" },
+  "card_batt_title": { "message": "Батарея" },
+  "card_disp_title": { "message": "Дисплей" },
+  "card_net_title": { "message": "Мережа" },
+  "card_chrome_title": { "message": "Chrome" },
+  "card_os_title": { "message": "Система" },
+  "card_storage_title": { "message": "Сховище" },
+  "card_settings_title": { "message": "COGext - Налаштування" },
+
+  "label_mem_total": { "message": "Всього пам'яті :" },
+  "label_mem_used": { "message": "Використано пам'яті :" },
+  "label_batt_time_general": {
+    "message": "Час до повної зарядки/розрядки :"
+  },
+  "label_ip": { "message": "IP-адреса :" },
+  "label_latency": { "message": "Затримка :" },
+  "label_platform": { "message": "Платформа :" },
+  "label_free": { "message": "вільно" },
+  "label_version": { "message": "Версія :" },
+
+  "overlay_cpu_title": { "message": "Деталі навантаження ЦП" },
+  "overlay_temp_title": { "message": "Деталі температури" },
+  "overlay_disp_title": { "message": "Деталі дисплея" },
+  "overlay_chrome_title": { "message": "Деталі Chrome" },
+  "overlay_storage_title": { "message": "Деталі сховища" },
+
+  "detail_cpu_avg": { "message": "Середнє навантаження :" },
+  "detail_cpu_core": { "message": "Навантаження по ядрах :" },
+  "detail_cpu_arch": { "message": "Архітектура ЦП :" },
+  "detail_cpu_model": { "message": "Модель ЦП :" },
+  "detail_cpu_features": { "message": "Можливості ЦП :" },
+
+  "detail_temp_avg": { "message": "Середня температура :" },
+  "detail_temp_sensor": { "message": "Температура по датчиках :" },
+
+  "detail_disp_prim": { "message": "Основний дисплей :" },
+  "detail_disp_other": { "message": "Додаткові дисплеї :" },
+  "detail_gpu": { "message": "Графічний процесор :" },
+
+  "detail_chrome_langs": { "message": "Мови :" },
+  "detail_chrome_exts": { "message": "Активні розширення :" },
+
+  "detail_storage_discs": { "message": "Диски :" },
+
+  "settings_zoom": { "message": "Увімкнути масштаб :" },
+  "settings_theme": { "message": "Увімкнути темну тему :" },
+  "settings_unit": { "message": "Використовувати °F для температури :" },
+  "settings_mood": { "message": "Колір акценту :" },
+  "settings_footer": {
+    "message": "2026, GPL-3.0, François Bacconnet, <a href='https://ext.tchoa.com'>Більше інфо</a>"
+  },
+
+  "status_charging": { "message": "Заряджається" },
+  "status_on_battery": { "message": "Від батареї" },
+  "status_full_charge_in": { "message": "Повне заряджання через :" },
+  "status_time_left": { "message": "Залишилось часу :" },
+  "status_powered": { "message": "Від мережі" },
+
+  "status_online": { "message": "В мережі" },
+  "status_offline": { "message": "Поза мережею" },
+  "status_on": { "message": "УВІМК" },
+  "status_off": { "message": "ВИМК" },
+  "status_warning": { "message": "Попередження" },
+  "status_alert": { "message": "Тривога" },
+  "label_and": { "message": "та" },
+
+  "disp_internal": { "message": "Вбудований дисплей" },
+  "disp_internal_short": { "message": "Вбудований" },
+  "disp_unknown": { "message": "Невідомо" },
+  "disp_none": { "message": "Немає" },
+  "action_close": { "message": "Закрити вікно" },
+  "action_toggle_mini": { "message": "Переключити міні-режим" },
+  "val_na": { "message": "Н/Д" },
+  "cpu_mood_idle": { "message": "Система відпочиває" },
+  "cpu_mood_crit": { "message": "Критичне загальне перевантаження" },
+  "cpu_mood_asym": { "message": "Асиметрична активність" },
+  "cpu_mood_homo": { "message": "Рівномірне навантаження" },
+  "cpu_peaks_all": { "message": "Усі ядра в червоній зоні." },
+  "cpu_peaks_one": {
+    "message": "Висока активність на ядрі $id$ при $val$%.",
+    "placeholders": {
+      "id": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_many": {
+    "message": "Висока активність на ядрах $ids$. Від $min$ до $max$ %.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "min": { "content": "$2" },
+      "max": { "content": "$3" }
+    }
+  },
+  "cpu_peaks_many_same": {
+    "message": "Висока активність на ядрах $ids$ при $val$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_none": { "message": "Жодне ядро не перевантажене." },
+  "cpu_avg_label": {
+    "message": "Середнє $avg$%.",
+    "placeholders": { "avg": { "content": "$1" } }
+  }
+}

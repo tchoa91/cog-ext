@@ -1,0 +1,119 @@
+{
+  "appName": { "message": "COGext : Monitor Sistem" },
+  "appDesc": {
+    "message": "Sistemul tău văzut de Chrome — prezentat într-un panou de control modern, ușor și open-source."
+  },
+
+  "monitor_cpu": { "message": "CPU" },
+  "monitor_mem": { "message": "MEM" },
+  "monitor_batt": { "message": "BAT" },
+  "monitor_net": { "message": "NET" },
+
+  "card_cpu_title": { "message": "Încărcare CPU" },
+  "card_mem_title": { "message": "Memorie" },
+  "card_temp_title": { "message": "Temperatură CPU" },
+  "card_batt_title": { "message": "Baterie" },
+  "card_disp_title": { "message": "Afișaj" },
+  "card_net_title": { "message": "Rețea" },
+  "card_chrome_title": { "message": "Chrome" },
+  "card_os_title": { "message": "Sistem" },
+  "card_storage_title": { "message": "Stocare" },
+  "card_settings_title": { "message": "COGext - Setări" },
+
+  "label_mem_total": { "message": "Memorie totală :" },
+  "label_mem_used": { "message": "Memorie utilizată :" },
+  "label_batt_time_general": {
+    "message": "Timp până la încărcare/descărcare completă :"
+  },
+  "label_ip": { "message": "Adresă IP :" },
+  "label_latency": { "message": "Latență :" },
+  "label_platform": { "message": "Platformă :" },
+  "label_free": { "message": "liber" },
+  "label_version": { "message": "Versiune :" },
+
+  "overlay_cpu_title": { "message": "Detalii încărcare CPU" },
+  "overlay_temp_title": { "message": "Detalii temperatură" },
+  "overlay_disp_title": { "message": "Detalii afișaj" },
+  "overlay_chrome_title": { "message": "Detalii Chrome" },
+  "overlay_storage_title": { "message": "Detalii stocare" },
+
+  "detail_cpu_avg": { "message": "Încărcare medie :" },
+  "detail_cpu_core": { "message": "Încărcare pe nucleu :" },
+  "detail_cpu_arch": { "message": "Arhitectură CPU :" },
+  "detail_cpu_model": { "message": "Model CPU :" },
+  "detail_cpu_features": { "message": "Funcționalități CPU :" },
+
+  "detail_temp_avg": { "message": "Temperatură medie :" },
+  "detail_temp_sensor": { "message": "Temperatură pe senzor :" },
+
+  "detail_disp_prim": { "message": "Ecran principal :" },
+  "detail_disp_other": { "message": "Ecrane secundare :" },
+  "detail_gpu": { "message": "GPU :" },
+
+  "detail_chrome_langs": { "message": "Limbi :" },
+  "detail_chrome_exts": { "message": "Extensii active :" },
+
+  "detail_storage_discs": { "message": "Discuri :" },
+
+  "settings_zoom": { "message": "Activează zoom :" },
+  "settings_theme": { "message": "Activează tema întunecată :" },
+  "settings_unit": { "message": "Utilizează °F pentru temperatură :" },
+  "settings_mood": { "message": "Culoare de ambient :" },
+  "settings_footer": {
+    "message": "2026, GPL-3.0, François Bacconnet, <a href='https://ext.tchoa.com'>Mai multe detalii</a>"
+  },
+
+  "status_charging": { "message": "Se încarcă" },
+  "status_on_battery": { "message": "Pe baterie" },
+  "status_full_charge_in": { "message": "Încărcare completă în :" },
+  "status_time_left": { "message": "Timp rămas :" },
+  "status_powered": { "message": "Conectat la priză" },
+
+  "status_online": { "message": "Conectat" },
+  "status_offline": { "message": "Deconectat" },
+  "status_on": { "message": "PORNIT" },
+  "status_off": { "message": "OPRIT" },
+  "status_warning": { "message": "Avertisment" },
+  "status_alert": { "message": "Alertă" },
+  "label_and": { "message": "și" },
+
+  "disp_internal": { "message": "Ecran intern" },
+  "disp_internal_short": { "message": "Intern" },
+  "disp_unknown": { "message": "Necunoscut" },
+  "disp_none": { "message": "Niciunul" },
+  "action_close": { "message": "Închide fereastra" },
+  "action_toggle_mini": { "message": "Comută modul mini" },
+  "val_na": { "message": "N/A" },
+  "cpu_mood_idle": { "message": "Sistem în repaus" },
+  "cpu_mood_crit": { "message": "Supraîncărcare globală critică" },
+  "cpu_mood_asym": { "message": "Activitate asimetrică" },
+  "cpu_mood_homo": { "message": "Încărcare omogenă" },
+  "cpu_peaks_all": { "message": "Toate nucleele sunt în zona roșie." },
+  "cpu_peaks_one": {
+    "message": "Activitate ridicată pe nucleul $id$ la $val$%.",
+    "placeholders": {
+      "id": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_many": {
+    "message": "Activitate ridicată pe nucleele $ids$. Între $min$ și $max$ %.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "min": { "content": "$2" },
+      "max": { "content": "$3" }
+    }
+  },
+  "cpu_peaks_many_same": {
+    "message": "Activitate ridicată pe nucleele $ids$ la $val$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_none": { "message": "Niciun nucleu supraîncărcat." },
+  "cpu_avg_label": {
+    "message": "Medie $avg$%.",
+    "placeholders": { "avg": { "content": "$1" } }
+  }
+}

@@ -1,0 +1,119 @@
+{
+  "appName": { "message": "COGext：系統監視器" },
+  "appDesc": {
+    "message": "透過 Chrome 的視角俯瞰您的系統 — 呈現於現代、輕量且開源的儀表板中。"
+  },
+
+  "monitor_cpu": { "message": "CPU" },
+  "monitor_mem": { "message": "MEM" },
+  "monitor_batt": { "message": "BAT" },
+  "monitor_net": { "message": "NET" },
+
+  "card_cpu_title": { "message": "CPU 負載" },
+  "card_mem_title": { "message": "記憶體" },
+  "card_temp_title": { "message": "CPU 溫度" },
+  "card_batt_title": { "message": "電池" },
+  "card_disp_title": { "message": "顯示器" },
+  "card_net_title": { "message": "網路" },
+  "card_chrome_title": { "message": "Chrome" },
+  "card_os_title": { "message": "作業系統" },
+  "card_storage_title": { "message": "儲存空間" },
+  "card_settings_title": { "message": "COGext - 設定" },
+
+  "label_mem_total": { "message": "總記憶體：" },
+  "label_mem_used": { "message": "已用記憶體：" },
+  "label_batt_time_general": {
+    "message": "充滿 / 耗盡剩餘時間："
+  },
+  "label_ip": { "message": "IP 位址：" },
+  "label_latency": { "message": "延遲：" },
+  "label_platform": { "message": "平台：" },
+  "label_free": { "message": "可用" },
+  "label_version": { "message": "版本：" },
+
+  "overlay_cpu_title": { "message": "CPU 負載詳情" },
+  "overlay_temp_title": { "message": "溫度詳情" },
+  "overlay_disp_title": { "message": "顯示器詳情" },
+  "overlay_chrome_title": { "message": "Chrome 詳情" },
+  "overlay_storage_title": { "message": "儲存空間詳情" },
+
+  "detail_cpu_avg": { "message": "平均負載：" },
+  "detail_cpu_core": { "message": "核心負載：" },
+  "detail_cpu_arch": { "message": "CPU 架構：" },
+  "detail_cpu_model": { "message": "CPU 型號：" },
+  "detail_cpu_features": { "message": "CPU 功能：" },
+
+  "detail_temp_avg": { "message": "平均溫度：" },
+  "detail_temp_sensor": { "message": "感測器溫度：" },
+
+  "detail_disp_prim": { "message": "主顯示器：" },
+  "detail_disp_other": { "message": "副顯示器：" },
+  "detail_gpu": { "message": "GPU：" },
+
+  "detail_chrome_langs": { "message": "語言：" },
+  "detail_chrome_exts": { "message": "已啟用的擴充功能：" },
+
+  "detail_storage_discs": { "message": "磁碟：" },
+
+  "settings_zoom": { "message": "啟用縮放：" },
+  "settings_theme": { "message": "啟用深色模式：" },
+  "settings_unit": { "message": "使用 °F 顯示溫度：" },
+  "settings_mood": { "message": "主題色彩：" },
+  "settings_footer": {
+    "message": "2026, GPL-3.0, François Bacconnet, <a href='https://ext.tchoa.com'>更多資訊</a>"
+  },
+
+  "status_charging": { "message": "充電中" },
+  "status_on_battery": { "message": "使用電池" },
+  "status_full_charge_in": { "message": "距充滿還剩：" },
+  "status_time_left": { "message": "剩餘時間：" },
+  "status_powered": { "message": "已連接電源" },
+
+  "status_online": { "message": "連線" },
+  "status_offline": { "message": "離線" },
+  "status_on": { "message": "開啟" },
+  "status_off": { "message": "關閉" },
+  "status_warning": { "message": "警告" },
+  "status_alert": { "message": "警報" },
+  "label_and": { "message": "與" },
+
+  "disp_internal": { "message": "內建顯示器" },
+  "disp_internal_short": { "message": "內建" },
+  "disp_unknown": { "message": "未知" },
+  "disp_none": { "message": "無" },
+  "action_close": { "message": "關閉視窗" },
+  "action_toggle_mini": { "message": "切換精簡模式" },
+  "val_na": { "message": "N/A" },
+  "cpu_mood_idle": { "message": "系統空閒" },
+  "cpu_mood_crit": { "message": "全域嚴重過載" },
+  "cpu_mood_asym": { "message": "非對稱負載" },
+  "cpu_mood_homo": { "message": "均勻負載" },
+  "cpu_peaks_all": { "message": "所有核心均處於紅燈警戒狀態。" },
+  "cpu_peaks_one": {
+    "message": "核心 $id$ 負載較高：$val$%。",
+    "placeholders": {
+      "id": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_many": {
+    "message": "核心 $ids$ 負載較高。介於 $min$% 至 $max$% 之間。",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "min": { "content": "$2" },
+      "max": { "content": "$3" }
+    }
+  },
+  "cpu_peaks_many_same": {
+    "message": "核心 $ids$ 負載較高：$val$%。",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_none": { "message": "無核心過載。" },
+  "cpu_avg_label": {
+    "message": "平均 $avg$%。",
+    "placeholders": { "avg": { "content": "$1" } }
+  }
+}

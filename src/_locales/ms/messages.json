@@ -1,0 +1,119 @@
+{
+  "appName": { "message": "COGext : Pemantau Sistem" },
+  "appDesc": {
+    "message": "Sistem anda dari pandangan Chrome — dipersembahkan dalam papan pemuka moden, ringan dan sumber terbuka."
+  },
+
+  "monitor_cpu": { "message": "CPU" },
+  "monitor_mem": { "message": "MEM" },
+  "monitor_batt": { "message": "BAT" },
+  "monitor_net": { "message": "NET" },
+
+  "card_cpu_title": { "message": "Beban CPU" },
+  "card_mem_title": { "message": "Memori" },
+  "card_temp_title": { "message": "Suhu CPU" },
+  "card_batt_title": { "message": "Bateri" },
+  "card_disp_title": { "message": "Paparan" },
+  "card_net_title": { "message": "Rangkaian" },
+  "card_chrome_title": { "message": "Chrome" },
+  "card_os_title": { "message": "Sistem" },
+  "card_storage_title": { "message": "Storan" },
+  "card_settings_title": { "message": "COGext - Tetapan" },
+
+  "label_mem_total": { "message": "Jumlah memori :" },
+  "label_mem_used": { "message": "Memori digunakan :" },
+  "label_batt_time_general": {
+    "message": "Masa sebelum cas penuh/habis :"
+  },
+  "label_ip": { "message": "Alamat IP :" },
+  "label_latency": { "message": "Kependaman :" },
+  "label_platform": { "message": "Platform :" },
+  "label_free": { "message": "bebas" },
+  "label_version": { "message": "Versi :" },
+
+  "overlay_cpu_title": { "message": "Butiran beban CPU" },
+  "overlay_temp_title": { "message": "Butiran suhu" },
+  "overlay_disp_title": { "message": "Butiran paparan" },
+  "overlay_chrome_title": { "message": "Butiran Chrome" },
+  "overlay_storage_title": { "message": "Butiran storan" },
+
+  "detail_cpu_avg": { "message": "Purata beban :" },
+  "detail_cpu_core": { "message": "Beban setiap teras :" },
+  "detail_cpu_arch": { "message": "Seni bina CPU :" },
+  "detail_cpu_model": { "message": "Model CPU :" },
+  "detail_cpu_features": { "message": "Ciri-ciri CPU :" },
+
+  "detail_temp_avg": { "message": "Purata suhu :" },
+  "detail_temp_sensor": { "message": "Suhu setiap sensor :" },
+
+  "detail_disp_prim": { "message": "Paparan utama :" },
+  "detail_disp_other": { "message": "Paparan sekunder :" },
+  "detail_gpu": { "message": "GPU :" },
+
+  "detail_chrome_langs": { "message": "Bahasa :" },
+  "detail_chrome_exts": { "message": "Peluasan aktif :" },
+
+  "detail_storage_discs": { "message": "Cakera :" },
+
+  "settings_zoom": { "message": "Aktifkan zum :" },
+  "settings_theme": { "message": "Aktifkan tema gelap :" },
+  "settings_unit": { "message": "Gunakan °F untuk suhu :" },
+  "settings_mood": { "message": "Warna suasana :" },
+  "settings_footer": {
+    "message": "2026, GPL-3.0, François Bacconnet, <a href='https://ext.tchoa.com'>Maklumat lanjut</a>"
+  },
+
+  "status_charging": { "message": "Sedang dicas" },
+  "status_on_battery": { "message": "Menggunakan bateri" },
+  "status_full_charge_in": { "message": "Cas penuh dalam :" },
+  "status_time_left": { "message": "Masa berbaki :" },
+  "status_powered": { "message": "Disambung kuasa" },
+
+  "status_online": { "message": "Dalam talian" },
+  "status_offline": { "message": "Luar talian" },
+  "status_on": { "message": "HIDUP" },
+  "status_off": { "message": "MATI" },
+  "status_warning": { "message": "Amaran" },
+  "status_alert": { "message": "Makluman" },
+  "label_and": { "message": "dan" },
+
+  "disp_internal": { "message": "Paparan dalaman" },
+  "disp_internal_short": { "message": "Dalaman" },
+  "disp_unknown": { "message": "Tidak diketahui" },
+  "disp_none": { "message": "Tiada" },
+  "action_close": { "message": "Tutup tetingkap" },
+  "action_toggle_mini": { "message": "Tukar mod mini" },
+  "val_na": { "message": "T/A" },
+  "cpu_mood_idle": { "message": "Sistem melala" },
+  "cpu_mood_crit": { "message": "Beban lampau kritikal" },
+  "cpu_mood_asym": { "message": "Aktiviti tidak simetri" },
+  "cpu_mood_homo": { "message": "Beban homogen" },
+  "cpu_peaks_all": { "message": "Semua teras berada dalam zon merah." },
+  "cpu_peaks_one": {
+    "message": "Aktiviti tinggi pada teras $id$ pada $val$%.",
+    "placeholders": {
+      "id": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_many": {
+    "message": "Aktiviti tinggi pada teras $ids$. Antara $min$ dan $max$ %.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "min": { "content": "$2" },
+      "max": { "content": "$3" }
+    }
+  },
+  "cpu_peaks_many_same": {
+    "message": "Aktiviti tinggi pada teras $ids$ pada $val$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_none": { "message": "Tiada teras mengalami beban lampau." },
+  "cpu_avg_label": {
+    "message": "Purata $avg$%.",
+    "placeholders": { "avg": { "content": "$1" } }
+  }
+}

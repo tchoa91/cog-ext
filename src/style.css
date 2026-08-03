@@ -13,25 +13,6 @@
     border-width: 0;
 }
 
-@font-face {
-    font-family: "Inter";
-    src: url("assets/fonts/Inter-300.ttf") format("truetype");
-    font-weight: 300;
-    font-style: normal;
-}
-@font-face {
-    font-family: "Inter";
-    src: url("assets/fonts/Inter-500.ttf") format("truetype");
-    font-weight: 500;
-    font-style: normal;
-}
-@font-face {
-    font-family: "Inter";
-    src: url("assets/fonts/Inter-700.ttf") format("truetype");
-    font-weight: 700;
-    font-style: normal;
-}
-
 * {
     box-sizing: border-box;
     margin: 0;
@@ -50,10 +31,7 @@ body {
 body {
     background-color: var(--bg-color);
     color: var(--text-main);
-    font-family:
-        system-ui,
-        -apple-system,
-        sans-serif;
+    font-family: var(--font-main);
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -113,7 +91,7 @@ body {
     --topbar-height: 5.25rem;
     --grid-gap: 0.875rem;
     --radius-lg: 0.75rem;
-    --font-main: "Inter", system-ui, sans-serif;
+    --font-main: system-ui, -apple-system, sans-serif;
     --shadow: 0.125rem 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
     --overlay-backdrop: var(--bg-color);
     --modal-bg: hsl(var(--brand-base), 20%);

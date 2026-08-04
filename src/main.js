@@ -142,7 +142,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.documentElement.style.setProperty("--brand-h", appHue);
   // D. Mode Mini
   setMiniMode(prefs.mini);
-  // E. Zoom (Taille de police racine 16px si zoomé, 14px sinon)
+  // E. Zoom (Taille de police racine 100% = zoomé, 80% = compact)
   applyZoom(prefs.zoom);
 
   // ÉTAPE 3 : Définition des Actions (Callbacks)
@@ -187,7 +187,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     },
 
     onZoomToggle: () => {
-      const isZoomed = document.documentElement.style.fontSize === "16px";
+      const isZoomed = document.documentElement.style.fontSize === "100%";
       const nextZoom = !isZoomed;
       applyZoom(nextZoom);
       chrome.storage.local.set({ zoom: nextZoom });
@@ -528,7 +528,7 @@ function resolveWidgetData(itemId, data, updateText, isMonitor = false) {
 
   // --- 9. SETTINGS ---
   if (itemId === "toggleZoom")
-    res.value = document.documentElement.style.fontSize === "16px";
+    res.value = document.documentElement.style.fontSize === "100%";
   if (itemId === "toggleTheme")
     res.value = document.body.getAttribute("data-theme") !== "light";
   if (itemId === "toggleUnit") res.value = appUnit === "F";
@@ -538,11 +538,11 @@ function resolveWidgetData(itemId, data, updateText, isMonitor = false) {
 }
 
 /**
- * Applique la taille de police racine (16px = Zoomé, 14px = Compact / Par défaut).
+ * Applique la taille de police racine (100% = Zoomé, 80% = Compact / Par défaut).
  * @param {boolean} isZoom
  */
 function applyZoom(isZoom) {
-  document.documentElement.style.fontSize = isZoom ? "16px" : "12px";
+  document.documentElement.style.fontSize = isZoom ? "100%" : "80%";
 }
 
 // --- 4. TRANSFORMATEUR DE DONNÉES (Adapter / Mapper) ---

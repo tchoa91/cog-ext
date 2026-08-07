@@ -55,6 +55,7 @@
 
   "detail_storage_discs": { "message": "Diskar :" },
 
+  "settings_zoom": { "message": "Aktivera zoom :" },
   "settings_theme": { "message": "Aktivera mörkt tema :" },
   "settings_unit": { "message": "Använd °F för temperatur :" },
   "settings_mood": { "message": "Stämningsfärg :" },
@@ -82,15 +83,33 @@
   "disp_none": { "message": "Ingen" },
   "action_close": { "message": "Stäng fönster" },
   "action_toggle_mini": { "message": "Växla mini-läge" },
-  "val_na": { "message": "Ej tillgänglig" },
+  "val_na": { "message": "N/A" },
   "cpu_mood_idle": { "message": "Systemet är inaktivt" },
   "cpu_mood_crit": { "message": "Kritisk global överbelastning" },
   "cpu_mood_asym": { "message": "Asymmetrisk aktivitet" },
   "cpu_mood_homo": { "message": "Homogen belastning" },
   "cpu_peaks_all": { "message": "Alla kärnor är i det röda området." },
   "cpu_peaks_one": {
-    "message": "Varning, toppar på kärna $desc$.",
-    "placeholders": { "desc": { "content": "$1" } }
+    "message": "Hög aktivitet på kärna $id$ vid $val$%.",
+    "placeholders": {
+      "id": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_many": {
+    "message": "Hög aktivitet på kärnorna $ids$. Mellan $min$ och $max$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "min": { "content": "$2" },
+      "max": { "content": "$3" }
+    }
+  },
+  "cpu_peaks_many_same": {
+    "message": "Hög aktivitet på kärnorna $ids$ vid $val$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
   },
   "cpu_peaks_none": { "message": "Ingen kärna överbelastad." },
   "cpu_avg_label": {

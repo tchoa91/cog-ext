@@ -55,6 +55,7 @@
 
   "detail_storage_discs": { "message": "Discos :" },
 
+  "settings_zoom": { "message": "Activar zoom :" },
   "settings_theme": { "message": "Activar tema oscuro :" },
   "settings_unit": { "message": "Usar °F para la temperatura :" },
   "settings_mood": { "message": "Color de ambiente :" },
@@ -82,15 +83,33 @@
   "disp_none": { "message": "Ninguna" },
   "action_close": { "message": "Cerrar ventana" },
   "action_toggle_mini": { "message": "Alternar modo mini" },
-  "val_na": { "message": "No disponible" },
+  "val_na": { "message": "N/A" },
   "cpu_mood_idle": { "message": "Sistema inactivo" },
   "cpu_mood_crit": { "message": "Sobrecarga global crítica" },
   "cpu_mood_asym": { "message": "Actividad asimétrica" },
   "cpu_mood_homo": { "message": "Carga homogénea" },
   "cpu_peaks_all": { "message": "Todos los núcleos están en rojo." },
   "cpu_peaks_one": {
-    "message": "Advertencia, picos en el núcleo $desc$.",
-    "placeholders": { "desc": { "content": "$1" } }
+    "message": "Alta actividad en el núcleo $id$ al $val$%.",
+    "placeholders": {
+      "id": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_many": {
+    "message": "Alta actividad en los núcleos $ids$. Entre el $min$ y el $max$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "min": { "content": "$2" },
+      "max": { "content": "$3" }
+    }
+  },
+  "cpu_peaks_many_same": {
+    "message": "Alta actividad en los núcleos $ids$ al $val$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
   },
   "cpu_peaks_none": { "message": "Ningún núcleo en sobrecarga." },
   "cpu_avg_label": {

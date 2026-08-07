@@ -1,0 +1,119 @@
+{
+  "appName": { "message": "COGext : सिस्टम मॉनिटर" },
+  "appDesc": {
+    "message": "आपका सिस्टम जैसा क्रोम देखता है — एक आधुनिक, हल्के और ओपन-सोर्स डैशबोर्ड में।"
+  },
+
+  "monitor_cpu": { "message": "CPU" },
+  "monitor_mem": { "message": "MEM" },
+  "monitor_batt": { "message": "BAT" },
+  "monitor_net": { "message": "NET" },
+
+  "card_cpu_title": { "message": "सीपीयूं लोड" },
+  "card_mem_title": { "message": "मेमोरी" },
+  "card_temp_title": { "message": "सीपीयूं तापमान" },
+  "card_batt_title": { "message": "बैटरी" },
+  "card_disp_title": { "message": "डिस्प्ले" },
+  "card_net_title": { "message": "नेटवर्क" },
+  "card_chrome_title": { "message": "Chrome" },
+  "card_os_title": { "message": "सिस्टम" },
+  "card_storage_title": { "message": "स्टोरेज" },
+  "card_settings_title": { "message": "COGext - सेटिंग्स" },
+
+  "label_mem_total": { "message": "कुल मेमोरी :" },
+  "label_mem_used": { "message": "उपयोग की गई मेमोरी :" },
+  "label_batt_time_general": {
+    "message": "पूर्ण चार्ज/डिस्चार्ज होने का समय :"
+  },
+  "label_ip": { "message": "आईपी पता :" },
+  "label_latency": { "message": "लेटेंसी :" },
+  "label_platform": { "message": "प्लेटफॉर्म :" },
+  "label_free": { "message": "मुफ्त" },
+  "label_version": { "message": "संस्करण :" },
+
+  "overlay_cpu_title": { "message": "सीपीयूं लोड विवरण" },
+  "overlay_temp_title": { "message": "तापमान विवरण" },
+  "overlay_disp_title": { "message": "डिस्प्ले विवरण" },
+  "overlay_chrome_title": { "message": "Chrome विवरण" },
+  "overlay_storage_title": { "message": "स्टोरेज विवरण" },
+
+  "detail_cpu_avg": { "message": "औसत लोड :" },
+  "detail_cpu_core": { "message": "कोर अनुसार लोड :" },
+  "detail_cpu_arch": { "message": "सीपीयूं आर्किटेक्चर :" },
+  "detail_cpu_model": { "message": "सीपीयूं मॉडल :" },
+  "detail_cpu_features": { "message": "सीपीयूं विशेषताएं :" },
+
+  "detail_temp_avg": { "message": "औसत तापमान :" },
+  "detail_temp_sensor": { "message": "सेंसर अनुसार तापमान :" },
+
+  "detail_disp_prim": { "message": "प्राथमिक डिस्प्ले :" },
+  "detail_disp_other": { "message": "द्वितीयक डिस्प्ले :" },
+  "detail_gpu": { "message": "जीपीयूं :" },
+
+  "detail_chrome_langs": { "message": "भाषाएं :" },
+  "detail_chrome_exts": { "message": "सक्रिय एक्सटेंशन :" },
+
+  "detail_storage_discs": { "message": "डिक्स :" },
+
+  "settings_zoom": { "message": "ज़ूम सक्षम करें :" },
+  "settings_theme": { "message": "डार्क थीम सक्षम करें :" },
+  "settings_unit": { "message": "तापमान के लिए °F का उपयोग करें :" },
+  "settings_mood": { "message": "माहौल का रंग :" },
+  "settings_footer": {
+    "message": "2026, GPL-3.0, François Bacconnet, <a href='https://ext.tchoa.com'>अधिक जानकारी</a>"
+  },
+
+  "status_charging": { "message": "चार्ज हो रहा है" },
+  "status_on_battery": { "message": "बैटरी पर" },
+  "status_full_charge_in": { "message": "पूर्ण चार्ज होने में समय :" },
+  "status_time_left": { "message": "शेष समय :" },
+  "status_powered": { "message": "पावर प्लग-इन" },
+
+  "status_online": { "message": "ऑनलाइन" },
+  "status_offline": { "message": "ऑफलाइन" },
+  "status_on": { "message": "चालू" },
+  "status_off": { "message": "बंद" },
+  "status_warning": { "message": "चेतावनी" },
+  "status_alert": { "message": "अलर्ट" },
+  "label_and": { "message": "और" },
+
+  "disp_internal": { "message": "आंतरिक डिस्प्ले" },
+  "disp_internal_short": { "message": "आंतरिक" },
+  "disp_unknown": { "message": "अज्ञात" },
+  "disp_none": { "message": "कोई नहीं" },
+  "action_close": { "message": "विंडो बंद करें" },
+  "action_toggle_mini": { "message": "मिनी मोड बदलें" },
+  "val_na": { "message": "लागू नहीं" },
+  "cpu_mood_idle": { "message": "सिस्टम निष्क्रिय है" },
+  "cpu_mood_crit": { "message": "गंभीर वैश्विक ओवरलोड" },
+  "cpu_mood_asym": { "message": "असममित गतिविधि" },
+  "cpu_mood_homo": { "message": "समान लोड" },
+  "cpu_peaks_all": { "message": "सभी कोर लाल ज़ोन में हैं।" },
+  "cpu_peaks_one": {
+    "message": "कोर $id$ पर उच्च गतिविधि: $val$%.",
+    "placeholders": {
+      "id": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_many": {
+    "message": "कोर $ids$ पर उच्च गतिविधि। $min$ और $max$ % के बीच।",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "min": { "content": "$2" },
+      "max": { "content": "$3" }
+    }
+  },
+  "cpu_peaks_many_same": {
+    "message": "कोर $ids$ पर उच्च गतिविधि: $val$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_none": { "message": "कोई कोर ओवरलोड नहीं है।" },
+  "cpu_avg_label": {
+    "message": "औसत $avg$%.",
+    "placeholders": { "avg": { "content": "$1" } }
+  }
+}

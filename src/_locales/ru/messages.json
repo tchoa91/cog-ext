@@ -53,6 +53,7 @@
 
   "detail_storage_discs": { "message": "Диски :" },
 
+  "settings_zoom": { "message": "Включить масштаб :" },
   "settings_theme": { "message": "Включить темную тему :" },
   "settings_unit": { "message": "Использовать °F для температуры :" },
   "settings_mood": { "message": "Цвет атмосферы :" },
@@ -80,15 +81,33 @@
   "disp_none": { "message": "Нет" },
   "action_close": { "message": "Закрыть окно" },
   "action_toggle_mini": { "message": "Переключить мини-режим" },
-  "val_na": { "message": "Недоступно" },
+  "val_na": { "message": "N/A" },
   "cpu_mood_idle": { "message": "Система простаивает" },
   "cpu_mood_crit": { "message": "Критическая перегрузка" },
   "cpu_mood_asym": { "message": "Асимметричная активность" },
   "cpu_mood_homo": { "message": "Однородная нагрузка" },
   "cpu_peaks_all": { "message": "Все ядра в красной зоне." },
   "cpu_peaks_one": {
-    "message": "Внимание, скачки на ядре $desc$.",
-    "placeholders": { "desc": { "content": "$1" } }
+    "message": "Высокая активность на ядре $id$: $val$%.",
+    "placeholders": {
+      "id": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_many": {
+    "message": "Высокая активность на ядрах $ids$. От $min$ до $max$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "min": { "content": "$2" },
+      "max": { "content": "$3" }
+    }
+  },
+  "cpu_peaks_many_same": {
+    "message": "Высокая активность на ядрах $ids$: $val$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
   },
   "cpu_peaks_none": { "message": "Нет перегрузки ядер." },
   "cpu_avg_label": {

@@ -53,6 +53,7 @@
 
   "detail_storage_discs": { "message": "디스크 :" },
 
+  "settings_zoom": { "message": "확대 활성화 :" },
   "settings_theme": { "message": "다크 테마 활성화 :" },
   "settings_unit": { "message": "온도 단위로 °F 사용 :" },
   "settings_mood": { "message": "분위기 색상 :" },
@@ -80,15 +81,33 @@
   "disp_none": { "message": "없음" },
   "action_close": { "message": "창 닫기" },
   "action_toggle_mini": { "message": "미니 모드 전환" },
-  "val_na": { "message": "사용 불가능" },
+  "val_na": { "message": "N/A" },
   "cpu_mood_idle": { "message": "시스템 유휴 상태" },
   "cpu_mood_crit": { "message": "심각한 전체 과부하" },
   "cpu_mood_asym": { "message": "비대칭 활동" },
   "cpu_mood_homo": { "message": "균일한 부하" },
   "cpu_peaks_all": { "message": "모든 코어가 레드 존에 있습니다." },
   "cpu_peaks_one": {
-    "message": "경고, $desc$ 코어에서 피크 발생.",
-    "placeholders": { "desc": { "content": "$1" } }
+    "message": "코어 $id$ 높은 활동: $val$%.",
+    "placeholders": {
+      "id": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_many": {
+    "message": "코어 $ids$ 높은 활동. $min$% ~ $max$% 사이.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "min": { "content": "$2" },
+      "max": { "content": "$3" }
+    }
+  },
+  "cpu_peaks_many_same": {
+    "message": "코어 $ids$ 높은 활동: $val$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
   },
   "cpu_peaks_none": { "message": "과부하된 코어 없음." },
   "cpu_avg_label": {

@@ -5,7 +5,7 @@
  * @author      François Bacconnet <https://github.com/tchoa91>
  * @copyright   2026 François Bacconnet
  * @license     GPL-3.0
- * @version     2.2
+ * @version     2.4
  * @homepage    https://ext.tchoa.com
  * @see         https://github.com/tchoa91/cog-ext
  */
@@ -19,10 +19,7 @@ import {
 } from "./renderer.js";
 
 import { DataStore } from "./data-store.js";
-import { UI_CONFIG, THRESHOLDS } from "./config.js";
-
-// --- Raccourci i18n ---
-const t = chrome.i18n.getMessage;
+import { UI_CONFIG, THRESHOLDS, t } from "./config.js";
 
 /**
  * Traduit un tableau de pourcentages d'utilisation CPU en une description
@@ -63,11 +60,25 @@ function generateGraphSemantics(cores) {
   // 4. Assemblage de la conclusion
   let peaksText = "";
   if (peaks.length > 0) {
-    if (peaks.length === cores.length) {
+    if (peaks.length === cores.length && cores.length > 1) {
       peaksText = t("cpu_peaks_all");
+    } else if (peaks.length === 1) {
+      const p = peaks[0];
+      peaksText = t("cpu_peaks_one", [p.id.toString(), p.val.toString()]);
     } else {
-      const peaksDesc = peaks.map((p) => `n°${p.id}: ${p.val}%`).join(", ");
-      peaksText = t("cpu_peaks_one", [peaksDesc]);
+      const ids = peaks.map((p) => p.id).join(", ");
+      const vals = peaks.map((p) => p.val);
+      const minVal = Math.min(...vals);
+      const maxVal = Math.max(...vals);
+      if (minVal === maxVal) {
+        peaksText = t("cpu_peaks_many_same", [ids, minVal.toString()]);
+      } else {
+        peaksText = t("cpu_peaks_many", [
+          ids,
+          minVal.toString(),
+          maxVal.toString(),
+        ]);
+      }
     }
   } else if (avg >= 20) {
     peaksText = t("cpu_peaks_none");
@@ -104,7 +115,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // ÉTAPE 1 : Chargement des Préférences (Bloquant pour éviter le flash)
   // On définit des défauts clairs ici.
-  const defaultPrefs = { theme: "dark", unit: "C", hue: 195, mini: false };
+  const defaultPrefs = { theme: "dark", unit: "C", hue: 195, mini: false, zoom: false };
   let prefs = defaultPrefs;
 
   try {
@@ -113,6 +124,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       "unit",
       "hue",
       "mini",
+      "zoom",
     ]);
     // Fusionner avec les défauts au cas où une clé manque
     prefs = { ...defaultPrefs, ...stored };
@@ -130,6 +142,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.documentElement.style.setProperty("--brand-h", appHue);
   // D. Mode Mini
   setMiniMode(prefs.mini);
+  // E. Zoom (Taille de police racine 100% = zoomé, 80% = compact)
+  applyZoom(prefs.zoom);
 
   // ÉTAPE 3 : Définition des Actions (Callbacks)
   const callbacks = {
@@ -170,6 +184,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     onClose: () => {
       activeOverlayId = null;
       setOverlayState(false);
+    },
+
+    onZoomToggle: () => {
+      const isZoomed = document.documentElement.style.fontSize === "100%";
+      const nextZoom = !isZoomed;
+      applyZoom(nextZoom);
+      chrome.storage.local.set({ zoom: nextZoom });
     },
 
     onThemeToggle: () => {
@@ -280,13 +301,20 @@ function resolveWidgetData(itemId, data, updateText, isMonitor = false) {
       itemId === "cpuLoadAverage" ||
       itemId === "cpuSparkline"
     ) {
-      res.value = data.cpuUsage.usagePct;
-      res.display = txt(`${data.cpuUsage.usagePct}%`);
+      const hasUsage =
+        typeof data.cpuUsage.usagePct === "number" &&
+        !isNaN(data.cpuUsage.usagePct);
+      res.value = hasUsage ? data.cpuUsage.usagePct : 0;
+      res.display = hasUsage
+        ? txt(`${data.cpuUsage.usagePct}%`)
+        : txt(t("val_na") || "N/A");
       if (isMonitor) {
-        res.percent = data.cpuUsage.usagePct;
+        res.percent = hasUsage ? data.cpuUsage.usagePct : 0;
         res.label = res.display;
       }
-      res.state = getLoadState(data.cpuUsage.usagePct, THRESHOLDS.cpu);
+      res.state = hasUsage
+        ? getLoadState(data.cpuUsage.usagePct, THRESHOLDS.cpu)
+        : "normal";
     }
     if (itemId === "cpuSemanticDesc") {
       if (updateText)
@@ -499,12 +527,22 @@ function resolveWidgetData(itemId, data, updateText, isMonitor = false) {
   }
 
   // --- 9. SETTINGS ---
+  if (itemId === "toggleZoom")
+    res.value = document.documentElement.style.fontSize === "100%";
   if (itemId === "toggleTheme")
     res.value = document.body.getAttribute("data-theme") !== "light";
   if (itemId === "toggleUnit") res.value = appUnit === "F";
   if (itemId === "moodSelector") res.value = appHue;
 
   return res;
+}
+
+/**
+ * Applique la taille de police racine (100% = Zoomé, 80% = Compact / Par défaut).
+ * @param {boolean} isZoom
+ */
+function applyZoom(isZoom) {
+  document.documentElement.style.fontSize = isZoom ? "100%" : "80%";
 }
 
 // --- 4. TRANSFORMATEUR DE DONNÉES (Adapter / Mapper) ---
@@ -677,9 +715,11 @@ async function gameLoop() {
   // Si tickCount est un multiple de 5 (5, 10, 15...), updateText est vrai
   const updateText = tickCount % TEXT_UPDATE_RATIO === 0;
 
-  // A. SCOPE (Inchangé)
+  // A. SCOPE
   let scope = "cards";
-  if (activeOverlayId) {
+  if (document.body.classList.contains("mini-mode")) {
+    scope = null; // Mode Eco : uniquement les moniteurs (TopBar)
+  } else if (activeOverlayId) {
     const config = getOverlayConfig(activeOverlayId);
     // Si overlay dynamique -> focus dessus, sinon mode eco (monitors only)
     scope = config && config.isDynamic ? activeOverlayId : null;

@@ -55,6 +55,7 @@
 
   "detail_storage_discs": { "message": "Schijven :" },
 
+  "settings_zoom": { "message": "Zoom inschakelen :" },
   "settings_theme": { "message": "Donker thema inschakelen :" },
   "settings_unit": { "message": "Gebruik °F voor temperatuur :" },
   "settings_mood": { "message": "Sfeerkleur :" },
@@ -82,15 +83,33 @@
   "disp_none": { "message": "Geen" },
   "action_close": { "message": "Venster sluiten" },
   "action_toggle_mini": { "message": "Mini-modus in-/uitschakelen" },
-  "val_na": { "message": "Niet beschikbaar" },
+  "val_na": { "message": "N/A" },
   "cpu_mood_idle": { "message": "Systeem inactief" },
   "cpu_mood_crit": { "message": "Kritieke globale overbelasting" },
   "cpu_mood_asym": { "message": "Asymmetrische activiteit" },
   "cpu_mood_homo": { "message": "Homogene belasting" },
   "cpu_peaks_all": { "message": "Alle kernen staan in het rood." },
   "cpu_peaks_one": {
-    "message": "Waarschuwing, pieken op kern $desc$.",
-    "placeholders": { "desc": { "content": "$1" } }
+    "message": "Hoge activiteit op kern $id$ bij $val$%.",
+    "placeholders": {
+      "id": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_many": {
+    "message": "Hoge activiteit op kernen $ids$. Tussen $min$ en $max$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "min": { "content": "$2" },
+      "max": { "content": "$3" }
+    }
+  },
+  "cpu_peaks_many_same": {
+    "message": "Hoge activiteit op kernen $ids$ bij $val$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
   },
   "cpu_peaks_none": { "message": "Geen kern overbelast." },
   "cpu_avg_label": {

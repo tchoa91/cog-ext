@@ -10,14 +10,13 @@
  * @see         https://github.com/tchoa91/cog-ext
  */
 
+import { t } from "./config.js";
+
 // Constantes graphiques
 const SVGS = {
   chevron: `<svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>`,
   bolt: `<svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>`,
 };
-
-// Raccourci i18n
-const t = chrome.i18n.getMessage;
 
 // === 1. CACHE & ÉTAT ===
 let topBarEl;
@@ -109,36 +108,50 @@ export function toggleTheme() {
  */
 export function setMiniMode(isMini) {
   const main = document.querySelector("main");
+  const monitors = document.querySelectorAll(".monitor-block");
+
   if (isMini) {
     document.body.classList.add("mini-mode");
     if (main) {
       main.inert = true;
       main.setAttribute("aria-hidden", "true");
     }
+    monitors.forEach((m) => {
+      m.setAttribute("tabindex", "-1");
+      m.removeAttribute("role");
+    });
   } else {
     document.body.classList.remove("mini-mode");
     if (main) {
       main.inert = false;
       main.removeAttribute("aria-hidden");
     }
+    monitors.forEach((m) => {
+      if (m.classList.contains("interactive")) {
+        m.setAttribute("tabindex", "0");
+        m.setAttribute("role", "button");
+      }
+    });
   }
 }
 
 // === 3. CONSTRUCTION (BUILD) ===
 function buildInterface(config, callbacks) {
+  const isMini = document.body.classList.contains("mini-mode");
+
   // TopBar
   const monitorsHtml = config.monitors
     .map((item) => {
       const linkedCard = config.cards.find((c) => c.id === item.cardLink);
       const ariaLabel = linkedCard ? linkedCard.title : item.title;
+      const canInteract = item.hasOvelay && !isMini;
       return `
       <div class="monitor-block ${item.hasOvelay ? "interactive" : "static"}"
             id="monitor-${item.id}"
             data-link="${item.cardLink}"
-            tabindex="${item.hasOvelay ? "0" : "-1"}"
-            ${item.hasOvelay ? 'role="button"' : ""}
-            aria-labelledby="mon-lbl-${item.id} mon-val-${item.id}"
-            ${!item.hasOvelay ? 'style="cursor: default;"' : ""}>
+            tabindex="${canInteract ? "0" : "-1"}"
+            ${canInteract ? 'role="button"' : ""}
+            aria-labelledby="mon-lbl-${item.id} mon-val-${item.id}">
           <div class="monitor-header" aria-hidden="true">
             <span class="monitor-label" id="mon-lbl-${item.id}" aria-label="${ariaLabel} :">${item.title}</span>
             <div>
@@ -546,7 +559,7 @@ export function updateInterface(payload) {
           if (item.type === "olLoadList") {
             return `
             <div class="overlay-section">
-                <div style="margin-bottom:8px;" class="overlay-label">${item.title || ""}</div>
+                <div class="overlay-label">${item.title || ""}</div>
                 <div class="overlay-cores-grid" data-oid="${item.id}-grid" role="img"></div>
             </div>`;
           }
@@ -565,7 +578,7 @@ export function updateInterface(payload) {
           if (item.type === "olTempList") {
             return `
             <div class="overlay-section">
-                <div style="margin-bottom:8px;" class="overlay-label">${item.title || ""}</div>
+                <div class="overlay-label">${item.title || ""}</div>
                 <div class="overlay-temp-grid" data-oid="${item.id}-grid" role="img"></div>
             </div>`;
           }
@@ -573,8 +586,8 @@ export function updateInterface(payload) {
           // Type: Liste textuelle simple (olTextList)
           if (item.type === "olTextList") {
             return `
-            <div class="overlay-section">
-                <div class="overlay-label" style="margin-bottom:5px;">${item.title || ""}</div>
+            <div class="overlay-section overlay-text-list-section">
+                <div class="overlay-label">${item.title || ""}</div>
                 <div data-oid="${item.id}-list"></div>
             </div>`;
           }
@@ -583,7 +596,7 @@ export function updateInterface(payload) {
           if (item.type === "disk") {
             return `
             <div class="overlay-section">
-                <div style="margin-bottom:8px;" class="overlay-label">${item.title || ""}</div>
+                <div class="overlay-label">${item.title || ""}</div>
                 <div class="overlay-disk-list" data-oid="${item.id}-list"></div>
             </div>`;
           }
@@ -637,6 +650,7 @@ export function updateInterface(payload) {
           if (!appCallbacks) return;
 
           // Mapping ID -> Action
+          if (e.target.id === "toggleZoom") appCallbacks.onZoomToggle();
           if (e.target.id === "toggleTheme") {
             appCallbacks.onThemeToggle();
           }
@@ -731,9 +745,7 @@ export function updateInterface(payload) {
 
           if (item.value.length === 0) {
             const emptyDiv = document.createElement("div");
-            emptyDiv.className = "overlay-disk-info"; // Réutilisation d'un style discret
-            emptyDiv.style.padding = "5px 0";
-            emptyDiv.style.textAlign = "right";
+            emptyDiv.className = "overlay-kv-val empty";
             emptyDiv.textContent = t("disp_none");
             listEl.appendChild(emptyDiv);
           } else {

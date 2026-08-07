@@ -55,6 +55,7 @@
 
   "detail_storage_discs": { "message": "Disques :" },
 
+  "settings_zoom": { "message": "Activer le zoom :" },
   "settings_theme": { "message": "Activer le thème sombre :" },
   "settings_unit": { "message": "Utiliser le °F pour la température :" },
   "settings_mood": { "message": "Couleur d'ambiance :" },
@@ -82,15 +83,33 @@
   "disp_none": { "message": "Aucun" },
   "action_close": { "message": "Fermer la fenêtre" },
   "action_toggle_mini": { "message": "Basculer le mode mini" },
-  "val_na": { "message": "Indisponible" },
+  "val_na": { "message": "N/A" },
   "cpu_mood_idle": { "message": "Système au repos" },
   "cpu_mood_crit": { "message": "Surcharge globale critique" },
   "cpu_mood_asym": { "message": "Activité asymétrique" },
   "cpu_mood_homo": { "message": "Charge homogène" },
   "cpu_peaks_all": { "message": "Tous les cœurs sont dans le rouge." },
   "cpu_peaks_one": {
-    "message": "Attention, pics sur le cœur $desc$.",
-    "placeholders": { "desc": { "content": "$1" } }
+    "message": "Forte activité sur le cœur $id$ à $val$%.",
+    "placeholders": {
+      "id": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_many": {
+    "message": "Forte activité sur les cœurs $ids$. Entre $min$ et $max$ %.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "min": { "content": "$2" },
+      "max": { "content": "$3" }
+    }
+  },
+  "cpu_peaks_many_same": {
+    "message": "Forte activité sur les cœurs $ids$ à $val$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
   },
   "cpu_peaks_none": { "message": "Aucun cœur en surcharge." },
   "cpu_avg_label": {

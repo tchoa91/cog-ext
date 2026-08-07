@@ -6,7 +6,7 @@ COGext is a highly optimized and accessible system monitor extension for the Chr
 
 ## **Features**
 
-**NEW : mini mode**
+**NEW : zoom mode**
 
 **4 Monitors & 9 Cards :**
 
@@ -22,8 +22,8 @@ COGext is a highly optimized and accessible system monitor extension for the Chr
 
 (\* OS restrictions apply) (+ Has overlay for details)
 
-Customisation: Temp unit, Dark/Light mode and 5 color moods.  
-Accessibility: Engineered for universal access (aiming WCAG 2.2 AAA). Includes curated semantic audio, multi-modal navigation, and native support for 17 languages.
+Customisation: Temp unit, Dark/Light mode, 5 color moods and Mini display.  
+Accessibility: Engineered for universal access (aiming WCAG 2.2 AAA). Includes curated semantics, multi-modal navigation, native support for 23 languages and zoom mode.
 
 ## **Code history**
 
@@ -47,6 +47,14 @@ This extension started as a wild hack of the ChromeApp "COG" coded by François 
 The data exposed by this extension and its usage are NOT recorded nor transmitted in any way. All but your preferences is deleted as soon as you close the extension. The extension works well off-line or behind a firewall, but it will not display your IP nor the latency.
 
 ## 🛠 Changelog
+
+### **V 2.4**
+
+- Added Zoom mode.
+- Several optimisations and hardening, with tests on true Linux.
+- Improved sementics for CPU usage summary.
+- Removed Inter font, 300Kb gain, total down to 230Kb.
+- Added 6 languages: uk, th, hi, zh_TW, ms & ro.
 
 ### **V 2.3**
 
@@ -114,7 +122,7 @@ Link : https://chromewebstore.google.com/detail/cogext-system-info-viewer/bkgdbd
 - `src/renderer.js`: UI Rendering engine (DOM manipulation & Caching).
 - `src/style.css`: All visual styles, variables, and animations.
 - `src/_locales/`: Internationalization files.
-- `src/assets/`: Icons and Fonts.
+- `src/assets/`: Icons.
 
 ## 🔐 Permissions Used
 

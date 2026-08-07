@@ -55,6 +55,7 @@
 
   "detail_storage_discs": { "message": "Dischi :" },
 
+  "settings_zoom": { "message": "Attiva zoom :" },
   "settings_theme": { "message": "Attiva tema scuro :" },
   "settings_unit": { "message": "Usa °F per la temperatura :" },
   "settings_mood": { "message": "Colore ambiente :" },
@@ -82,15 +83,33 @@
   "disp_none": { "message": "Nessuno" },
   "action_close": { "message": "Chiudi finestra" },
   "action_toggle_mini": { "message": "Attiva/disattiva modalità mini" },
-  "val_na": { "message": "Non disponibile" },
+  "val_na": { "message": "N/A" },
   "cpu_mood_idle": { "message": "Sistema inattivo" },
   "cpu_mood_crit": { "message": "Sovraccarico globale critico" },
   "cpu_mood_asym": { "message": "Attività asimmetrica" },
   "cpu_mood_homo": { "message": "Carico omogeneo" },
   "cpu_peaks_all": { "message": "Tutti i core sono nella zona rossa." },
   "cpu_peaks_one": {
-    "message": "Attenzione, picchi sul core $desc$.",
-    "placeholders": { "desc": { "content": "$1" } }
+    "message": "Elevata attività sul core $id$ al $val$%.",
+    "placeholders": {
+      "id": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_many": {
+    "message": "Elevata attività sui core $ids$. Tra $min$ e $max$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "min": { "content": "$2" },
+      "max": { "content": "$3" }
+    }
+  },
+  "cpu_peaks_many_same": {
+    "message": "Elevata attività sui core $ids$ al $val$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
   },
   "cpu_peaks_none": { "message": "Nessun core in sovraccarico." },
   "cpu_avg_label": {

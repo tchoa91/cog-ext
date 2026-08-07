@@ -3,7 +3,10 @@
  * @description Configuration statique de l'interface, des couleurs et des seuils.
  */
 
-const t = chrome.i18n.getMessage;
+export const t = (key, substitutions) =>
+  chrome?.i18n?.getMessage
+    ? chrome.i18n.getMessage(key, substitutions) || key
+    : key;
 
 export const MOOD_COLORS = [
   { val: 195, label: "Electric Cyan" },
@@ -188,15 +191,16 @@ export const UI_CONFIG = {
       id: "settings",
       title: t("card_settings_title"),
       content: [
-        { id: "appVersion", type: "kv", title: t("label_version") },
+        { id: "toggleZoom", type: "switch", title: t("settings_zoom") },
+        { id: "toggleTheme", type: "switch", title: t("settings_theme") },
+        { id: "toggleUnit", type: "switch", title: t("settings_unit") },
         {
           id: "moodSelector",
           type: "colorPicker",
           title: t("settings_mood"),
           options: MOOD_COLORS,
         },
-        { id: "toggleTheme", type: "switch", title: t("settings_theme") },
-        { id: "toggleUnit", type: "switch", title: t("settings_unit") },
+        { id: "appVersion", type: "kv", title: t("label_version") },
         {
           id: "settingsFooter",
           type: "html",

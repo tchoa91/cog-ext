@@ -1,0 +1,119 @@
+{
+  "appName": { "message": "COGext : ตัวเฝ้าระบบ" },
+  "appDesc": {
+    "message": "ระบบของคุณในมุมมองของ Chrome — นำเสนอในแดชบอร์ดที่ทันสมัย เบา และโอเพ่นซอร์ส"
+  },
+
+  "monitor_cpu": { "message": "CPU" },
+  "monitor_mem": { "message": "MEM" },
+  "monitor_batt": { "message": "BAT" },
+  "monitor_net": { "message": "NET" },
+
+  "card_cpu_title": { "message": "ภาระ CPU" },
+  "card_mem_title": { "message": "หน่วยความจำ" },
+  "card_temp_title": { "message": "อุณหภูมิ CPU" },
+  "card_batt_title": { "message": "แบตเตอรี่" },
+  "card_disp_title": { "message": "การแสดงผล" },
+  "card_net_title": { "message": "เครือข่าย" },
+  "card_chrome_title": { "message": "Chrome" },
+  "card_os_title": { "message": "ระบบ" },
+  "card_storage_title": { "message": "พื้นที่จัดเก็บ" },
+  "card_settings_title": { "message": "COGext - การตั้งค่า" },
+
+  "label_mem_total": { "message": "หน่วยความจำทั้งหมด :" },
+  "label_mem_used": { "message": "หน่วยความจำที่ใช้ :" },
+  "label_batt_time_general": {
+    "message": "เวลาก่อนชาร์จเต็ม/แบตหมด :"
+  },
+  "label_ip": { "message": "ที่อยู่ IP :" },
+  "label_latency": { "message": "ความหน่วง :" },
+  "label_platform": { "message": "แพลตฟอร์ม :" },
+  "label_free": { "message": "ว่าง" },
+  "label_version": { "message": "เวอร์ชัน :" },
+
+  "overlay_cpu_title": { "message": "รายละเอียดภาระ CPU" },
+  "overlay_temp_title": { "message": "รายละเอียดอุณหภูมิ" },
+  "overlay_disp_title": { "message": "รายละเอียดการแสดงผล" },
+  "overlay_chrome_title": { "message": "รายละเอียด Chrome" },
+  "overlay_storage_title": { "message": "รายละเอียดพื้นที่จัดเก็บ" },
+
+  "detail_cpu_avg": { "message": "ภาระเฉลี่ย :" },
+  "detail_cpu_core": { "message": "ภาระรายคอร์ :" },
+  "detail_cpu_arch": { "message": "สถาปัตยกรรม CPU :" },
+  "detail_cpu_model": { "message": "รุ่น CPU :" },
+  "detail_cpu_features": { "message": "ฟีเจอร์ CPU :" },
+
+  "detail_temp_avg": { "message": "อุณหภูมิเฉลี่ย :" },
+  "detail_temp_sensor": { "message": "อุณหภูมิรายเซนเซอร์ :" },
+
+  "detail_disp_prim": { "message": "หน้าจอหลัก :" },
+  "detail_disp_other": { "message": "หน้าจอรอบข้าง :" },
+  "detail_gpu": { "message": "GPU :" },
+
+  "detail_chrome_langs": { "message": "ภาษา :" },
+  "detail_chrome_exts": { "message": "ส่วนขยายที่เปิดใช้งาน :" },
+
+  "detail_storage_discs": { "message": "ดิสก์ :" },
+
+  "settings_zoom": { "message": "เปิดใช้งานการขยาย :" },
+  "settings_theme": { "message": "เปิดใช้งานธีมมืด :" },
+  "settings_unit": { "message": "ใช้ °F สำหรับอุณหภูมิ :" },
+  "settings_mood": { "message": "สีแอมเบียนต์ :" },
+  "settings_footer": {
+    "message": "2026, GPL-3.0, François Bacconnet, <a href='https://ext.tchoa.com'>ข้อมูลเพิ่มเติม</a>"
+  },
+
+  "status_charging": { "message": "กำลังชาร์จ" },
+  "status_on_battery": { "message": "ใช้แบตเตอรี่" },
+  "status_full_charge_in": { "message": "ชาร์จเต็มใน :" },
+  "status_time_left": { "message": "เวลาที่เหลือ :" },
+  "status_powered": { "message": "เสียบปลั๊ก" },
+
+  "status_online": { "message": "ออนไลน์" },
+  "status_offline": { "message": "ออฟไลน์" },
+  "status_on": { "message": "เปิด" },
+  "status_off": { "message": "ปิด" },
+  "status_warning": { "message": "คำเตือน" },
+  "status_alert": { "message": "การแจ้งเตือน" },
+  "label_and": { "message": "และ" },
+
+  "disp_internal": { "message": "หน้าจอภายใน" },
+  "disp_internal_short": { "message": "ภายใน" },
+  "disp_unknown": { "message": "ไม่ทราบ" },
+  "disp_none": { "message": "ไม่มี" },
+  "action_close": { "message": "ปิดหน้าต่าง" },
+  "action_toggle_mini": { "message": "สลับโหมดมินิ" },
+  "val_na": { "message": "N/A" },
+  "cpu_mood_idle": { "message": "ระบบพักการทำงาน" },
+  "cpu_mood_crit": { "message": "ภาระรวมวิกฤต" },
+  "cpu_mood_asym": { "message": "การทำงานไม่สมมาตร" },
+  "cpu_mood_homo": { "message": "ภาระสม่ำเสมอ" },
+  "cpu_peaks_all": { "message": "ทุกคอร์อยู่ในโซนแดง" },
+  "cpu_peaks_one": {
+    "message": "ทำงานสูงบนคอร์ $id$ ที่ $val$%.",
+    "placeholders": {
+      "id": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_many": {
+    "message": "ทำงานสูงบนคอร์ $ids$ ระหว่าง $min$ ถึง $max$ %.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "min": { "content": "$2" },
+      "max": { "content": "$3" }
+    }
+  },
+  "cpu_peaks_many_same": {
+    "message": "ทำงานสูงบนคอร์ $ids$ ที่ $val$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_none": { "message": "ไม่มีคอร์ใดเกินภาระ" },
+  "cpu_avg_label": {
+    "message": "เฉลี่ย $avg$%.",
+    "placeholders": { "avg": { "content": "$1" } }
+  }
+}

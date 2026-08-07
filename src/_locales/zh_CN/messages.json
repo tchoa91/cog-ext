@@ -53,6 +53,7 @@
 
   "detail_storage_discs": { "message": "磁盘 ：" },
 
+  "settings_zoom": { "message": "开启缩放 ：" },
   "settings_theme": { "message": "开启深色主题 ：" },
   "settings_unit": { "message": "温度单位使用 °F ：" },
   "settings_mood": { "message": "氛围颜色 ：" },
@@ -80,15 +81,33 @@
   "disp_none": { "message": "无" },
   "action_close": { "message": "关闭窗口" },
   "action_toggle_mini": { "message": "切换迷你模式" },
-  "val_na": { "message": "不可用" },
+  "val_na": { "message": "N/A" },
   "cpu_mood_idle": { "message": "系统空闲" },
   "cpu_mood_crit": { "message": "严重的全局过载" },
   "cpu_mood_asym": { "message": "非对称活动" },
   "cpu_mood_homo": { "message": "均匀负载" },
   "cpu_peaks_all": { "message": "所有核心都处于红色区域。" },
   "cpu_peaks_one": {
-    "message": "警告，核心 $desc$ 出现峰值。",
-    "placeholders": { "desc": { "content": "$1" } }
+    "message": "核心 $id$ 活动频繁：$val$%。",
+    "placeholders": {
+      "id": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_many": {
+    "message": "核心 $ids$ 活动频繁。介于 $min$% 至 $max$% 之间。",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "min": { "content": "$2" },
+      "max": { "content": "$3" }
+    }
+  },
+  "cpu_peaks_many_same": {
+    "message": "核心 $ids$ 活动频繁：$val$%。",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
   },
   "cpu_peaks_none": { "message": "核心未过载。" },
   "cpu_avg_label": {

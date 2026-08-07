@@ -53,6 +53,7 @@
 
   "detail_storage_discs": { "message": "Laufwerke :" },
 
+  "settings_zoom": { "message": "Zoom aktivieren :" },
   "settings_theme": { "message": "Dunkles Design aktivieren :" },
   "settings_unit": { "message": "Nutze °F für Temperatur :" },
   "settings_mood": { "message": "Ambiente-Farbe :" },
@@ -80,15 +81,33 @@
   "disp_none": { "message": "Keine" },
   "action_close": { "message": "Fenster schließen" },
   "action_toggle_mini": { "message": "Mini-Modus umschalten" },
-  "val_na": { "message": "Nicht verfügbar" },
+  "val_na": { "message": "N/A" },
   "cpu_mood_idle": { "message": "System im Leerlauf" },
   "cpu_mood_crit": { "message": "Kritische globale Überlastung" },
   "cpu_mood_asym": { "message": "Asymmetrische Aktivität" },
   "cpu_mood_homo": { "message": "Homogene Last" },
   "cpu_peaks_all": { "message": "Alle Kerne sind im roten Bereich." },
   "cpu_peaks_one": {
-    "message": "Warnung, Spitzen auf Kern $desc$.",
-    "placeholders": { "desc": { "content": "$1" } }
+    "message": "Hohe Aktivität auf Kern $id$ bei $val$%.",
+    "placeholders": {
+      "id": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
+  },
+  "cpu_peaks_many": {
+    "message": "Hohe Aktivität auf den Kernen $ids$. Zwischen $min$ und $max$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "min": { "content": "$2" },
+      "max": { "content": "$3" }
+    }
+  },
+  "cpu_peaks_many_same": {
+    "message": "Hohe Aktivität auf den Kernen $ids$ bei $val$%.",
+    "placeholders": {
+      "ids": { "content": "$1" },
+      "val": { "content": "$2" }
+    }
   },
   "cpu_peaks_none": { "message": "Kein Kern überlastet." },
   "cpu_avg_label": {

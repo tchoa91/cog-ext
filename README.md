@@ -23,7 +23,7 @@ COGext is a highly optimized and accessible system monitor extension for the Chr
 (\* OS restrictions apply) (+ Has overlay for details)
 
 Customisation: Temp unit, Dark/Light mode, 5 color moods and Mini display.  
-Accessibility: Engineered for universal access (aiming WCAG 2.2 AAA). Includes curated semantics, multi-modal navigation, native support for 23 languages and zoom mode.
+Accessibility: Engineered for universal access (aiming WCAG 2.2 AAA). Includes curated semantics, multi-modal navigation, native support for 23 languages and zoom mode. ([Architecture & Engineering Guide](./ACCESSIBILITY.md))
 
 ## **Code history**
 

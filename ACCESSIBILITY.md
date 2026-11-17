@@ -98,9 +98,8 @@ Every release of COGext is validated through a three-step manual protocol—the 
 
 1. **Keyboard-Only Walkthrough:** Navigate `#topbar`, `#dashboard-grid`, overlays, toggle switches, and color swatches using only `Tab`, `Shift+Tab`, `Enter`, and `Space`, confirming zero focus traps and deterministic focus restoration when closing an overlay.  
 2. **Live Screen Reader Audit (ChromeVox):**  
-   * Confirm each card and monitor announces as a single control combining title, current value, and threshold state.  
-   * Verify that background cards remain unreachable while an overlay is open or Mini Mode is active (`inert`).  
-   * Check that opening the CPU overlay reads the visible semantic summary cleanly without sub-second numerical jitter.  
+    * **Navigation Mode:** Verify alignment between visual layout, logical DOM structure, and focus order; validate the information quality and phrasing announced for each region; and check transitions between zones (opening overlays, isolating the background via `inert` or Mini Mode, and restoring focus on close).
+    * **Read Mode:** Validate sequential reading order, verify standard structural navigation shortcuts (`H` for headings, landmarks, lists), and confirm that speech interruptions from live updates (`#aria-alerts`, 1 Hz cadence) are relevant and never cut off ongoing announcements prematurely.
 3. **Zoom, Contrast & Color-Vision Simulation (Chrome DevTools):** Toggle Zoom (`100%`), Light/Dark themes, and ambiance colors (`MOOD_COLORS`), and use **Chrome DevTools** (*Rendering \-\> Emulate vision deficiencies* and the built-in contrast ratio inspector) to verify legibility across protanopia, deuteranopia, tritanopia, achromatopsia, and blurred vision.
 
 ---

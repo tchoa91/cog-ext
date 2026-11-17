@@ -106,7 +106,7 @@ Every release of COGext is validated through a three-step manual protocol—the 
 
 ## 7\. Built for the User, Not the Coder
 
-An interface is no more a raw dump of internal APIs or developer data structures—**it is built for the human using it.**
+An interface is no longer a raw dump of internal APIs or developer data structures—**it is built for the human using it.**
 
 Designing around human perception and real-world ergonomics pays off directly across the entire codebase:
 
